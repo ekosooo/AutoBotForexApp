@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_calendar_carousel/classes/event_list.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:forex_app/constants.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:forex_app/model/calendar_news_model.dart';
+import 'package:forex_app/widget/no_connection.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:flutter_calendar_carousel/classes/event.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart'
@@ -29,10 +31,51 @@ class CalendarPageState extends State<CalendarPage> {
   CalendarNews calendarNews = CalendarNews();
   Future<List> futureCalendar;
 
+  EventList<Event> _markedDateMap = EventList<Event>();
+  //List<Event> events;
+
   @override
   void initState() {
     super.initState();
     futureCalendar = calendarNews.getNews();
+
+    futureCalendar.then((value) {
+      int day;
+      int month;
+      int year;
+      String impact;
+      Color colorImpact;
+      for (var i = 0; i < value.length; i++) {
+        day = int.parse(value[i].date.toString().substring(8, 10));
+        year = int.parse(value[i].date.toString().substring(0, 4));
+        month = int.parse(value[i].date.toString().substring(5, 7));
+        impact = value[i].impact;
+
+        if (impact == "High") {
+          //impact high
+          colorImpact = Colors.red;
+        } else if (impact == "Medium") {
+          //impact medium
+          colorImpact = Colors.orange;
+        } else if (impact == "Low") {
+          //impact low
+          colorImpact = kPrimaryColor;
+        }
+
+        _markedDateMap.add(
+          DateTime(year, month, day),
+          Event(
+            date: DateTime(year, month, day),
+            dot: Container(
+              margin: EdgeInsets.symmetric(horizontal: 1.w),
+              color: colorImpact,
+              height: 5.w,
+              width: 5.w,
+            ),
+          ),
+        );
+      }
+    });
   }
 
   void refresh(DateTime date) {
@@ -45,7 +88,7 @@ class CalendarPageState extends State<CalendarPage> {
     CalendarCarousel<Event> _calendarCarousel = CalendarCarousel<Event>(
       /// Example Calendar Carousel without header and custom prev & next button
       todayBorderColor: Colors.white,
-      onDayPressed: (DateTime date, List<Event> events) {
+      onDayPressed: (DateTime date, events) {
         this.setState(() => refresh(date));
         _flagEventToDay = false;
         dateSelectedEvent = date;
@@ -53,6 +96,7 @@ class CalendarPageState extends State<CalendarPage> {
       pageScrollPhysics: NeverScrollableScrollPhysics(),
       daysHaveCircularBorder: null,
       showOnlyCurrentMonthDate: false,
+      markedDatesMap: _markedDateMap,
       weekdayTextStyle: TextStyle(
         color: kPrimaryColor,
         fontFamily: "Nunito-Bold",
@@ -116,64 +160,91 @@ class CalendarPageState extends State<CalendarPage> {
     return Scaffold(
       backgroundColor: kBackgroundColor,
       appBar: buildAppBar(),
-      body: SlidingUpPanel(
-        minHeight: 450.w,
-        maxHeight: 1050.w,
-        backdropEnabled: false,
-        borderRadius: BorderRadius.only(
-            topRight: Radius.circular(35.w), topLeft: Radius.circular(35.w)),
-        panel: Container(
-          width: double.infinity,
-          height: double.infinity,
-          padding: EdgeInsets.only(left: 35.w, top: 50.w, right: 35.w),
-          decoration: BoxDecoration(
-            color: kPrimaryColor,
-            borderRadius: BorderRadius.only(
-                topRight: Radius.circular(35.w),
-                topLeft: Radius.circular(35.w)),
-          ),
-          child: ListView(
-            scrollDirection: Axis.vertical,
-            children: <Widget>[
-              buildLineSwipeUp(),
-              SizedBox(height: 30.w),
-              buildFilterButton(),
-              SizedBox(height: 30.w),
-              Container(
-                child: FutureBuilder<List>(
-                  future: futureCalendar,
-                  builder:
-                      (BuildContext context, AsyncSnapshot<List> snapshot) {
-                    if (snapshot.hasError) {
-                      return Text("Connection error");
-                    } else if (snapshot.connectionState ==
-                        ConnectionState.done) {
-                      List<CalendarNews> calendarNewsData = snapshot.data;
-                      if (_flagEventToDay) {
-                        return buildListNews(calendarNewsData, DateTime.now());
-                      } else {
-                        return buildListNews(
-                            calendarNewsData, dateSelectedEvent);
-                      }
-                    } else {
-                      return Center(
-                        child: CircularProgressIndicator(
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.white),
-                        ),
-                      );
-                    }
-                  },
+      body: Container(
+        child: FutureBuilder<List>(
+          future: futureCalendar,
+          builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
+            if (snapshot.hasError) {
+              return Center(
+                child: Container(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 25.w, vertical: 25.w),
+                  child: NoConnectionScreen(
+                    textColor: "black",
+                  ),
                 ),
-              ),
-            ],
-          ),
+              );
+            } else if (snapshot.connectionState == ConnectionState.done) {
+              return buildSlidingUpPanel(_calendarCarousel);
+            } else {
+              return Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(kPrimaryColor),
+                ),
+              );
+            }
+          },
         ),
-        body: Column(
+      ),
+    );
+  }
+
+  SlidingUpPanel buildSlidingUpPanel(
+      CalendarCarousel<Event> _calendarCarousel) {
+    return SlidingUpPanel(
+      minHeight: 450.w,
+      maxHeight: 1050.w,
+      backdropEnabled: false,
+      borderRadius: BorderRadius.only(
+          topRight: Radius.circular(35.w), topLeft: Radius.circular(35.w)),
+      panel: Container(
+        width: double.infinity,
+        height: double.infinity,
+        padding: EdgeInsets.only(left: 35.w, top: 50.w, right: 35.w),
+        decoration: BoxDecoration(
+          color: kPrimaryColor,
+          borderRadius: BorderRadius.only(
+              topRight: Radius.circular(35.w), topLeft: Radius.circular(35.w)),
+        ),
+        child: ListView(
+          scrollDirection: Axis.vertical,
           children: <Widget>[
-            buildCalendar(_calendarCarousel),
+            buildLineSwipeUp(),
+            SizedBox(height: 30.w),
+            buildFilterButton(),
+            SizedBox(height: 30.w),
+            Container(
+              child: FutureBuilder<List>(
+                future: futureCalendar,
+                builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
+                  if (snapshot.hasError) {
+                    return NoConnectionScreen(
+                      textColor: "black",
+                    );
+                  } else if (snapshot.connectionState == ConnectionState.done) {
+                    List<CalendarNews> calendarNewsData = snapshot.data;
+                    if (_flagEventToDay) {
+                      return buildListNews(calendarNewsData, DateTime.now());
+                    } else {
+                      return buildListNews(calendarNewsData, dateSelectedEvent);
+                    }
+                  } else {
+                    return Center(
+                      child: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    );
+                  }
+                },
+              ),
+            ),
           ],
         ),
+      ),
+      body: Column(
+        children: <Widget>[
+          buildCalendar(_calendarCarousel),
+        ],
       ),
     );
   }

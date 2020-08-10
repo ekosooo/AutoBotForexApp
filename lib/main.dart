@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:forex_app/constants.dart';
 import 'package:feather_icons_flutter/feather_icons_flutter.dart';
-import 'package:forex_app/screen/calendar_screen.dart';
 import 'package:forex_app/screen/home_screen.dart';
 
 void main() {
@@ -13,6 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,

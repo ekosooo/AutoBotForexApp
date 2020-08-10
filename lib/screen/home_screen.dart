@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:forex_app/constants.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:forex_app/screen/signal_screen.dart';
 import 'package:forex_app/widget/market_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'calendar_screen.dart';
+import 'signal_screen.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -154,6 +156,9 @@ class HomePageState extends State<HomePage> {
               if (_titleMenu == "Calendar") {
                 Navigator.push(context,
                     CupertinoPageRoute(builder: (context) => CalendarPage()));
+              } else if (_titleMenu == "Signal") {
+                Navigator.push(context,
+                    CupertinoPageRoute(builder: (context) => SignalPage()));
               }
             },
             child: Container(
