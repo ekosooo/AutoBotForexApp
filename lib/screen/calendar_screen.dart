@@ -202,7 +202,8 @@ class CalendarPageState extends State<CalendarPage> {
         height: double.infinity,
         padding: EdgeInsets.only(left: 35.w, top: 50.w, right: 35.w),
         decoration: BoxDecoration(
-          color: kPrimaryColor,
+          // color: kPrimaryColor,
+          color: kPrimaryColor.withOpacity(0.93),
           borderRadius: BorderRadius.only(
               topRight: Radius.circular(35.w), topLeft: Radius.circular(35.w)),
         ),
@@ -288,7 +289,8 @@ class CalendarPageState extends State<CalendarPage> {
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.w),
               margin: EdgeInsets.only(bottom: 10.w),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.05),
+                //color: Colors.white.withOpacity(0.08),
+                color: kPrimaryColor,
                 borderRadius: BorderRadius.circular(10.w),
               ),
               child: Column(
@@ -506,7 +508,8 @@ class CalendarPageState extends State<CalendarPage> {
           ),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(50.w),
-            color: (_isMedium) ? Colors.white : Colors.black.withOpacity(0.2),
+            // color: (_isMedium) ? Colors.white : Colors.black.withOpacity(0.2),
+            color: (_isMedium) ? Colors.white : kPrimaryColor,
           ),
         ),
       ),
@@ -536,7 +539,7 @@ class CalendarPageState extends State<CalendarPage> {
                 height: 13.w,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: kPrimaryColor,
+                  color: Colors.grey,
                 ),
               ),
               SizedBox(width: 15.w),
@@ -552,7 +555,8 @@ class CalendarPageState extends State<CalendarPage> {
           ),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(50.w),
-            color: (_isLow) ? Colors.white : Colors.black.withOpacity(0.2),
+            // color: (_isLow) ? Colors.white : Colors.black.withOpacity(0.2),
+            color: (_isLow) ? Colors.white : kPrimaryColor,
           ),
         ),
       ),
@@ -598,7 +602,8 @@ class CalendarPageState extends State<CalendarPage> {
           ),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(50.w),
-            color: (_isHigh) ? Colors.white : Colors.black.withOpacity(0.2),
+            //color: (_isHigh) ? Colors.white : Colors.black.withOpacity(0.2),
+            color: (_isHigh) ? Colors.white : kPrimaryColor,
           ),
         ),
       ),
@@ -630,7 +635,7 @@ class CalendarPageState extends State<CalendarPage> {
                 height: 13.w,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: kPrimaryColor,
+                  color: kPrimaryColor,li
                 ),
               ),
               SizedBox(width: 15.w),
@@ -646,7 +651,8 @@ class CalendarPageState extends State<CalendarPage> {
           ),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(50.w),
-            color: (_isALL) ? Colors.white : Colors.black.withOpacity(0.2),
+            //color: (_isALL) ? Colors.white : Colors.black.withOpacity(0.2),
+            color: (_isALL) ? Colors.white : kPrimaryColor,
           ),
         ),
       ),
@@ -731,7 +737,7 @@ class CalendarPageState extends State<CalendarPage> {
     } else {
       return BoxDecoration(
         borderRadius: BorderRadius.circular(5.w),
-        color: Color.fromRGBO(50, 142, 78, 1),
+        color: Colors.grey,
       );
     }
   }
