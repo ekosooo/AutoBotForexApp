@@ -16,6 +16,9 @@ bool _isHigh = false;
 bool _isMedium = false;
 bool _isLow = false;
 
+//arr impact news
+List<String> arrImpact = ["Low", "Medium", "High"];
+
 class CalendarPage extends StatefulWidget {
   CalendarPageState createState() => CalendarPageState();
 }
@@ -37,43 +40,77 @@ class CalendarPageState extends State<CalendarPage> {
   @override
   void initState() {
     super.initState();
+
+    //array list 3 dimensi untuk menampung tanggal dan impact dari news
+    var arrFlag = List.generate(31, (index) => List(3), growable: false);
+    //membuat default flag setiap tanggal menjadi 0
+    for (var i = 0; i < 31; i++) {
+      for (var j = 0; j < 3; j++) {
+        arrFlag[i][j] = 0;
+      }
+    }
+
     futureCalendar = calendarNews.getNews();
 
-    futureCalendar.then((value) {
+    calendarNews.getNews().then((value) {
       int day;
       int month;
       int year;
       String impact;
       Color colorImpact;
+
+      //get year and month to mark calendar berdasarkan bulan dan tahun saat ini
+      var now = DateTime.now();
+      year = int.parse(now.toString().substring(0, 4));
+      month = int.parse(now.toString().substring(5, 7));
+
       for (var i = 0; i < value.length; i++) {
         day = int.parse(value[i].date.toString().substring(8, 10));
-        year = int.parse(value[i].date.toString().substring(0, 4));
-        month = int.parse(value[i].date.toString().substring(5, 7));
         impact = value[i].impact;
 
-        if (impact == "High") {
-          //impact high
-          colorImpact = Colors.red;
-        } else if (impact == "Medium") {
-          //impact medium
-          colorImpact = Colors.orange;
-        } else if (impact == "Low") {
-          //impact low
-          colorImpact = kPrimaryColor;
+        //-------------------------------
+
+        int impactVal = getImpactVal(impact);
+        if (impactVal >= 0) {
+          arrFlag[day - 1][impactVal] = 1;
         }
 
-        _markedDateMap.add(
-          DateTime(year, month, day),
-          Event(
-            date: DateTime(year, month, day),
-            dot: Container(
-              margin: EdgeInsets.symmetric(horizontal: 1.w),
-              color: colorImpact,
-              height: 5.w,
-              width: 5.w,
-            ),
-          ),
-        );
+        //-------------------------------
+      }
+
+      for (var i = 0; i < 31; i++) {
+        for (var j = 0; j < 3; j++) {
+          //cek jika tanggal tersebut memiliki impact berita maka akan di mark di calendar
+          if (arrFlag[i][j] == 1) {
+            //menentukan warna marked pada calendar sesuai impact news
+            if (j == 2) {
+              //impact high
+              colorImpact = Colors.red;
+            } else if (j == 1) {
+              //impact medium
+              colorImpact = Colors.orange;
+            } else if (j == 0) {
+              //impact low
+              colorImpact = Colors.yellow;
+            }
+
+            _markedDateMap.add(
+              DateTime(year, month, i + 1),
+              Event(
+                date: DateTime(year, month, i + 1),
+                dot: Container(
+                  margin: EdgeInsets.symmetric(horizontal: 1.w),
+                  height: 7.w,
+                  width: 7.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: colorImpact,
+                  ),
+                ),
+              ),
+            );
+          }
+        }
       }
     });
   }
@@ -539,7 +576,7 @@ class CalendarPageState extends State<CalendarPage> {
                 height: 13.w,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.grey,
+                  color: Colors.yellow[700],
                 ),
               ),
               SizedBox(width: 15.w),
@@ -635,7 +672,7 @@ class CalendarPageState extends State<CalendarPage> {
                 height: 13.w,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: kPrimaryColor,li
+                  color: kPrimaryColor,
                 ),
               ),
               SizedBox(width: 15.w),
@@ -737,7 +774,7 @@ class CalendarPageState extends State<CalendarPage> {
     } else {
       return BoxDecoration(
         borderRadius: BorderRadius.circular(5.w),
-        color: Colors.grey,
+        color: Colors.yellow[700],
       );
     }
   }
@@ -751,5 +788,17 @@ class CalendarPageState extends State<CalendarPage> {
     } else {
       _isALL = false;
     }
+  }
+
+  // get impact from news
+  int getImpactVal(String impact) {
+    int val = -1;
+    for (var i = 0; i < arrImpact.length; i++) {
+      if (impact == arrImpact[i]) {
+        val = i;
+        break;
+      }
+    }
+    return val;
   }
 }

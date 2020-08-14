@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:forex_app/constants.dart';
 import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:forex_app/screen/home_screen.dart';
+import 'package:forex_app/screen/analysis_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -44,9 +45,7 @@ class BottomNavPageState extends State<BottomNavPage> {
       Center(
         child: Text("News"),
       ),
-      Center(
-        child: Text("Analysis"),
-      ),
+      AnalysisPage(),
       Center(
         child: Text("Services"),
       ),

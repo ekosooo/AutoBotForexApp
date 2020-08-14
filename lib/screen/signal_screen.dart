@@ -46,7 +46,7 @@ class SignalPageState extends State<SignalPage>
           ),
 
           // ---------------------- profit weekly
-          buildProfitWeekly(),
+          buildProfit(),
           //------------------------------------
         ],
         controller: _tabController,
@@ -54,7 +54,7 @@ class SignalPageState extends State<SignalPage>
     );
   }
 
-  Container buildProfitWeekly() {
+  Container buildProfit() {
     var textStyle = TextStyle(
       fontFamily: "Nunito-SemiBold",
       fontSize: 20.ssp,
@@ -448,14 +448,7 @@ class SignalPageState extends State<SignalPage>
                         ],
                       ),
                       SizedBox(
-                        height: 15.w,
-                      ),
-                      Container(
-                        height: 4.w,
-                        color: kBackgroundColor,
-                      ),
-                      SizedBox(
-                        height: 15.w,
+                        height: 10.w,
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -479,7 +472,14 @@ class SignalPageState extends State<SignalPage>
                         ],
                       ),
                       SizedBox(
-                        height: 10.w,
+                        height: 15.w,
+                      ),
+                      Container(
+                        height: 4.w,
+                        color: kBackgroundColor,
+                      ),
+                      SizedBox(
+                        height: 15.w,
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
