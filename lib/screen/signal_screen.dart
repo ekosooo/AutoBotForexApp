@@ -4,6 +4,7 @@ import 'package:forex_app/constants.dart';
 import 'package:expandable/expandable.dart';
 import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:forex_app/widget/profit_chart.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class SignalPage extends StatefulWidget {
   SignalPageState createState() => SignalPageState();
@@ -36,11 +37,11 @@ class SignalPageState extends State<SignalPage>
               shrinkWrap: true,
               scrollDirection: Axis.vertical,
               children: <Widget>[
-                buildExpandableNotifier(),
+                buildSingalList(),
                 SizedBox(height: 20.w),
-                buildExpandableNotifier(),
+                buildSingalList(),
                 SizedBox(height: 20.w),
-                buildExpandableNotifier(),
+                buildSingalList(),
               ],
             ),
           ),
@@ -280,7 +281,7 @@ class SignalPageState extends State<SignalPage>
     );
   }
 
-  ExpandableNotifier buildExpandableNotifier() {
+  ExpandableNotifier buildSingalList() {
     return ExpandableNotifier(
       child: ScrollOnExpand(
         child: Card(
@@ -305,13 +306,23 @@ class SignalPageState extends State<SignalPage>
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          Text(
-                            "EUR USD",
-                            style: TextStyle(
-                              fontFamily: "Nunito-ExtraBold",
-                              fontSize: 35.ssp,
-                              color: kTextColor,
-                            ),
+                          Row(
+                            children: <Widget>[
+                              SvgPicture.asset(
+                                'assets/images/eurusd.svg',
+                                height: 35.w,
+                                width: 70.w,
+                              ),
+                              SizedBox(width: 10),
+                              Text(
+                                "EUR USD",
+                                style: TextStyle(
+                                  fontFamily: "Nunito-ExtraBold",
+                                  fontSize: 25.ssp,
+                                  color: kTextColor,
+                                ),
+                              ),
+                            ],
                           ),
                           Text(
                             "1.17649",

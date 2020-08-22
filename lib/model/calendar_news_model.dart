@@ -3,30 +3,42 @@ import 'package:forex_app/func_global.dart';
 import 'package:http/http.dart' as http;
 
 class CalendarNews {
-  String title;
-  String country;
-  DateTime date;
-  String impact;
-  String forecast;
-  String previous;
+  String ffTitle;
+  String ffCountry;
+  DateTime ffDate;
+  String ffTime;
+  String ffImpact;
+  String ffForecast;
+  String ffPrevious;
+  dynamic ffActual;
+  DateTime ffCreatedAt;
+  DateTime ffUpdatedAt;
 
   CalendarNews({
-    this.title,
-    this.country,
-    this.date,
-    this.impact,
-    this.forecast,
-    this.previous,
+    this.ffTitle,
+    this.ffCountry,
+    this.ffDate,
+    this.ffTime,
+    this.ffImpact,
+    this.ffForecast,
+    this.ffPrevious,
+    this.ffActual,
+    this.ffCreatedAt,
+    this.ffUpdatedAt,
   });
 
   factory CalendarNews.fromJson(Map<String, dynamic> json) => CalendarNews(
-        title: json["title"],
-        country: json["country"],
-        date: DateTime.parse(json["date"])
+        ffTitle: json["FFTitle"],
+        ffCountry: json["FFCountry"],
+        ffDate: DateTime.parse(json["FFDate"] + " " + json["FFTime"])
             .add(Duration(seconds: (FunctionGlobal().getGMTbySystem()) * 3600)),
-        impact: json["impact"],
-        forecast: json["forecast"],
-        previous: json["previous"],
+        //ffTime: json["FFTime"],
+        ffImpact: json["FFImpact"],
+        ffForecast: json["FFForecast"],
+        ffPrevious: json["FFPrevious"],
+        ffActual: json["FFActual"],
+        ffCreatedAt: DateTime.parse(json["FFCreatedAt"]),
+        ffUpdatedAt: DateTime.parse(json["FFUpdatedAt"]),
       );
 
   List<CalendarNews> calendarFromJson(String jsonData) {
@@ -36,8 +48,7 @@ class CalendarNews {
   }
 
   Future<List<CalendarNews>> getNews() async {
-    final String baseUrl =
-        "https://cdn-nfs.faireconomy.media/ff_calendar_thisweek.json";
+    final String baseUrl = "https://signalforex.id/apis/ShowFF";
     final response = await http.get("$baseUrl");
     if (response.statusCode == 200) {
       return calendarFromJson(response.body);

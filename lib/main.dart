@@ -3,6 +3,7 @@ import 'package:forex_app/constants.dart';
 import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:forex_app/screen/home_screen.dart';
 import 'package:forex_app/screen/analysis_screen.dart';
+import 'package:flutter/services.dart';
 
 void main() {
   runApp(MyApp());
@@ -12,6 +13,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',

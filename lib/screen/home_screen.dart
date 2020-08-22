@@ -107,6 +107,7 @@ class HomePageState extends State<HomePage> {
           child: GridView.count(
             crossAxisCount: 4,
             shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
             children: <Widget>[
               buildMenu("Calendar", FeatherIcons.calendar),
               buildMenu("Education", FeatherIcons.book),
