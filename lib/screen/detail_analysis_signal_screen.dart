@@ -1,44 +1,63 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:forex_app/constants.dart';
+import 'package:signalforex/constants.dart';
 import 'package:expandable/expandable.dart';
+import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:http/http.dart' as http;
 import '../model/analysis_signal_model.dart';
 
-Future<AnalysisSignal> getAnalysisSignal() async {
-  final String baseUrl = "http://192.168.100.5:8000/api/analysis/signal";
-  final response =
-      await http.post("$baseUrl", body: {"pair": "EURUSD", "TF": "240"});
-  if (response.statusCode == 200) {
-    return AnalysisSignal.fromJson(response.body);
-  } else {
-    return null;
-  }
-}
-
-List<Bb> bolingerBandList = [];
-List<Rsi> rsiList = [];
-List<Ichimoku> ichimoku = [];
-List<Ma> maList = [];
-
-bool m5Clicked = false;
-bool m15Clicked = false;
-bool m30Clicked = false;
-bool h1Clicked = true;
-bool h4Clicked = false;
-bool d1Clicked = false;
+// Future<AnalysisSignal> getAnalysisSignal() async {
+//   final String baseUrl = "http://192.168.100.5:8000/api/analysis/signal";
+//   final response =
+//       await http.post("$baseUrl", body: {"pair": "EURUSD", "TF": "240"});
+//   if (response.statusCode == 200) {
+//     return AnalysisSignal.fromJson(response.body);
+//   } else {
+//     return null;
+//   }
+// }
 
 class DetailAnalysisSignalPage extends StatefulWidget {
+  final String pair;
+  const DetailAnalysisSignalPage(this.pair);
+
   DetailAnalysisSignalPageState createState() =>
       DetailAnalysisSignalPageState();
 }
 
 class DetailAnalysisSignalPageState extends State<DetailAnalysisSignalPage> {
-  @override
-  void initState() {
-    super.initState();
-    // getAnalysisSignal();
+  List<Bb> bolingerBandList = [];
+  List<Rsi> rsiList = [];
+  List<Ichimoku> ichimokuList = [];
+  List<Ma> maList = [];
+  Price price;
+
+  bool m5Clicked = false;
+  bool m15Clicked = false;
+  bool m30Clicked = false;
+  bool h1Clicked = true;
+  bool h4Clicked = false;
+  bool d1Clicked = false;
+
+  Future getAnalysisSignal() async {
+    final String baseUrl = "http://192.168.100.5:8000/api/analysis/signal";
+    final response =
+        await http.post("$baseUrl", body: {"pair": widget.pair, "TF": "240"});
+    if (response.statusCode == 200) {
+      return AnalysisSignal.fromJson(response.body);
+    } else {
+      throw Exception('Fail to load data');
+    }
+  }
+
+  Future refreshData() async {
+    bolingerBandList.clear();
+    rsiList.clear();
+    ichimokuList.clear();
+    maList.clear();
+    await Future.delayed(Duration(seconds: 2));
+    setState(() {});
   }
 
   var textStyleHeaderTable = TextStyle(
@@ -56,45 +75,48 @@ class DetailAnalysisSignalPageState extends State<DetailAnalysisSignalPage> {
     return Scaffold(
       backgroundColor: kBackgroundColor,
       appBar: buildAppBar(context),
-      body: ListView(
-        shrinkWrap: true,
-        scrollDirection: Axis.vertical,
-        children: <Widget>[
-          buildContainerPrice(),
-          SizedBox(height: 20.w),
-          buildSummaryAndTimeFrame(),
-          SizedBox(height: 20.w),
-          Container(
-            child: FutureBuilder(
-              future: getAnalysisSignal(),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.hasError) {
-                  return Center(
-                    child: Container(
-                      child: Text("Terjadi Kesalahan"),
-                    ),
-                  );
-                } else if (snapshot.connectionState == ConnectionState.done) {
-                  bolingerBandList = snapshot.data.data.indicator.bb;
-                  rsiList = snapshot.data.data.indicator.rsi;
-                  ichimoku = snapshot.data.data.indicator.ichimoku;
-                  maList = snapshot.data.data.indicator.ma;
-                  return buildMasterIndicator();
-                } else {
-                  return Container(
-                    margin: EdgeInsets.only(top: 40.w),
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        valueColor:
-                            AlwaysStoppedAnimation<Color>(kPrimaryColor),
+      body: RefreshIndicator(
+        color: kPrimaryColor,
+        onRefresh: refreshData,
+        child: ListView(
+          shrinkWrap: true,
+          scrollDirection: Axis.vertical,
+          children: <Widget>[
+            buildSummaryAndTimeFrame(),
+            SizedBox(height: 20.w),
+            Container(
+              child: FutureBuilder(
+                future: getAnalysisSignal(),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Container(
+                        child: Text("Terjadi Kesalahan"),
                       ),
-                    ),
-                  );
-                }
-              },
+                    );
+                  } else if (snapshot.connectionState == ConnectionState.done) {
+                    bolingerBandList = snapshot.data.data.indicator.bb;
+                    rsiList = snapshot.data.data.indicator.rsi;
+                    ichimokuList = snapshot.data.data.indicator.ichimoku;
+                    maList = snapshot.data.data.indicator.ma;
+                    price = snapshot.data.data.price;
+                    return buildMasterIndicator();
+                  } else {
+                    return Container(
+                      margin: EdgeInsets.only(top: 40.w),
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(kPrimaryColor),
+                        ),
+                      ),
+                    );
+                  }
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -102,6 +124,8 @@ class DetailAnalysisSignalPageState extends State<DetailAnalysisSignalPage> {
   Column buildMasterIndicator() {
     return Column(
       children: <Widget>[
+        buildContainerPrice(),
+        SizedBox(height: 20.w),
         buildMasterExpanded("Moving Averages", 0, buildMovingAverages()),
         SizedBox(height: 20.w),
         buildMasterExpanded("Bolinger Bands", 0, buildBolingerBands()),
@@ -109,7 +133,7 @@ class DetailAnalysisSignalPageState extends State<DetailAnalysisSignalPage> {
         buildMasterExpanded("RSI", -1, buildRSI()),
         SizedBox(height: 20.w),
         buildMasterExpanded(
-            "Ichimoku", ichimoku[0].iMokuSignal, buildIchimoku()),
+            "Ichimoku", ichimokuList[0].iMokuSignal, buildIchimoku()),
         SizedBox(height: 20.w),
         // buildMasterExpanded("PivotPoint", "", buildPivotPoint()),
         // SizedBox(height: 20.w),
@@ -194,40 +218,6 @@ class DetailAnalysisSignalPageState extends State<DetailAnalysisSignalPage> {
 
   //---------------------- end master build expands layout -------------------
 
-  //---------------------- Build Pivot Point ---------------------------------
-  Container buildPivotPoint() {
-    return Container(
-      padding: EdgeInsets.all(20.w),
-      child: Column(
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              buildHeader("N"),
-              buildHeader("Classic"),
-              buildHeader("Fibonanci"),
-              buildHeader("Camarilla"),
-              buildHeader("Woodie"),
-            ],
-          ),
-          SizedBox(height: 10),
-          Divider(thickness: 3.w, color: Colors.grey[100]),
-          SizedBox(height: 10),
-          Row(
-            children: <Widget>[
-              buildPeriodAndPrice("R4"),
-              buildPeriodAndPrice("1.1857"),
-              buildPeriodAndPrice("1.1824"),
-              buildPeriodAndPrice("1.1792"),
-              buildPeriodAndPrice("1.1792"),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-  //---------------------- End Build Pivot Point -----------------------------
-
   //--------------------- build bolinger bands -------------------------------
   Container buildBolingerBands() {
     return Container(
@@ -246,6 +236,7 @@ class DetailAnalysisSignalPageState extends State<DetailAnalysisSignalPage> {
             ],
           ),
           ListView.builder(
+            primary: false,
             shrinkWrap: true,
             itemCount: bolingerBandList.length,
             itemBuilder: (context, index) {
@@ -287,35 +278,38 @@ class DetailAnalysisSignalPageState extends State<DetailAnalysisSignalPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text("Tenkan-sen (9)", style: textStylePrice),
-              Text(ichimoku[0].iMokuTenkan.toString(), style: textStylePrice),
+              Text(ichimokuList[0].iMokuTenkan.toString(),
+                  style: textStylePrice),
             ],
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text("Kijun-sen (26)", style: textStylePrice),
-              Text(ichimoku[0].iMokuKijun.toString(), style: textStylePrice),
+              Text(ichimokuList[0].iMokuKijun.toString(),
+                  style: textStylePrice),
             ],
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text("SenkouSpanA (26)", style: textStylePrice),
-              Text(ichimoku[0].iMokuSsa.toString(), style: textStylePrice),
+              Text(ichimokuList[0].iMokuSsa.toString(), style: textStylePrice),
             ],
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text("SenkouSpanB (52, 26)", style: textStylePrice),
-              Text(ichimoku[0].iMokuSsb.toString(), style: textStylePrice),
+              Text(ichimokuList[0].iMokuSsb.toString(), style: textStylePrice),
             ],
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text("Chikouspan (26)", style: textStylePrice),
-              Text(ichimoku[0].iMokuChikou.toString(), style: textStylePrice),
+              Text(ichimokuList[0].iMokuChikou.toString(),
+                  style: textStylePrice),
             ],
           ),
         ],
@@ -340,6 +334,7 @@ class DetailAnalysisSignalPageState extends State<DetailAnalysisSignalPage> {
             ],
           ),
           ListView.builder(
+            primary: false,
             shrinkWrap: true,
             itemCount: rsiList.length,
             itemBuilder: (context, index) {
@@ -455,6 +450,7 @@ class DetailAnalysisSignalPageState extends State<DetailAnalysisSignalPage> {
             ],
           ),
           ListView.builder(
+            primary: false,
             shrinkWrap: true,
             itemCount: maList.length,
             itemBuilder: (context, index) {
@@ -502,25 +498,6 @@ class DetailAnalysisSignalPageState extends State<DetailAnalysisSignalPage> {
                             ],
                           ),
                         ),
-
-                        // Column(
-                        //   children: <Widget>[
-                        //     buildMethodMA(ma.iMaSmoothed),
-                        //     buildSignalMA(ma.iMaSigSmoothed),
-                        //   ],
-                        // ),
-                        // Column(
-                        //   children: <Widget>[
-                        //     buildMethodMA(ma.iMaExponential),
-                        //     buildSignalMA(ma.iMaSigExponential),
-                        //   ],
-                        // ),
-                        // Column(
-                        //   children: <Widget>[
-                        //     buildMethodMA(ma.iMalw),
-                        //     buildSignalMA(ma.iMaSigLw),
-                        //   ],
-                        // ),
                       ],
                     ),
                   ],
@@ -578,8 +555,9 @@ class DetailAnalysisSignalPageState extends State<DetailAnalysisSignalPage> {
                 Text(
                   "Technical Analysis",
                   style: TextStyle(
-                    fontFamily: "Nunito-ExtraBold",
+                    fontFamily: "Nunito-Bold",
                     fontSize: 25.ssp,
+                    color: kTextLightColor,
                   ),
                 ),
                 Divider(
@@ -597,7 +575,7 @@ class DetailAnalysisSignalPageState extends State<DetailAnalysisSignalPage> {
                       ),
                     ),
                     Text(
-                      "Neutral",
+                      "BUY",
                       style: TextStyle(
                         fontFamily: "Nunito-Bold",
                         fontSize: 25.ssp,
@@ -644,6 +622,7 @@ class DetailAnalysisSignalPageState extends State<DetailAnalysisSignalPage> {
       child: Container(
         height: 45.w,
         child: ListView(
+          primary: false,
           shrinkWrap: true,
           scrollDirection: Axis.horizontal,
           children: <Widget>[
@@ -826,6 +805,16 @@ class DetailAnalysisSignalPageState extends State<DetailAnalysisSignalPage> {
 //----------------------------- CONTENT PRICE --------------------------------
 
   Container buildContainerPrice() {
+    var textStyleTitleValue = TextStyle(
+      fontFamily: "Nunito",
+      fontSize: 22.ssp,
+      color: kTextMediumColor,
+    );
+    var textStyleValue = TextStyle(
+      fontFamily: "Nunito-Bold",
+      fontSize: 22.ssp,
+      color: kTextColor,
+    );
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 20.w),
       child: Column(
@@ -844,67 +833,110 @@ class DetailAnalysisSignalPageState extends State<DetailAnalysisSignalPage> {
               ],
             ),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
+                Text(
+                  "Price Market",
+                  style: TextStyle(
+                    fontFamily: "Nunito-Bold",
+                    fontSize: 25.ssp,
+                    color: kTextLightColor,
+                  ),
+                ),
+                Divider(
+                  thickness: 3.w,
+                  color: Colors.grey[100],
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Text(
-                      "Price : 1.185",
-                      style: TextStyle(
-                        fontFamily: "Nunito",
-                        fontSize: 22.ssp,
-                        color: kTextMediumColor,
-                      ),
+                    Row(
+                      children: <Widget>[
+                        Text(
+                          "Now  : ",
+                          style: textStyleTitleValue,
+                        ),
+                        Text(
+                          price.now.toString(),
+                          style: textStyleValue,
+                        ),
+                      ],
                     ),
-                    Text(
-                      "ADR : -0.004(-0.04%)",
-                      style: TextStyle(
-                        fontFamily: "Nunito",
-                        fontSize: 22.ssp,
-                        color: kTextMediumColor,
-                      ),
+                    Row(
+                      children: <Widget>[
+                        Text(
+                          "ADR  : ",
+                          style: textStyleTitleValue,
+                        ),
+                        Text(
+                          "-0.004(-0.04%)",
+                          style: textStyleValue,
+                        ),
+                        SizedBox(width: 10.w),
+                        Icon(
+                          FeatherIcons.trendingDown,
+                          color: Colors.red,
+                          size: 30.w,
+                        ),
+                      ],
                     ),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Text(
-                      "Open : 1.185",
-                      style: TextStyle(
-                        fontFamily: "Nunito",
-                        fontSize: 22.ssp,
-                        color: kTextMediumColor,
-                      ),
+                    Row(
+                      children: <Widget>[
+                        Text(
+                          "Open : ",
+                          style: textStyleTitleValue,
+                        ),
+                        Text(
+                          price.open.toString(),
+                          style: textStyleValue,
+                        ),
+                      ],
                     ),
-                    Text(
-                      "Low : 1.185",
-                      style: TextStyle(
-                        fontFamily: "Nunito",
-                        fontSize: 22.ssp,
-                        color: kTextMediumColor,
-                      ),
+                    Row(
+                      children: <Widget>[
+                        Text(
+                          "Low  : ",
+                          style: textStyleTitleValue,
+                        ),
+                        Text(
+                          price.low.toString(),
+                          style: textStyleValue,
+                        ),
+                      ],
                     ),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Text(
-                      "Close : 1.185",
-                      style: TextStyle(
-                        fontFamily: "Nunito",
-                        fontSize: 22.ssp,
-                        color: kTextMediumColor,
-                      ),
+                    Row(
+                      children: <Widget>[
+                        Text(
+                          "Close : ",
+                          style: textStyleTitleValue,
+                        ),
+                        Text(
+                          price.close.toString(),
+                          style: textStyleValue,
+                        ),
+                      ],
                     ),
-                    Text(
-                      "High : 1.185",
-                      style: TextStyle(
-                        fontFamily: "Nunito",
-                        fontSize: 22.ssp,
-                        color: kTextMediumColor,
-                      ),
+                    Row(
+                      children: <Widget>[
+                        Text(
+                          "High  : ",
+                          style: textStyleTitleValue,
+                        ),
+                        Text(
+                          price.high.toString(),
+                          style: textStyleValue,
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -933,7 +965,7 @@ class DetailAnalysisSignalPageState extends State<DetailAnalysisSignalPage> {
         },
       ),
       title: Text(
-        "EUR/USD",
+        widget.pair,
         style: TextStyle(
           fontFamily: "Nunito-ExtraBold",
           fontSize: 32.ssp,

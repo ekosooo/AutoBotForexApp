@@ -1,4 +1,4 @@
-name: forex_app
+name: signalforex
 description: A new Flutter project.
 
 # The following line prevents the package from being accidentally published to
@@ -46,6 +46,8 @@ dependencies:
   expandable: ^4.1.4
   #fl chart
   fl_chart: ^0.11.0
+  #push notif
+  firebase_messaging: ^6.0.13
 
 dev_dependencies:
   flutter_test:

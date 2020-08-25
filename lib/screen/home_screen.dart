@@ -1,10 +1,10 @@
 import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:forex_app/constants.dart';
+import 'package:signalforex/constants.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:forex_app/screen/signal_screen.dart';
-import 'package:forex_app/widget/market_card.dart';
+import 'package:signalforex/screen/signal_screen.dart';
+import 'package:signalforex/widget/market_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'calendar_screen.dart';
 import 'signal_screen.dart';

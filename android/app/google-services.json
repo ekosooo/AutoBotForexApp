@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "2111895143",
+    "firebase_url": "https://signalforex-98925.firebaseio.com",
+    "project_id": "signalforex-98925",
+    "storage_bucket": "signalforex-98925.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:2111895143:android:6f097ec776a8e9ae9e86c2",
+        "android_client_info": {
+          "package_name": "com.autobotfx.signalforex"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "2111895143-10g5t01bv6t2917d6cr92pb26ncrsi6e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.autobotfx.signalforex",
+            "certificate_hash": "8bef56d5111d727f0d0a88c03c601ef50ad8f419"
+          }
+        },
+        {
+          "client_id": "2111895143-1r4pti203tv6m60qvpt6e1madkuja4sp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBR4ds-7a0JXzX_Xl-BNCW0KuDDkhNRtEI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "2111895143-1r4pti203tv6m60qvpt6e1madkuja4sp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

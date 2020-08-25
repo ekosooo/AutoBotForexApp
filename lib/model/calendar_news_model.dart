@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:forex_app/func_global.dart';
+import '../func_global.dart';
 import 'package:http/http.dart' as http;
 
 class CalendarNews {

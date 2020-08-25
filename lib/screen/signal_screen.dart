@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:forex_app/constants.dart';
+import 'package:signalforex/constants.dart';
 import 'package:expandable/expandable.dart';
 import 'package:feather_icons_flutter/feather_icons_flutter.dart';
-import 'package:forex_app/widget/profit_chart.dart';
+import 'package:signalforex/widget/profit_chart.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class SignalPage extends StatefulWidget {

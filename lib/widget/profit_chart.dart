@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:forex_app/constants.dart';
+import 'package:signalforex/constants.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProfitChart extends StatelessWidget {

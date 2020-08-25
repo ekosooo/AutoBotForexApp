@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:forex_app/constants.dart';
+import 'package:signalforex/constants.dart';
 import 'package:feather_icons_flutter/feather_icons_flutter.dart';
-import 'package:forex_app/screen/home_screen.dart';
-import 'package:forex_app/screen/analysis_screen.dart';
+import 'package:signalforex/screen/home_screen.dart';
+import 'package:signalforex/screen/analysis_screen.dart';
 import 'package:flutter/services.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 void main() {
   runApp(MyApp());
@@ -32,6 +33,32 @@ class BottomNavPage extends StatefulWidget {
 }
 
 class BottomNavPageState extends State<BottomNavPage> {
+
+  //----- fcm ---
+  FirebaseMessaging fm = FirebaseMessaging();
+  String token = '';
+
+  @override
+  void initState(){
+    fm.configure(
+      onMessage: (Map<String, dynamic> message) async{
+        debugPrint('onMessage : $message');
+      },
+      onResume: (Map<String, dynamic> message) async{
+        debugPrint('onResume : $message');
+      },
+      onLaunch: (Map<String, dynamic> message) async{
+        debugPrint('onLunch : $message');
+      }
+    );
+
+    fm.getToken().then((token) => setState((){
+      this.token = token;
+    }));
+    super.initState();
+  }
+  //----- end fcm ---
+
   int _selectedTabIndex = 0;
 
   void _onNavBarTapped(int index) {
@@ -42,6 +69,8 @@ class BottomNavPageState extends State<BottomNavPage> {
 
   @override
   Widget build(BuildContext context) {
+    print("AA");
+    debugPrint('token : $token');
     final _listPage = <Widget>[
       HomePage(),
       Center(

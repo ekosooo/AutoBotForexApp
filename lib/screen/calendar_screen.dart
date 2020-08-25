@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_calendar_carousel/classes/event_list.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:forex_app/constants.dart';
+import 'package:signalforex/constants.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:forex_app/model/calendar_news_model.dart';
-import 'package:forex_app/widget/no_connection.dart';
+import 'package:signalforex/model/calendar_news_model.dart';
+import 'package:signalforex/widget/no_connection.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:flutter_calendar_carousel/classes/event.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart'

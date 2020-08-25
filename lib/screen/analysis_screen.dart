@@ -1,8 +1,10 @@
+import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:forex_app/constants.dart';
+import 'package:signalforex/constants.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:signalforex/screen/detail_patterns_signal.dart';
 
 import 'detail_analysis_signal_screen.dart';
 
@@ -51,10 +53,91 @@ class AnalysisPageState extends State<AnalysisPage>
                 ],
               ),
 
-              //Text("ini AA"),
-              Text("ini BB"),
+              // ------------------ Patterns ----------------------
+              ListView(
+                scrollDirection: Axis.vertical,
+                physics: BouncingScrollPhysics(),
+                children: <Widget>[
+                  SizedBox(height: 10.w),
+                  buildListPatterns(),
+                  buildListPatterns(),
+                  buildListPatterns(),
+                ],
+              ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Container buildListPatterns() {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 35.w, vertical: 15.w),
+      width: double.infinity,
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            offset: Offset(8.w, 21.w),
+            blurRadius: 53.w,
+            color: Colors.black.withOpacity(0.05),
+          ),
+        ],
+      ),
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(context,
+              CupertinoPageRoute(builder: (context) => DetailPatternsPage()));
+        },
+        child: Column(
+          children: <Widget>[
+            Container(
+              height: 300.w,
+              decoration: BoxDecoration(
+                color: Colors.amber,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(15.w),
+                  topRight: Radius.circular(15.w),
+                ),
+              ),
+            ),
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 20.w),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(15.w),
+                  bottomRight: Radius.circular(15.w),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    "Asscending Triangle",
+                    style: TextStyle(
+                      fontFamily: "Nunito-ExtraBold",
+                      fontSize: 33.ssp,
+                      color: kTextColor,
+                    ),
+                  ),
+                  SizedBox(height: 5.w),
+                  Text(
+                    "Segitiga naik adalah jenis pola grafik segitiga yang terjadi ketika ada level resistensi dan kemiringan dari posisi terendah yang lebih tinggi. Apa yang terjadi selama ini adalah bahwa ada tingkat tertentu yang tampaknya tidak dapat dilampaui oleh pembeli. Namun, mereka secara bertahap mulai mendorong harga naik sebagaimana dibuktikan dengan posisi terendah yang lebih tinggi.",
+                    textAlign: TextAlign.justify,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontFamily: "Nunito",
+                      fontSize: 25.ssp,
+                      color: kTextMediumColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -73,7 +156,7 @@ class AnalysisPageState extends State<AnalysisPage>
           Navigator.push(
               context,
               CupertinoPageRoute(
-                  builder: (context) => DetailAnalysisSignalPage()));
+                  builder: (context) => DetailAnalysisSignalPage("EURUSD")));
         },
         child: Column(
           children: <Widget>[
@@ -133,9 +216,19 @@ class AnalysisPageState extends State<AnalysisPage>
                               color: kPrimaryColor,
                             ),
                           ),
-                          Text(
-                            "+0.0047(+0.40%)",
-                            style: textStyleLowPrice,
+                          Row(
+                            children: <Widget>[
+                              Text(
+                                "(+0.40%)",
+                                style: textStyleLowPrice,
+                              ),
+                              SizedBox(width: 10.w),
+                              Icon(
+                                FeatherIcons.trendingUp,
+                                color: kPrimaryColor,
+                                size: 30.w,
+                              ),
+                            ],
                           ),
                         ],
                       ),
