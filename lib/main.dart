@@ -1,10 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:signalforex/bottom_nav_page.dart';
 import 'package:signalforex/constants.dart';
-import 'package:feather_icons_flutter/feather_icons_flutter.dart';
-import 'package:signalforex/screen/home_screen.dart';
-import 'package:signalforex/screen/analysis_screen.dart';
 import 'package:flutter/services.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 void main() {
   runApp(MyApp());
@@ -22,128 +22,60 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: BottomNavPage(),
+      //home: BottomNavPage(),
+      home: SplashScreenPage(),
     );
   }
 }
 
-class BottomNavPage extends StatefulWidget {
+class SplashScreenPage extends StatefulWidget {
   @override
-  BottomNavPageState createState() => BottomNavPageState();
+  SplashScreenPageState createState() => SplashScreenPageState();
 }
 
-class BottomNavPageState extends State<BottomNavPage> {
-
-  //----- fcm ---
-  FirebaseMessaging fm = FirebaseMessaging();
-  String token = '';
-
+class SplashScreenPageState extends State<SplashScreenPage> {
   @override
-  void initState(){
-    fm.configure(
-      onMessage: (Map<String, dynamic> message) async{
-        debugPrint('onMessage : $message');
-      },
-      onResume: (Map<String, dynamic> message) async{
-        debugPrint('onResume : $message');
-      },
-      onLaunch: (Map<String, dynamic> message) async{
-        debugPrint('onLunch : $message');
-      }
-    );
-
-    fm.getToken().then((token) => setState((){
-      this.token = token;
-    }));
+  void initState() {
     super.initState();
+    this.startSplashScreen();
   }
-  //----- end fcm ---
 
-  int _selectedTabIndex = 0;
-
-  void _onNavBarTapped(int index) {
-    setState(() {
-      _selectedTabIndex = index;
+  startSplashScreen() async {
+    var duration = const Duration(seconds: 3);
+    return Timer(duration, () {
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) {
+        return BottomNavPage();
+      }));
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    print("AA");
-    debugPrint('token : $token');
-    final _listPage = <Widget>[
-      HomePage(),
-      Center(
-        child: Text("News"),
-      ),
-      AnalysisPage(),
-      Center(
-        child: Text("Services"),
-      ),
-      Center(
-        child: Text("Profile"),
-      ),
-    ];
-
-    final _bottomNavBarItems = <BottomNavigationBarItem>[
-      // ----- home
-      BottomNavigationBarItem(
-          icon: Icon(FeatherIcons.home),
-          title: Text(
-            "Home",
-            style: TextStyle(fontFamily: "Nunito"),
-          )),
-
-      // ----- News
-      BottomNavigationBarItem(
-        icon: Icon(FeatherIcons.monitor),
-        title: Text(
-          "News",
-          style: TextStyle(fontFamily: "Nunito"),
-        ),
-      ),
-
-      // ------ Analysis
-      BottomNavigationBarItem(
-        icon: Icon(FeatherIcons.activity),
-        title: Text(
-          "Analysis",
-          style: TextStyle(fontFamily: "Nunito"),
-        ),
-      ),
-
-      // ----- Services
-      BottomNavigationBarItem(
-        icon: Icon(FeatherIcons.voicemail),
-        title: Text(
-          "Services",
-          style: TextStyle(fontFamily: "Nunito"),
-        ),
-      ),
-
-      // ----- Profile
-      BottomNavigationBarItem(
-        icon: Icon(FeatherIcons.user),
-        title: Text(
-          "Profile",
-          style: TextStyle(fontFamily: "Nunito"),
-        ),
-      ),
-    ];
-
-    final _bottomNavBar = BottomNavigationBar(
-      items: _bottomNavBarItems,
-      currentIndex: _selectedTabIndex,
-      onTap: _onNavBarTapped,
-      unselectedItemColor: Colors.grey,
-      selectedItemColor: kPrimaryColor,
-      elevation: 0.0,
-    );
-
+    ScreenUtil.init(context, width: 750, height: 1334);
     return Scaffold(
       backgroundColor: kBackgroundColor,
-      body: _listPage[_selectedTabIndex],
-      bottomNavigationBar: _bottomNavBar,
+      body: Center(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Image.asset(
+              "assets/images/logo.png",
+              width: 200.w,
+              height: 200.w,
+            ),
+            SizedBox(width: 10.w),
+            Text(
+              "Signal\nForex",
+              style: TextStyle(
+                fontFamily: "Fins-Regular",
+                fontSize: 70.ssp,
+                color: kTextColor,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

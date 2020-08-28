@@ -4,7 +4,10 @@ import 'package:signalforex/constants.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:signalforex/model/analysis_list_signal_model.dart';
 import 'package:signalforex/screen/detail_patterns_signal.dart';
+import 'package:http/http.dart' as http;
+import 'package:signalforex/widget/something_wrong.dart';
 
 import 'detail_analysis_signal_screen.dart';
 
@@ -15,6 +18,24 @@ class AnalysisPage extends StatefulWidget {
 class AnalysisPageState extends State<AnalysisPage>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
+
+  List<DataPair> dataPairList = [];
+
+  Future getListPair() async {
+    final String baseUrl = kBaseUrlApi + "analisys/ListSignal";
+    final response = await http.get("$baseUrl");
+    if (response.statusCode == 200) {
+      return ListAnalysisSignal.fromJson(response.body);
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+
+  Future refreshData() async {
+    dataPairList.clear();
+    await Future.delayed(Duration(seconds: 2));
+    setState(() {});
+  }
 
   @override
   void initState() {
@@ -34,25 +55,33 @@ class AnalysisPageState extends State<AnalysisPage>
           appBar: buildTabBar(),
           body: TabBarView(
             children: <Widget>[
-              ListView(
-                scrollDirection: Axis.vertical,
-                physics: BouncingScrollPhysics(),
-                children: <Widget>[
-                  SizedBox(height: 20.w),
-                  buildListPair(),
-                  SizedBox(height: 20.w),
-                  buildListPair(),
-                  SizedBox(height: 20.w),
-                  buildListPair(),
-                  SizedBox(height: 20.w),
-                  buildListPair(),
-                  SizedBox(height: 20.w),
-                  buildListPair(),
-                  SizedBox(height: 20.w),
-                  buildListPair(),
-                ],
+              RefreshIndicator(
+                onRefresh: refreshData,
+                color: kPrimaryColor,
+                child: FutureBuilder(
+                  future: getListPair(),
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (snapshot.hasError) {
+                      return SomethingWrong(
+                        textColor: "black",
+                      );
+                    } else if (snapshot.connectionState ==
+                        ConnectionState.done) {
+                      dataPairList = snapshot.data.data;
+                      return buildListPair(dataPairList);
+                    } else {
+                      return Container(
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(kPrimaryColor),
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                ),
               ),
-
               // ------------------ Patterns ----------------------
               ListView(
                 scrollDirection: Axis.vertical,
@@ -143,135 +172,208 @@ class AnalysisPageState extends State<AnalysisPage>
     );
   }
 
-  Container buildListPair() {
+  buildListPair(List<DataPair> dataPairList) {
     var textStyleLowPrice = TextStyle(
-      fontSize: 18.ssp,
+      fontSize: 22.ssp,
       fontFamily: "Nunito-Bold",
       color: kTextLightColor,
     );
-    return Container(
-      margin: EdgeInsets.only(left: 25.w, right: 25.w),
-      child: GestureDetector(
-        onTap: () {
-          Navigator.push(
-              context,
-              CupertinoPageRoute(
-                  builder: (context) => DetailAnalysisSignalPage("EURUSD")));
-        },
+
+    var textStylePrice = TextStyle(
+      fontSize: 22.ssp,
+      fontFamily: "Nunito-Bold",
+      color: kTextLightColor,
+    );
+
+    if (dataPairList.length == 0) {
+      return Container(
+        margin: EdgeInsets.only(top: 40.w),
+        height: 450.w,
         child: Column(
           children: <Widget>[
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 18.w),
-              decoration: BoxDecoration(
+            SvgPicture.asset(
+              'assets/images/empty.svg',
+              height: 300.w,
+              width: 300.w,
+            ),
+            SizedBox(height: 40.w),
+            Text(
+              "Ooops, Data Not Found",
+              style: TextStyle(
+                fontFamily: "Nunito-ExtraBold",
+                fontSize: 35.ssp,
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(15.w),
-                boxShadow: [
-                  BoxShadow(
-                    offset: Offset(8.w, 21.w),
-                    blurRadius: 53.w,
-                    color: Colors.black.withOpacity(0.05),
-                  ),
-                ],
-              ),
-              child: Column(
-                children: <Widget>[
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          SvgPicture.asset(
-                            'assets/images/eurusd.svg',
-                            height: 35.w,
-                            width: 70.w,
-                          ),
-                          SizedBox(width: 10.w),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                "EUR/USD",
-                                style: TextStyle(
-                                  fontFamily: "Nunito-Bold",
-                                  fontSize: 25.ssp,
-                                ),
-                              ),
-                              Text(
-                                "Euro vs US Dollar",
-                                style: textStyleLowPrice,
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: <Widget>[
-                          Text(
-                            "1.1824",
-                            style: TextStyle(
-                              fontSize: 30.ssp,
-                              fontFamily: "Nunito-ExtraBold",
-                              color: kPrimaryColor,
-                            ),
-                          ),
-                          Row(
-                            children: <Widget>[
-                              Text(
-                                "(+0.40%)",
-                                style: textStyleLowPrice,
-                              ),
-                              SizedBox(width: 10.w),
-                              Icon(
-                                FeatherIcons.trendingUp,
-                                color: kPrimaryColor,
-                                size: 30.w,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  //--------------- row open price dan low price
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      Column(
-                        children: <Widget>[
-                          Text(
-                            "Open  : 1.1794",
-                            style: textStyleLowPrice,
-                          ),
-                          Text(
-                            "Close  : 1.1781",
-                            style: textStyleLowPrice,
-                          ),
-                        ],
-                      ),
-                      SizedBox(width: 30.w),
-                      Column(
-                        children: <Widget>[
-                          Text(
-                            "Low  : 1.1781",
-                            style: textStyleLowPrice,
-                          ),
-                          Text(
-                            "High : 1.1841",
-                            style: textStyleLowPrice,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
               ),
             ),
           ],
         ),
-      ),
-    );
+      );
+    } else {
+      return ListView.builder(
+          physics: BouncingScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: dataPairList.length,
+          itemBuilder: (context, index) {
+            DataPair dataPair = dataPairList[index];
+            return Column(
+              children: <Widget>[
+                SizedBox(
+                  height: 15.w,
+                ),
+                Container(
+                  margin: EdgeInsets.only(left: 25.w, right: 25.w),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          CupertinoPageRoute(
+                              builder: (context) => DetailAnalysisSignalPage(
+                                  dataPair.pairId, dataPair.pairName)));
+                    },
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 18.w, vertical: 18.w),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10.w),
+                            boxShadow: [
+                              BoxShadow(
+                                offset: Offset(8.w, 21.w),
+                                blurRadius: 53.w,
+                                color: Colors.black.withOpacity(0.05),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            children: <Widget>[
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Row(
+                                    children: <Widget>[
+                                      SvgPicture.network(
+                                        kMasterUrl +
+                                            "/img/pairs/" +
+                                            dataPair.pairImg,
+                                        height: 35.w,
+                                        width: 70.w,
+                                      ),
+                                      SizedBox(width: 15.w),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Text(
+                                            dataPair.pairName,
+                                            style: TextStyle(
+                                              fontFamily: "Nunito-Bold",
+                                              fontSize: 25.ssp,
+                                            ),
+                                          ),
+                                          SizedBox(height: 2.w),
+                                          Text(
+                                            dataPair.pairDesc,
+                                            style: textStyleLowPrice,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: <Widget>[
+                                      Text(
+                                        getValPrice(dataPair.pairName,
+                                            dataPair.iPriceClose),
+                                        style: TextStyle(
+                                          fontSize: 28.ssp,
+                                          fontFamily: "Nunito-ExtraBold",
+                                          color: kPrimaryColor,
+                                        ),
+                                      ),
+                                      Row(
+                                        children: <Widget>[
+                                          Text(
+                                            "(" +
+                                                dataPair.iAdrPersen
+                                                    .substring(0, 5) +
+                                                "%)",
+                                            style: textStyleLowPrice,
+                                          ),
+                                          SizedBox(width: 10.w),
+                                          buildIconAdrDirection(
+                                              dataPair.iAdrDirection),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              //--------------- row open price dan low price
+                              Container(
+                                margin: EdgeInsets.only(left: 73.w, top: 5.w),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Text(
+                                      "O  : " +
+                                          getValPrice(dataPair.pairName,
+                                              dataPair.iPriceOpen),
+                                      style: textStylePrice,
+                                    ),
+                                    Text(
+                                      "C  : " +
+                                          getValPrice(dataPair.pairName,
+                                              dataPair.iPriceClose),
+                                      style: textStylePrice,
+                                    ),
+                                    Text(
+                                      "H  : " +
+                                          getValPrice(dataPair.pairName,
+                                              dataPair.iPriceHigh),
+                                      style: textStylePrice,
+                                    ),
+                                    Text(
+                                      "L  : " +
+                                          getValPrice(dataPair.pairName,
+                                              dataPair.iPriceLow),
+                                      style: textStylePrice,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            );
+          });
+    }
+  }
+
+  Icon buildIconAdrDirection(int adrDirection) {
+    if (adrDirection == 0) {
+      return Icon(
+        FeatherIcons.trendingUp,
+        color: kPrimaryColor,
+        size: 30.w,
+      );
+    } else {
+      return Icon(
+        FeatherIcons.trendingDown,
+        color: Colors.red,
+        size: 30.w,
+      );
+    }
   }
 
   PreferredSize buildTabBar() {
@@ -308,5 +410,19 @@ class AnalysisPageState extends State<AnalysisPage>
         ),
       ),
     );
+  }
+
+  String getValPrice(String pairName, String price) {
+    var posDot = price.indexOf(".");
+    var posAfterDot;
+    if (pairName.contains("JPY") || pairName.contains("XAU")) {
+      posAfterDot = 3;
+    } else {
+      posAfterDot = 5;
+    }
+    String str1 = price.substring(0, posDot + 1);
+    String str2 = price.substring(posDot + 1, posDot + 1 + posAfterDot);
+
+    return str1 + str2;
   }
 }

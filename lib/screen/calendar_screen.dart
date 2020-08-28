@@ -4,7 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:signalforex/constants.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:signalforex/model/calendar_news_model.dart';
-import 'package:signalforex/widget/no_connection.dart';
+import 'package:signalforex/widget/something_wrong.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:flutter_calendar_carousel/classes/event.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart'
@@ -17,6 +17,9 @@ bool _isMedium = false;
 bool _isLow = false;
 //arr impact news
 List<String> arrImpact = ["Low", "Medium", "High"];
+
+EventList<Event> _markedDateMap = EventList<Event>();
+CalendarCarousel _calendarCarousel;
 
 class CalendarPage extends StatefulWidget {
   CalendarPageState createState() => CalendarPageState();
@@ -33,8 +36,6 @@ class CalendarPageState extends State<CalendarPage> {
   CalendarNews calendarNews = CalendarNews();
   Future<List> futureCalendar;
 
-  EventList<Event> _markedDateMap = EventList<Event>();
-
   @override
   void initState() {
     super.initState();
@@ -48,7 +49,7 @@ class CalendarPageState extends State<CalendarPage> {
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, width: 750, height: 1334);
-    CalendarCarousel<Event> _calendarCarousel = CalendarCarousel<Event>(
+    _calendarCarousel = CalendarCarousel<Event>(
       /// Example Calendar Carousel without header and custom prev & next button
       todayBorderColor: Colors.white,
       onDayPressed: (DateTime date, events) {
@@ -56,7 +57,6 @@ class CalendarPageState extends State<CalendarPage> {
         _flagEventToDay = false;
         dateSelectedEvent = date;
       },
-      pageScrollPhysics: NeverScrollableScrollPhysics(),
       daysHaveCircularBorder: null,
       showOnlyCurrentMonthDate: false,
       markedDatesMap: _markedDateMap,
@@ -65,6 +65,7 @@ class CalendarPageState extends State<CalendarPage> {
         fontFamily: "Nunito-Bold",
         fontSize: 25.ssp,
       ),
+      pageScrollPhysics: NeverScrollableScrollPhysics(),
       thisMonthDayBorderColor: Colors.grey,
       weekFormat: false,
       showHeader: true,
@@ -78,7 +79,6 @@ class CalendarPageState extends State<CalendarPage> {
       height: 720.w,
       headerMargin: EdgeInsets.symmetric(vertical: 2.0),
       selectedDateTime: _currentDate,
-      targetDateTime: _targetDateTime,
       customGridViewPhysics: NeverScrollableScrollPhysics(),
       todayTextStyle: TextStyle(
         color: Colors.white,
@@ -109,31 +109,10 @@ class CalendarPageState extends State<CalendarPage> {
       ),
       selectedDayButtonColor: kPrimaryColor.withOpacity(0.08),
       onCalendarChanged: (DateTime date) {
-        //diclear agar list tidak menumpung jika pindah" bulan
-        _markedDateMap.clear();
-        // //tambah event
-        // _markedDateMap.add(
-        //   DateTime(2020, 07, 2),
-        //   Event(
-        //     date: DateTime(2020, 07, 2),
-        //     dot: Container(
-        //       margin: EdgeInsets.symmetric(horizontal: 1.w),
-        //       height: 7.w,
-        //       width: 7.w,
-        //       decoration: BoxDecoration(
-        //         shape: BoxShape.circle,
-        //         color: Colors.red,
-        //       ),
-        //     ),
-        //   ),
-        // );
-        // this.setState(() {
-        //print(date);
-        getDataFromAPI(date);
-        _targetDateTime = date;
-        _currentMonth = DateFormat.yMMMM().format(_targetDateTime);
-
-        // });
+        this.setState(() {
+          _targetDateTime = date;
+          _currentMonth = DateFormat.yMMM().format(_targetDateTime);
+        });
       },
       onDayLongPressed: (DateTime date) {
         print('long pressed date $date');
@@ -152,13 +131,13 @@ class CalendarPageState extends State<CalendarPage> {
                 child: Container(
                   padding:
                       EdgeInsets.symmetric(horizontal: 25.w, vertical: 25.w),
-                  child: NoConnectionScreen(
+                  child: SomethingWrong(
                     textColor: "black",
                   ),
                 ),
               );
             } else if (snapshot.connectionState == ConnectionState.done) {
-              return buildSlidingUpPanel(_calendarCarousel);
+              return buildSlidingUpPanel();
             } else {
               return Center(
                 child: CircularProgressIndicator(
@@ -172,8 +151,7 @@ class CalendarPageState extends State<CalendarPage> {
     );
   }
 
-  SlidingUpPanel buildSlidingUpPanel(
-      CalendarCarousel<Event> _calendarCarousel) {
+  SlidingUpPanel buildSlidingUpPanel() {
     return SlidingUpPanel(
       minHeight: 450.w,
       maxHeight: 1050.w,
@@ -202,7 +180,7 @@ class CalendarPageState extends State<CalendarPage> {
                 future: futureCalendar,
                 builder: (context, AsyncSnapshot<List> snapshot) {
                   if (snapshot.hasError) {
-                    return NoConnectionScreen(
+                    return SomethingWrong(
                       textColor: "black",
                     );
                   } else if (snapshot.connectionState == ConnectionState.done) {
@@ -227,7 +205,23 @@ class CalendarPageState extends State<CalendarPage> {
       ),
       body: Column(
         children: <Widget>[
-          buildCalendar(_calendarCarousel),
+          Container(
+            width: double.infinity,
+            height: 720.w,
+            margin: EdgeInsets.symmetric(horizontal: 35.w),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20.w),
+              boxShadow: [
+                BoxShadow(
+                  offset: Offset(8.w, 21.w),
+                  blurRadius: 53.w,
+                  color: Colors.black.withOpacity(0.05),
+                ),
+              ],
+            ),
+            child: _calendarCarousel,
+          ),
         ],
       ),
     );
@@ -664,26 +658,6 @@ class CalendarPageState extends State<CalendarPage> {
     );
   }
 
-  Container buildCalendar(CalendarCarousel<Event> _calendarCarousel) {
-    return Container(
-      width: double.infinity,
-      height: 720.w,
-      margin: EdgeInsets.symmetric(horizontal: 35.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20.w),
-        boxShadow: [
-          BoxShadow(
-            offset: Offset(8.w, 21.w),
-            blurRadius: 53.w,
-            color: Colors.black.withOpacity(0.05),
-          ),
-        ],
-      ),
-      child: _calendarCarousel,
-    );
-  }
-
   AppBar buildAppBar() {
     return AppBar(
       centerTitle: true,
@@ -700,6 +674,7 @@ class CalendarPageState extends State<CalendarPage> {
             _isMedium = false;
             _isLow = false;
             _isALL = true;
+            _markedDateMap.clear();
           }),
       title: Text(
         "Calendar Economic",

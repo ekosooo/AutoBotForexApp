@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:signalforex/constants.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:signalforex/screen/ea_forex_screen.dart';
 import 'package:signalforex/screen/signal_screen.dart';
 import 'package:signalforex/widget/market_card.dart';
 import 'package:flutter/cupertino.dart';
@@ -21,6 +22,7 @@ class HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     ScreenUtil.init(context, width: 750, height: 1334);
     return Scaffold(
+      backgroundColor: kBackgroundColor,
       appBar: buildAppBar(),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -160,6 +162,9 @@ class HomePageState extends State<HomePage> {
               } else if (_titleMenu == "Signal") {
                 Navigator.push(context,
                     CupertinoPageRoute(builder: (context) => SignalPage()));
+              } else if (_titleMenu == 'EA Forex') {
+                Navigator.push(context,
+                    CupertinoPageRoute(builder: (context) => EAForexPage()));
               }
             },
             child: Container(

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class NoConnectionScreen extends StatelessWidget {
+class SomethingWrong extends StatelessWidget {
   final String textColor;
-  const NoConnectionScreen({Key key, this.textColor});
+  const SomethingWrong({Key key, this.textColor});
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, width: 750, height: 1334);
@@ -20,7 +20,7 @@ class NoConnectionScreen extends StatelessWidget {
           ),
           SizedBox(height: 40.w),
           Text(
-            "No internet connection",
+            "Aaaaah! Something went wrong",
             style: TextStyle(
               fontFamily: "Nunito-ExtraBold",
               fontSize: 35.ssp,
@@ -28,7 +28,7 @@ class NoConnectionScreen extends StatelessWidget {
             ),
           ),
           Text(
-            "Try turning on your Wifi or Mobile Data for using the app",
+            "Check your data or wifi connection and refresh this page",
             style: TextStyle(
               fontFamily: "Nunito-SemiBold",
               fontSize: 25.ssp,

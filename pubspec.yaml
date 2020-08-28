@@ -120,6 +120,9 @@ flutter:
     - family: Nunito-SemiBoldItalic
       fonts:
         - asset: assets/fonts/Nunito-SemiBoldItalic.ttf 
+    - family: Fins-Regular
+      fonts:
+        - asset: assets/fonts/Fins-Regular.otf
 
     
     # - family: Schyler
