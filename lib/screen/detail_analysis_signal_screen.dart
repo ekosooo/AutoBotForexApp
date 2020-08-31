@@ -26,6 +26,7 @@ class DetailAnalysisSignalPageState extends State<DetailAnalysisSignalPage> {
   List<Stochastic> stochasticList = [];
   List<Wpr> wprList = [];
   List<Adr> adrList = [];
+  SumSignal sumSignal;
 
   bool m5Clicked = false;
   bool m15Clicked = false;
@@ -34,7 +35,8 @@ class DetailAnalysisSignalPageState extends State<DetailAnalysisSignalPage> {
   bool h4Clicked = false;
   bool d1Clicked = false;
 
-  String tf = "240";
+  String tf = "60";
+  String summary = "";
 
   Future getAnalysisSignal() async {
     final String baseUrl = kBaseUrlApi + "analisys/DetailSignal";
@@ -68,6 +70,17 @@ class DetailAnalysisSignalPageState extends State<DetailAnalysisSignalPage> {
       fontFamily: "Nunito", fontSize: 22.ssp, color: kTextMediumColor);
   var textStyleValue =
       TextStyle(fontFamily: "Nunito-Bold", fontSize: 22.ssp, color: kTextColor);
+  var boxDecoration = BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(10.w),
+    boxShadow: [
+      BoxShadow(
+        offset: Offset(8.w, 21.w),
+        blurRadius: 53.w,
+        color: Colors.black.withOpacity(0.05),
+      ),
+    ],
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +95,7 @@ class DetailAnalysisSignalPageState extends State<DetailAnalysisSignalPage> {
           shrinkWrap: true,
           scrollDirection: Axis.vertical,
           children: <Widget>[
-            buildSummaryAndTimeFrame(),
+            buildTimeFrameLayout(),
             SizedBox(height: 20.w),
             Container(
               child: FutureBuilder(
@@ -104,7 +117,9 @@ class DetailAnalysisSignalPageState extends State<DetailAnalysisSignalPage> {
                     stochasticList = snapshot.data.data.indicator.stochastic;
                     wprList = snapshot.data.data.indicator.wpr;
                     adrList = snapshot.data.data.adr;
-                    return buildMasterIndicator();
+                    sumSignal = snapshot.data.data.indicator.sumSignal;
+                    summary = sumSignal.sumAll;
+                    return buildMainLayout();
                   } else {
                     return Container(
                       margin: EdgeInsets.only(top: 40.w),
@@ -125,25 +140,33 @@ class DetailAnalysisSignalPageState extends State<DetailAnalysisSignalPage> {
     );
   }
 
-  Column buildMasterIndicator() {
+  Column buildMainLayout() {
     return Column(
       children: <Widget>[
         buildContainerPrice(),
         SizedBox(height: 20.w),
         buildContainerADR(),
         SizedBox(height: 20.w),
-        buildMasterExpanded("Moving Averages", 0, buildMovingAverages()),
-        SizedBox(height: 20.w),
-        buildMasterExpanded("Bolinger Bands", 0, buildBolingerBands()),
-        SizedBox(height: 20.w),
-        buildMasterExpanded("RSI", -1, buildRSI()),
-        SizedBox(height: 20.w),
-        buildMasterExpanded("Envelopes", 1, buildEnvelopes()),
+        buildSummaryIndicator(),
         SizedBox(height: 20.w),
         buildMasterExpanded(
-            "Ichimoku", ichimokuList[0].iMokuSignal, buildIchimoku()),
+            "Moving Averages", sumSignal.ma, buildMovingAverages()),
         SizedBox(height: 20.w),
-        buildMasterExpanded("William`s Percent Range", 1, buildWPR()),
+        buildMasterExpanded(
+            "Bolinger Bands", sumSignal.bb, buildBolingerBands()),
+        SizedBox(height: 20.w),
+        buildMasterExpanded("RSI", sumSignal.rsi, buildRSI()),
+        SizedBox(height: 20.w),
+        buildMasterExpanded("Envelopes", sumSignal.envelopes, buildEnvelopes()),
+        SizedBox(height: 20.w),
+        buildMasterExpanded("Ichimoku", ichimokuList[0].iMokuSignal.toString(),
+            buildIchimoku()),
+        SizedBox(height: 20.w),
+        buildMasterExpanded("Stochastic",
+            stochasticList[0].iStochsigStoch.toString(), buildStochastic()),
+        SizedBox(height: 20.w),
+        buildMasterExpanded(
+            "William`s Percent Range", sumSignal.wpr, buildWPR()),
         SizedBox(height: 20.w),
         // buildMasterExpanded("PivotPoint", "", buildPivotPoint()),
         // SizedBox(height: 20.w),
@@ -151,9 +174,54 @@ class DetailAnalysisSignalPageState extends State<DetailAnalysisSignalPage> {
     );
   }
 
+  Container buildSummaryIndicator() {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 20.w),
+      padding: EdgeInsets.all(20.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            "Analysis Indicator",
+            style: TextStyle(
+              fontFamily: "Nunito-Bold",
+              fontSize: 25.ssp,
+              color: kTextLightColor,
+            ),
+          ),
+          Divider(
+            thickness: 3.w,
+            color: Colors.grey[100],
+          ),
+          Row(
+            children: <Widget>[
+              Text(
+                "Summary Indicator : ",
+                style: TextStyle(
+                  fontFamily: "Nunito-Bold",
+                  fontSize: 25.ssp,
+                  color: kTextColor,
+                ),
+              ),
+              SizedBox(width: 8.w),
+              Text(
+                summary == "0" ? "BUY" : summary == "1" ? "SELL" : "NEUTRAL",
+                style: summary == "0"
+                    ? textStyleBuy
+                    : summary == "1" ? textStyleSell : textStylePrice,
+              ),
+              // buildIconDirection(int.parse(summary)),
+            ],
+          ),
+        ],
+      ),
+      decoration: boxDecoration,
+    );
+  }
+
   //---------------------- master build expands layout -----------------------
   ExpandableNotifier buildMasterExpanded(
-      String _titleExpands, int _summary, Container _indicator) {
+      String _titleExpands, String _summary, Container _indicator) {
     return ExpandableNotifier(
       child: ScrollOnExpand(
         child: Card(
@@ -189,12 +257,12 @@ class DetailAnalysisSignalPageState extends State<DetailAnalysisSignalPage> {
                           Row(
                             children: <Widget>[
                               Text(
-                                _summary == 0
+                                _summary == "0"
                                     ? "BUY"
-                                    : _summary == 1 ? "SELL" : "NEUTRAL",
-                                style: _summary == 0
+                                    : _summary == "1" ? "SELL" : "NEUTRAL",
+                                style: _summary == "0"
                                     ? textStyleBuy
-                                    : _summary == 1
+                                    : _summary == "1"
                                         ? textStyleSell
                                         : textStylePrice,
                               ),
@@ -272,6 +340,51 @@ class DetailAnalysisSignalPageState extends State<DetailAnalysisSignalPage> {
     );
   }
   // -------------------- end build envelopes --------------------------------
+
+  // ------------------- build stochastic ------------------------------------
+  Container buildStochastic() {
+    return Container(
+      padding: EdgeInsets.all(20.w),
+      margin: EdgeInsets.only(bottom: 10.w),
+      child: Column(
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              buildHeader("Value"),
+              buildHeader("Signal Value"),
+              buildHeader("Signal"),
+            ],
+          ),
+          ListView.builder(
+            primary: false,
+            shrinkWrap: true,
+            itemCount: stochasticList.length,
+            itemBuilder: (context, index) {
+              Stochastic stochastic = stochasticList[index];
+              return Container(
+                child: Column(
+                  children: <Widget>[
+                    SizedBox(height: 10),
+                    Divider(thickness: 3.w, color: Colors.grey[100]),
+                    SizedBox(height: 10),
+                    Row(
+                      children: <Widget>[
+                        buildPeriod(stochastic.iStochValue),
+                        buildPrice(stochastic.iStochsigValue.toString()),
+                        buildCommandSignal(stochastic.iStochsigStoch),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+  // ------------------- end build stochastic --------------------------------
 
   // -------------------- build envelopes ------------------------------------
   Container buildEnvelopes() {
@@ -656,7 +769,7 @@ class DetailAnalysisSignalPageState extends State<DetailAnalysisSignalPage> {
 
   //-------------------------- build Time Frame  ------
 
-  Container buildSummaryAndTimeFrame() {
+  Container buildTimeFrameLayout() {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 20.w),
       child: Column(
@@ -664,17 +777,7 @@ class DetailAnalysisSignalPageState extends State<DetailAnalysisSignalPage> {
           Container(
             width: double.infinity,
             padding: EdgeInsets.only(top: 10.w, left: 10, bottom: 10.w),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10.w),
-              boxShadow: [
-                BoxShadow(
-                  offset: Offset(8.w, 21.w),
-                  blurRadius: 53.w,
-                  color: Colors.black.withOpacity(0.05),
-                ),
-              ],
-            ),
+            decoration: boxDecoration,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -693,21 +796,21 @@ class DetailAnalysisSignalPageState extends State<DetailAnalysisSignalPage> {
                 Row(
                   children: <Widget>[
                     Text(
-                      "Summary : ",
+                      "TimeFrame : ",
                       style: TextStyle(
                         fontFamily: "Nunito-Bold",
                         fontSize: 25.ssp,
                         color: kTextColor,
                       ),
                     ),
-                    Text(
-                      "BUY",
-                      style: TextStyle(
-                        fontFamily: "Nunito-Bold",
-                        fontSize: 25.ssp,
-                        color: kPrimaryColor,
-                      ),
-                    ),
+                    // Text(
+                    //   summary == "0"
+                    //       ? "BUY"
+                    //       : summary == "1" ? "SELL" : "NEUTRAL",
+                    //   style: summary == "0"
+                    //       ? textStyleBuy
+                    //       : summary == "1" ? textStyleSell : textStylePrice,
+                    // ),
                     SizedBox(
                       width: 10.w,
                     ),
@@ -943,17 +1046,7 @@ class DetailAnalysisSignalPageState extends State<DetailAnalysisSignalPage> {
         children: <Widget>[
           Container(
             padding: EdgeInsets.symmetric(vertical: 20.w, horizontal: 20.w),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10.w),
-              boxShadow: [
-                BoxShadow(
-                  offset: Offset(8.w, 21.w),
-                  blurRadius: 53.w,
-                  color: Colors.black.withOpacity(0.05),
-                ),
-              ],
-            ),
+            decoration: boxDecoration,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -1066,17 +1159,7 @@ class DetailAnalysisSignalPageState extends State<DetailAnalysisSignalPage> {
         children: <Widget>[
           Container(
             padding: EdgeInsets.symmetric(vertical: 20.w, horizontal: 20.w),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10.w),
-              boxShadow: [
-                BoxShadow(
-                  offset: Offset(8.w, 21.w),
-                  blurRadius: 53.w,
-                  color: Colors.black.withOpacity(0.05),
-                ),
-              ],
-            ),
+            decoration: boxDecoration,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -1132,7 +1215,7 @@ class DetailAnalysisSignalPageState extends State<DetailAnalysisSignalPage> {
                           style: textStyleValue,
                         ),
                         SizedBox(width: 10.w),
-                        buildIconAdrDirection(adrList[0].iAdrDirection),
+                        buildIconDirection(adrList[0].iAdrDirection),
                       ],
                     ),
                   ],
@@ -1202,7 +1285,7 @@ class DetailAnalysisSignalPageState extends State<DetailAnalysisSignalPage> {
     );
   }
 
-  Icon buildIconAdrDirection(int adrDirection) {
+  Icon buildIconDirection(int adrDirection) {
     if (adrDirection == 0) {
       return Icon(
         FeatherIcons.trendingUp,

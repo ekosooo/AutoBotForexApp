@@ -105,15 +105,15 @@ class Adr {
 }
 
 class Indicator {
-  Indicator({
-    this.bb,
-    this.envelopes,
-    this.ma,
-    this.ichimoku,
-    this.rsi,
-    this.stochastic,
-    this.wpr,
-  });
+  Indicator(
+      {this.bb,
+      this.envelopes,
+      this.ma,
+      this.ichimoku,
+      this.rsi,
+      this.stochastic,
+      this.wpr,
+      this.sumSignal});
 
   List<Bb> bb;
   List<Envelope> envelopes;
@@ -122,6 +122,7 @@ class Indicator {
   List<Rsi> rsi;
   List<Stochastic> stochastic;
   List<Wpr> wpr;
+  SumSignal sumSignal;
 
   factory Indicator.fromJson(String str) => Indicator.fromMap(json.decode(str));
 
@@ -152,6 +153,9 @@ class Indicator {
         wpr: json["WPR"] == null
             ? null
             : List<Wpr>.from(json["WPR"].map((x) => Wpr.fromMap(x))),
+        sumSignal: json["SumSignal"] == null
+            ? null
+            : SumSignal.fromMap(json["SumSignal"]),
       );
 
   Map<String, dynamic> toMap() => {
@@ -170,6 +174,55 @@ class Indicator {
             : List<dynamic>.from(stochastic.map((x) => x.toMap())),
         "WPR":
             wpr == null ? null : List<dynamic>.from(wpr.map((x) => x.toMap())),
+        "SumSignal": sumSignal == null ? null : sumSignal.toMap(),
+      };
+}
+
+class SumSignal {
+  SumSignal({
+    this.bb,
+    this.envelopes,
+    this.ma,
+    this.ichimoku,
+    this.rsi,
+    this.stochastic,
+    this.wpr,
+    this.sumAll,
+  });
+
+  String bb;
+  String envelopes;
+  String ma;
+  String ichimoku;
+  String rsi;
+  String stochastic;
+  String wpr;
+  String sumAll;
+
+  factory SumSignal.fromJson(String str) => SumSignal.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  factory SumSignal.fromMap(Map<String, dynamic> json) => SumSignal(
+        bb: json["BB"] == null ? null : json["BB"],
+        envelopes: json["ENVELOPES"] == null ? null : json["ENVELOPES"],
+        ma: json["MA"] == null ? null : json["MA"],
+        ichimoku: json["ICHIMOKU"] == null ? null : json["ICHIMOKU"],
+        rsi: json["RSI"] == null ? null : json["RSI"],
+        stochastic: json["STOCHASTIC"] == null ? null : json["STOCHASTIC"],
+        wpr: json["WPR"] == null ? null : json["WPR"],
+        sumAll: json["SumAll"] == null ? null : json["SumAll"],
+      );
+
+  Map<String, dynamic> toMap() => {
+        "BB": bb == null ? null : bb,
+        "ENVELOPES": envelopes == null ? null : envelopes,
+        "MA": ma == null ? null : ma,
+        "ICHIMOKU": ichimoku == null ? null : ichimoku,
+        "RSI": rsi == null ? null : rsi,
+        "STOCHASTIC": stochastic == null ? null : stochastic,
+        "WPR": wpr == null ? null : wpr,
+        "SumAll": sumAll == null ? null : sumAll,
       };
 }
 
