@@ -39,6 +39,7 @@ class CalendarPageState extends State<CalendarPage> {
   @override
   void initState() {
     super.initState();
+    _markedDateMap.clear();
     this.getDataFromAPI(DateTime.now());
   }
 
@@ -109,10 +110,12 @@ class CalendarPageState extends State<CalendarPage> {
       ),
       selectedDayButtonColor: kPrimaryColor.withOpacity(0.08),
       onCalendarChanged: (DateTime date) {
-        this.setState(() {
-          _targetDateTime = date;
-          _currentMonth = DateFormat.yMMM().format(_targetDateTime);
-        });
+        // this.setState(() {
+        _markedDateMap.clear();
+        getDataFromAPI(date);
+        _targetDateTime = date;
+        _currentMonth = DateFormat.yMMM().format(_targetDateTime);
+        // });
       },
       onDayLongPressed: (DateTime date) {
         print('long pressed date $date');
@@ -740,7 +743,9 @@ class CalendarPageState extends State<CalendarPage> {
       }
     }
 
-    futureCalendar = calendarNews.getNews();
+    String strDate = date.toString().substring(0, 7);
+
+    futureCalendar = calendarNews.getNews(strDate);
     futureCalendar.then((value) {
       int day;
       int month;

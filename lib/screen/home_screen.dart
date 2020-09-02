@@ -9,6 +9,7 @@ import 'package:signalforex/widget/market_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'calendar_screen.dart';
 import 'signal_screen.dart';
+import 'education_screen.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -162,9 +163,12 @@ class HomePageState extends State<HomePage> {
               } else if (_titleMenu == "Signal") {
                 Navigator.push(context,
                     CupertinoPageRoute(builder: (context) => SignalPage()));
-              } else if (_titleMenu == 'EA Forex') {
+              } else if (_titleMenu == "EA Forex") {
                 Navigator.push(context,
                     CupertinoPageRoute(builder: (context) => EAForexPage()));
+              } else if (_titleMenu == "Education") {
+                Navigator.push(context,
+                    CupertinoPageRoute(builder: (context) => EducationPage()));
               }
             },
             child: Container(

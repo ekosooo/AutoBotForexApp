@@ -218,7 +218,7 @@ class AnalysisPageState extends State<AnalysisPage>
             return Column(
               children: <Widget>[
                 SizedBox(
-                  height: 15.w,
+                  height: 12.w,
                 ),
                 Container(
                   margin: EdgeInsets.only(left: 25.w, right: 25.w),
