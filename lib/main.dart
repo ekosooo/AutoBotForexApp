@@ -5,6 +5,8 @@ import 'package:signalforex/bottom_nav_page.dart';
 import 'package:signalforex/constants.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:signalforex/screen/signal_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -34,10 +36,42 @@ class SplashScreenPage extends StatefulWidget {
 }
 
 class SplashScreenPageState extends State<SplashScreenPage> {
+  //----- fcm ---
+  FirebaseMessaging fm = FirebaseMessaging();
+  String token = '';
+
   @override
   void initState() {
+    fm.configure(onMessage: (Map<String, dynamic> message) async {
+      debugPrint('onMessage : $message');
+    }, onResume: (Map<String, dynamic> message) async {
+      //debugPrint('onResume : $message');
+      this.directPageNotif(message['data']['screen']);
+    }, onLaunch: (Map<String, dynamic> message) async {
+      this.directPageNotif(message['data']['screen']);
+      //debugPrint('onLunch : $message');
+    });
+
+    fm.getToken().then((token) => setState(() {
+          this.token = token;
+        }));
     super.initState();
     this.startSplashScreen();
+  }
+
+  directPageNotif(String screenPage) async {
+    switch (screenPage) {
+      case "SIGNAL_PAGE":
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SignalPage(
+                      selectedPage: 1,
+                    )));
+        break;
+      default:
+        break;
+    }
   }
 
   startSplashScreen() async {
@@ -51,6 +85,7 @@ class SplashScreenPageState extends State<SplashScreenPage> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('token : $token');
     ScreenUtil.init(context, width: 750, height: 1334);
     return Scaffold(
       backgroundColor: kBackgroundColor,

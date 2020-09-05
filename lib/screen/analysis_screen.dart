@@ -388,7 +388,7 @@ class AnalysisPageState extends State<AnalysisPage>
               Expanded(
                 child: TabBar(indicatorColor: kPrimaryColor, tabs: [
                   Text(
-                    "Signal",
+                    "Signal Analysis",
                     style: TextStyle(
                       fontFamily: "Nunito-ExtraBold",
                       fontSize: 25.ssp,

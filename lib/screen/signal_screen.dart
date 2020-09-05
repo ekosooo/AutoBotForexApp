@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:signalforex/bottom_nav_page.dart';
 import 'package:signalforex/constants.dart';
 import 'package:expandable/expandable.dart';
 import 'package:feather_icons_flutter/feather_icons_flutter.dart';
@@ -7,18 +8,20 @@ import 'package:signalforex/widget/profit_chart.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class SignalPage extends StatefulWidget {
+  final selectedPage;
+  const SignalPage({Key key, this.selectedPage});
   SignalPageState createState() => SignalPageState();
 }
 
 class SignalPageState extends State<SignalPage>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
-
   int _valueDropDown = 1;
 
   @override
   void initState() {
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(
+        length: 2, vsync: this, initialIndex: widget.selectedPage);
     super.initState();
   }
 
@@ -229,7 +232,10 @@ class SignalPageState extends State<SignalPage>
             color: kTextColor,
           ),
           onPressed: () {
-            Navigator.of(context).pop();
+            //Navigator.of(context).pop();
+
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => BottomNavPage()));
           }),
       title: Text(
         "Signal",

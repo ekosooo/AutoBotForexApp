@@ -50,6 +50,10 @@ dependencies:
   firebase_messaging: ^6.0.13
    #icon louncher
   flutter_launcher_icons: "^0.7.2"
+  #rating bar
+  flutter_rating_bar: ^3.0.1+1
+  #open browser
+  url_launcher: ^5.5.2
  
 
 dev_dependencies:

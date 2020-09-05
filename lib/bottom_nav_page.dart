@@ -17,17 +17,6 @@ class BottomNavPageState extends State<BottomNavPage> {
 
   @override
   void initState() {
-    fm.configure(onMessage: (Map<String, dynamic> message) async {
-      debugPrint('onMessage : $message');
-    }, onResume: (Map<String, dynamic> message) async {
-      debugPrint('onResume : $message');
-    }, onLaunch: (Map<String, dynamic> message) async {
-      debugPrint('onLunch : $message');
-    });
-
-    fm.getToken().then((token) => setState(() {
-          this.token = token;
-        }));
     super.initState();
   }
   //----- end fcm ---
@@ -42,8 +31,6 @@ class BottomNavPageState extends State<BottomNavPage> {
 
   @override
   Widget build(BuildContext context) {
-    //print("AA");
-    //debugPrint('token : $token');
     final _listPage = <Widget>[
       HomePage(),
       Center(

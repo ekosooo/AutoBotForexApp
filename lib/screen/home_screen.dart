@@ -10,6 +10,7 @@ import 'package:flutter/cupertino.dart';
 import 'calendar_screen.dart';
 import 'signal_screen.dart';
 import 'education_screen.dart';
+import 'top_broker_screen.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -17,12 +18,28 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
+  final GlobalKey<ScaffoldState> scaffoldState = new GlobalKey<ScaffoldState>();
   static final List<String> imgSlider = ['promo.jpg', 'promo.jpg', 'promo.jpg'];
+
+  void buildSnackBar() {
+    scaffoldState.currentState.showSnackBar(
+      SnackBar(
+        content: Text("Comming Soon !"),
+        action: SnackBarAction(
+            label: 'Close',
+            textColor: kPrimaryColor,
+            onPressed: () {
+              scaffoldState.currentState.hideCurrentSnackBar();
+            }),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, width: 750, height: 1334);
     return Scaffold(
+      key: scaffoldState,
       backgroundColor: kBackgroundColor,
       appBar: buildAppBar(),
       body: SingleChildScrollView(
@@ -118,6 +135,7 @@ class HomePageState extends State<HomePage> {
               buildMenu("EA Forex", FeatherIcons.gitlab),
               buildMenu("Tools", FeatherIcons.settings),
               buildMenu("Indicator", FeatherIcons.thermometer),
+              buildMenu("Top Broker", FeatherIcons.award),
               buildMenu("More", FeatherIcons.moreHorizontal)
             ],
           ),
@@ -161,14 +179,27 @@ class HomePageState extends State<HomePage> {
                 Navigator.push(context,
                     CupertinoPageRoute(builder: (context) => CalendarPage()));
               } else if (_titleMenu == "Signal") {
-                Navigator.push(context,
-                    CupertinoPageRoute(builder: (context) => SignalPage()));
+                Navigator.push(
+                    context,
+                    CupertinoPageRoute(
+                        builder: (context) => SignalPage(
+                              selectedPage: 0,
+                            )));
               } else if (_titleMenu == "EA Forex") {
                 Navigator.push(context,
                     CupertinoPageRoute(builder: (context) => EAForexPage()));
               } else if (_titleMenu == "Education") {
                 Navigator.push(context,
                     CupertinoPageRoute(builder: (context) => EducationPage()));
+              } else if (_titleMenu == "Tools") {
+                buildSnackBar();
+              } else if (_titleMenu == "Indicator") {
+                buildSnackBar();
+              } else if (_titleMenu == "Top Broker") {
+                Navigator.push(context,
+                    CupertinoPageRoute(builder: (context) => TopBrokerPage()));
+              } else if (_titleMenu == "More") {
+                buildSnackBar();
               }
             },
             child: Container(
