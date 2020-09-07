@@ -64,7 +64,7 @@ class DetailTopBrokerPage extends StatelessWidget {
     );
   }
 
-  Container buildContent(List<DataBroker> dataBroker) {
+  ListView buildContent(List<DataBroker> dataBroker) {
     var textStyleTitle = TextStyle(
       fontFamily: "Nunito-ExtraBold",
       fontSize: 27.ssp,
@@ -75,519 +75,370 @@ class DetailTopBrokerPage extends StatelessWidget {
       fontSize: 25.ssp,
       color: kTextLightColor,
     );
-    return Container(
-      padding: EdgeInsets.all(20.w),
-      margin: EdgeInsets.only(left: 35.w, right: 35.w, bottom: 15.w),
-      child: ListView(
-        shrinkWrap: true,
-        children: <Widget>[
-          //------------------ logo broker and rating ----------------
-          Container(
-            padding: EdgeInsets.symmetric(vertical: 40.w),
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                    //color: Colors.amber,
-                    width: 100.w,
-                    height: 100.w,
-                    child: Image.network(
-                      'http://192.168.100.5:8000/images/broker/' +
-                          dataBroker[0].brokerImg,
-                      fit: BoxFit.fitWidth,
-                    ),
-                  ),
-                  SizedBox(height: 10.w),
-                  Text(
-                    dataBroker[0].brokerName,
-                    style: TextStyle(
-                      fontFamily: "Nunito-ExtraBold",
-                      fontSize: 30.ssp,
-                    ),
-                  ),
-                  SizedBox(height: 10.w),
-                  Row(
+    return ListView(
+      shrinkWrap: true,
+      children: <Widget>[
+        // container content
+        Container(
+          padding: EdgeInsets.all(20.w),
+          margin: EdgeInsets.only(left: 35.w, right: 35.w, bottom: 15.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              //------------------ logo broker and rating ----------------
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 40.w),
+                child: Center(
+                  child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      RatingBar(
-                        itemSize: 35.w,
-                        onRatingUpdate: null,
-                        initialRating: dataBroker[0].brokerRate,
-                        minRating: 1,
-                        direction: Axis.horizontal,
-                        allowHalfRating: true,
-                        itemPadding: EdgeInsets.symmetric(horizontal: 4.w),
-                        itemBuilder: (context, _) => Icon(
-                          Icons.star,
-                          color: kPrimaryColor,
+                      Container(
+                        //color: Colors.amber,
+                        width: 100.w,
+                        height: 100.w,
+                        child: Image.network(
+                          'http://192.168.100.5:8000/images/broker/' +
+                              dataBroker[0].brokerImg,
+                          fit: BoxFit.fitWidth,
                         ),
                       ),
-                      SizedBox(width: 10.w),
+                      SizedBox(height: 10.w),
                       Text(
-                        dataBroker[0].brokerRate.toString(),
+                        dataBroker[0].brokerName,
                         style: TextStyle(
                           fontFamily: "Nunito-ExtraBold",
-                          fontSize: 25.ssp,
+                          fontSize: 30.ssp,
+                        ),
+                      ),
+                      SizedBox(height: 10.w),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          RatingBar(
+                            itemSize: 35.w,
+                            onRatingUpdate: null,
+                            initialRating: dataBroker[0].brokerRate,
+                            minRating: 1,
+                            direction: Axis.horizontal,
+                            allowHalfRating: true,
+                            itemPadding: EdgeInsets.symmetric(horizontal: 4.w),
+                            itemBuilder: (context, _) => Icon(
+                              Icons.star,
+                              color: kPrimaryColor,
+                            ),
+                          ),
+                          SizedBox(width: 10.w),
+                          Text(
+                            dataBroker[0].brokerRate.toString(),
+                            style: TextStyle(
+                              fontFamily: "Nunito-ExtraBold",
+                              fontSize: 25.ssp,
+                            ),
+                          ),
+                        ],
+                      ),
+                      RaisedButton(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18.0),
+                        ),
+                        onPressed: () {
+                          launchURL(dataBroker[0].brokerAffiliate);
+                        },
+                        elevation: 0.0,
+                        color: kPrimaryColor,
+                        textColor: Colors.white,
+                        child: Text(
+                          "Create Account",
+                          style: TextStyle(
+                            fontFamily: "Nunito-ExtraBold",
+                            fontSize: 22.ssp,
+                          ),
                         ),
                       ),
                     ],
                   ),
-                  RaisedButton(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(18.0),
+                ),
+              ),
+              //----------------------- indroduction -----------
+              Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      "Introduction",
+                      style: textStyleTitle,
                     ),
-                    onPressed: () {
-                      launchURL(dataBroker[0].brokerAffiliate);
-                    },
-                    elevation: 0.0,
-                    color: kPrimaryColor,
-                    textColor: Colors.white,
-                    child: Text(
-                      "Create Account",
-                      style: TextStyle(
-                        fontFamily: "Nunito-ExtraBold",
-                        fontSize: 22.ssp,
+                    SizedBox(height: 10.w),
+                    Text(
+                      dataBroker[0].brokerIntro,
+                      textAlign: TextAlign.justify,
+                      style: textStyleContent,
+                    ),
+                  ],
+                ),
+              ),
+
+              //------------------- regulation and brokerage model --------------
+              Container(
+                margin: EdgeInsets.only(top: 30.w),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            "Regulation",
+                            style: textStyleTitle,
+                          ),
+                          SizedBox(height: 10.w),
+                          Text(
+                            dataBroker[0].brokerRegulation,
+                            style: textStyleContent,
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                ],
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            "Brokerage Model",
+                            style: textStyleTitle,
+                          ),
+                          SizedBox(height: 10.w),
+                          Text(
+                            dataBroker[0].brokerModel,
+                            style: textStyleContent,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              //--------------- Demo Account ----------------------
+              Container(
+                margin: EdgeInsets.only(top: 30.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      "Demo Account",
+                      style: textStyleTitle,
+                    ),
+                    SizedBox(height: 10.w),
+                    Text(
+                      dataBroker[0].brokerDemo,
+                      style: textStyleContent,
+                    ),
+                  ],
+                ),
+              ),
+
+              //------------ Deposit minimal & Founding Methods ---------
+              Container(
+                margin: EdgeInsets.only(top: 30.w),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            "Min Deposit",
+                            style: textStyleTitle,
+                          ),
+                          SizedBox(height: 10.w),
+                          Text(
+                            dataBroker[0].brokerMinDepo,
+                            style: textStyleContent,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            "Founding Methods",
+                            style: textStyleTitle,
+                          ),
+                          SizedBox(height: 10.w),
+                          Text(
+                            dataBroker[0].brokerFound,
+                            style: textStyleContent,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              //--------------- pros --------------
+              Container(
+                margin: EdgeInsets.only(top: 30.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      "Pros",
+                      style: textStyleTitle,
+                    ),
+                    SizedBox(height: 10.w),
+                    Text(
+                      dataBroker[0].brokerPros,
+                      style: textStyleContent,
+                    ),
+                  ],
+                ),
+              ),
+
+              //------------- Cros -----------------
+              Container(
+                margin: EdgeInsets.only(top: 30.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      "Cros",
+                      style: textStyleTitle,
+                    ),
+                    SizedBox(height: 10.w),
+                    Text(
+                      dataBroker[0].brokerCros,
+                      style: textStyleContent,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10.w),
+            boxShadow: [
+              BoxShadow(
+                offset: Offset(8.w, 21.w),
+                blurRadius: 53.w,
+                color: Colors.black.withOpacity(0.05),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: 20.w),
+        buildPromo(dataBroker[0].brokerPromo),
+      ],
+    );
+  }
+
+  buildPromo(List<BrokerPromo> brokerPromo) {
+    if (brokerPromo.length != 0) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: 35.w,
+            ),
+            child: Text(
+              "Promo",
+              style: TextStyle(
+                fontFamily: "Nunito",
+                fontSize: 25.ssp,
+                color: kTextLightColor,
               ),
             ),
           ),
-          //----------------------- indroduction -----------
-          Container(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  "Introduction",
-                  style: textStyleTitle,
-                ),
-                SizedBox(height: 10.w),
-                Text(
-                  dataBroker[0].brokerIntro,
-                  textAlign: TextAlign.justify,
-                  style: textStyleContent,
-                ),
-              ],
-            ),
-          ),
-
-          //------------------- regulation and brokerage model --------------
-          Container(
-            margin: EdgeInsets.only(top: 30.w),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Expanded(
-                  child: Column(
+          SizedBox(height: 10.w),
+          ListView.builder(
+            shrinkWrap: true,
+            itemCount: brokerPromo.length,
+            itemBuilder: (BuildContext context, int index) {
+              BrokerPromo dataPromo = brokerPromo[index];
+              return GestureDetector(
+                onTap: () {
+                  launchURL(dataPromo.prmBrokerLink);
+                  print("AA");
+                },
+                child: Container(
+                  margin:
+                      EdgeInsets.only(left: 35.w, right: 35.w, bottom: 15.w),
+                  child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(
-                        "Regulation",
-                        style: textStyleTitle,
+                      Container(
+                        height: 150.w,
+                        width: 150.w,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10.w),
+                          child: Image.network(
+                            "http://192.168.100.5:8000/images/promo/" +
+                                dataPromo.prmBrokerImg,
+                            fit: BoxFit.fill,
+                          ),
+                        ),
                       ),
-                      SizedBox(height: 10.w),
-                      Text(
-                        dataBroker[0].brokerRegulation,
-                        style: textStyleContent,
+                      SizedBox(width: 15.w),
+                      Expanded(
+                        child: Container(
+                          padding: EdgeInsets.symmetric(vertical: 20.w),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                dataPromo.prmBrokerTitle,
+                                style: TextStyle(
+                                  fontFamily: "Nunito-Bold",
+                                  fontSize: 25.ssp,
+                                  color: kTextColor,
+                                ),
+                              ),
+                              Text(
+                                dataPromo.prmBrokerCaption,
+                                style: TextStyle(
+                                  fontFamily: "Nunito",
+                                  fontSize: 22.ssp,
+                                  color: kTextLightColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10.w),
+                    boxShadow: [
+                      BoxShadow(
+                        offset: Offset(8.w, 21.w),
+                        blurRadius: 21.w,
+                        color: Colors.black.withOpacity(0.05),
                       ),
                     ],
                   ),
                 ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        "Brokerage Model",
-                        style: textStyleTitle,
-                      ),
-                      SizedBox(height: 10.w),
-                      Text(
-                        dataBroker[0].brokerModel,
-                        style: textStyleContent,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          //--------------- Demo Account ----------------------
-          Container(
-            margin: EdgeInsets.only(top: 30.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  "Demo Account",
-                  style: textStyleTitle,
-                ),
-                SizedBox(height: 10.w),
-                Text(
-                  dataBroker[0].brokerDemo,
-                  style: textStyleContent,
-                ),
-              ],
-            ),
-          ),
-
-          //------------ Deposit minimal & Founding Methods ---------
-          Container(
-            margin: EdgeInsets.only(top: 30.w),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        "Min Deposit",
-                        style: textStyleTitle,
-                      ),
-                      SizedBox(height: 10.w),
-                      Text(
-                        dataBroker[0].brokerMinDepo,
-                        style: textStyleContent,
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        "Founding Methods",
-                        style: textStyleTitle,
-                      ),
-                      SizedBox(height: 10.w),
-                      Text(
-                        dataBroker[0].brokerFound,
-                        style: textStyleContent,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          //--------------- pros --------------
-          Container(
-            margin: EdgeInsets.only(top: 30.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  "Pros",
-                  style: textStyleTitle,
-                ),
-                SizedBox(height: 10.w),
-                Text(
-                  dataBroker[0].brokerPros,
-                  style: textStyleContent,
-                ),
-              ],
-            ),
-          ),
-
-          //------------- Cros -----------------
-          Container(
-            margin: EdgeInsets.only(top: 30.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  "Cros",
-                  style: textStyleTitle,
-                ),
-                SizedBox(height: 10.w),
-                Text(
-                  dataBroker[0].brokerCros,
-                  style: textStyleContent,
-                ),
-              ],
-            ),
+              );
+            },
           ),
         ],
-      ),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10.w),
-        boxShadow: [
-          BoxShadow(
-            offset: Offset(8.w, 21.w),
-            blurRadius: 53.w,
-            color: Colors.black.withOpacity(0.05),
-          ),
-        ],
-      ),
-    );
+      );
+    } else {
+      return Column(
+        children: <Widget>[],
+      );
+    }
   }
-  //Container(
-  //   padding: EdgeInsets.all(20.w),
-  //   margin: EdgeInsets.only(left: 35.w, right: 35.w, bottom: 15.w),
-  //   child:
-  //   ListView(
-  //     shrinkWrap: true,
-  //     children: <Widget>[
-  //       //------------------ logo broker and rating ----------------
-  //       Container(
-  //         padding: EdgeInsets.symmetric(vertical: 40.w),
-  //         child: Center(
-  //           child: Column(
-  //             mainAxisAlignment: MainAxisAlignment.center,
-  //             children: <Widget>[
-  //               Container(
-  //                 //color: Colors.amber,
-  //                 width: 100.w,
-  //                 height: 100.w,
-  //                 child: Image.asset(
-  //                   'assets/images/fbs.jpg',
-  //                   fit: BoxFit.fitWidth,
-  //                 ),
-  //               ),
-  //               SizedBox(height: 10.w),
-  //               Text(
-  //                 "FBS",
-  //                 style: TextStyle(
-  //                   fontFamily: "Nunito-ExtraBold",
-  //                   fontSize: 30.ssp,
-  //                 ),
-  //               ),
-  //               SizedBox(height: 10.w),
-  //               Row(
-  //                 mainAxisAlignment: MainAxisAlignment.center,
-  //                 children: <Widget>[
-  //                   RatingBar(
-  //                     itemSize: 35.w,
-  //                     onRatingUpdate: null,
-  //                     initialRating: 4.5,
-  //                     minRating: 1,
-  //                     direction: Axis.horizontal,
-  //                     allowHalfRating: true,
-  //                     itemPadding: EdgeInsets.symmetric(horizontal: 4.w),
-  //                     itemBuilder: (context, _) => Icon(
-  //                       Icons.star,
-  //                       color: kPrimaryColor,
-  //                     ),
-  //                   ),
-  //                   SizedBox(width: 10.w),
-  //                   Text(
-  //                     "4.5",
-  //                     style: TextStyle(
-  //                       fontFamily: "Nunito-ExtraBold",
-  //                       fontSize: 25.ssp,
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //       ),
-  //       //----------------------- indroduction -----------
-  //       Container(
-  //         child: Column(
-  //           crossAxisAlignment: CrossAxisAlignment.start,
-  //           children: <Widget>[
-  //             Text(
-  //               "Introduction",
-  //               style: textStyleTitle,
-  //             ),
-  //             SizedBox(height: 10.w),
-  //             Text(
-  //               "FBS Markets Incorporated Ltd didirikan pada tahun 2011 dan mengkhususkan diri dalam menawarkan Forex dan CFD untuk perdagangan melalui gudang platform perdagangan yang komprehensif, yang meliputi platform MT4, MT5 dan cTrader. \n\nFBS adalah nama perdagangan dari FBS Markets. Pialang menggunakan model pialang hibrid karena bertindak dalam kapasitasnya sebagai Pembuat Pasar tetapi memiliki kemampuan untuk mengirim perdagangan ke tempat STP untuk tujuan lindung nilai.\n\nPenawaran produk dari FBS termasuk Spot FX, CFD pada Logam Spot, Komoditas, Indeks Ekuitas, dan Cryptocurrency. OctaFX terkenal dengan penawaran spread yang ketat dan kecepatan eksekusinya yang sangat cepat.",
-  //               textAlign: TextAlign.justify,
-  //               style: textStyleContent,
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-
-  //       //------------------- regulation and brokerage model --------------
-  //       Container(
-  //         margin: EdgeInsets.only(top: 30.w),
-  //         child: Row(
-  //           crossAxisAlignment: CrossAxisAlignment.start,
-  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //           children: <Widget>[
-  //             Expanded(
-  //               child: Column(
-  //                 crossAxisAlignment: CrossAxisAlignment.start,
-  //                 children: <Widget>[
-  //                   Text(
-  //                     "Regulation",
-  //                     style: textStyleTitle,
-  //                   ),
-  //                   SizedBox(height: 10.w),
-  //                   Text(
-  //                     "-   CySEC(Siprus)",
-  //                     style: textStyleContent,
-  //                   ),
-  //                   Text(
-  //                     "-   FSA (St. Vincent & Grenadines)",
-  //                     style: textStyleContent,
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //             Expanded(
-  //               child: Column(
-  //                 crossAxisAlignment: CrossAxisAlignment.start,
-  //                 children: <Widget>[
-  //                   Text(
-  //                     "Brokerage Model",
-  //                     style: textStyleTitle,
-  //                   ),
-  //                   SizedBox(height: 10.w),
-  //                   Text(
-  //                     "-   Market Maker (DOA)",
-  //                     style: textStyleContent,
-  //                   ),
-  //                   Text(
-  //                     "-   Straight-Through Processing (RTE)",
-  //                     style: textStyleContent,
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-
-  //       //--------------- Demo Account ----------------------
-  //       Container(
-  //         margin: EdgeInsets.only(top: 30.w),
-  //         child: Column(
-  //           crossAxisAlignment: CrossAxisAlignment.start,
-  //           children: <Widget>[
-  //             Text(
-  //               "Demo Account",
-  //               style: textStyleTitle,
-  //             ),
-  //             SizedBox(height: 10.w),
-  //             Text(
-  //               "-  Yes",
-  //               style: textStyleContent,
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-
-  //       //------------ Deposit minimal & Founding Methods ---------
-  //       Container(
-  //         margin: EdgeInsets.only(top: 30.w),
-  //         child: Row(
-  //           crossAxisAlignment: CrossAxisAlignment.start,
-  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //           children: <Widget>[
-  //             Expanded(
-  //               child: Column(
-  //                 crossAxisAlignment: CrossAxisAlignment.start,
-  //                 children: <Widget>[
-  //                   Text(
-  //                     "Min Deposit",
-  //                     style: textStyleTitle,
-  //                   ),
-  //                   SizedBox(height: 10.w),
-  //                   Text(
-  //                     "-   \$5",
-  //                     style: textStyleContent,
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //             Expanded(
-  //               child: Column(
-  //                 crossAxisAlignment: CrossAxisAlignment.start,
-  //                 children: <Widget>[
-  //                   Text(
-  //                     "Founding Methods",
-  //                     style: textStyleTitle,
-  //                   ),
-  //                   SizedBox(height: 10.w),
-  //                   Text(
-  //                     "-   Bank Wire Transfer",
-  //                     style: textStyleContent,
-  //                   ),
-  //                   Text(
-  //                     "-   Credit cards",
-  //                     style: textStyleContent,
-  //                   ),
-  //                   Text(
-  //                     "-   E-wallet",
-  //                     style: textStyleContent,
-  //                   ),
-  //                   Text(
-  //                     "-   Crypto",
-  //                     style: textStyleContent,
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-
-  //       //--------------- pros --------------
-  //       Container(
-  //         margin: EdgeInsets.only(top: 30.w),
-  //         child: Column(
-  //           crossAxisAlignment: CrossAxisAlignment.start,
-  //           children: <Widget>[
-  //             Text(
-  //               "Pros",
-  //               style: textStyleTitle,
-  //             ),
-  //             SizedBox(height: 10.w),
-  //             Text(
-  //               "-   Menawarkan berbagai pilihan platform perdagangan yang mencakup MT4, MT5, cTrader, Web, dan Aplikasi Seluler.",
-  //               style: textStyleContent,
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-
-  //       //------------- Cros -----------------
-  //       Container(
-  //         margin: EdgeInsets.only(top: 30.w),
-  //         child: Column(
-  //           crossAxisAlignment: CrossAxisAlignment.start,
-  //           children: <Widget>[
-  //             Text(
-  //               "Cros",
-  //               style: textStyleTitle,
-  //             ),
-  //             SizedBox(height: 10.w),
-  //             Text(
-  //               "-   Tidak adanya beberapa Peraturan Tier-1 (hanya dilisensikan oleh CySEC)",
-  //               style: textStyleContent,
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-  //     ],
-  //   ),
-  //   decoration: BoxDecoration(
-  //     color: Colors.white,
-  //     borderRadius: BorderRadius.circular(10.w),
-  //     boxShadow: [
-  //       BoxShadow(
-  //         offset: Offset(8.w, 21.w),
-  //         blurRadius: 53.w,
-  //         color: Colors.black.withOpacity(0.05),
-  //       ),
-  //     ],
-  //   ),
-  // ),
 
   AppBar buildAppBar(BuildContext context) {
     return AppBar(

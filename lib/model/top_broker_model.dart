@@ -13,8 +13,6 @@ class TopBroker {
 
   factory TopBroker.fromJson(String str) => TopBroker.fromMap(json.decode(str));
 
-  String toJson() => json.encode(toMap());
-
   factory TopBroker.fromMap(Map<String, dynamic> json) => TopBroker(
         status: json["status"] == null ? null : json["status"],
         message: json["message"] == null ? null : json["message"],
@@ -23,14 +21,6 @@ class TopBroker {
             : List<DataBroker>.from(
                 json["data"].map((x) => DataBroker.fromMap(x))),
       );
-
-  Map<String, dynamic> toMap() => {
-        "status": status == null ? null : status,
-        "message": message == null ? null : message,
-        "data": data == null
-            ? null
-            : List<dynamic>.from(data.map((x) => x.toMap())),
-      };
 }
 
 class DataBroker {
@@ -48,6 +38,7 @@ class DataBroker {
     this.brokerCros,
     this.brokerImg,
     this.brokerAffiliate,
+    this.brokerPromo,
   });
 
   String brokerId;
@@ -63,6 +54,7 @@ class DataBroker {
   String brokerCros;
   String brokerImg;
   String brokerAffiliate;
+  List<BrokerPromo> brokerPromo;
 
   factory DataBroker.fromJson(String str) =>
       DataBroker.fromMap(json.decode(str));
@@ -87,6 +79,10 @@ class DataBroker {
         brokerImg: json["BrokerImg"] == null ? null : json["BrokerImg"],
         brokerAffiliate:
             json["BrokerAffiliate"] == null ? null : json["BrokerAffiliate"],
+        brokerPromo: json["BrokerPromo"] == null
+            ? null
+            : List<BrokerPromo>.from(
+                json["BrokerPromo"].map((x) => BrokerPromo.fromMap(x))),
       );
 
   Map<String, dynamic> toMap() => {
@@ -103,5 +99,53 @@ class DataBroker {
         "BrokerCros": brokerCros == null ? null : brokerCros,
         "BrokerImg": brokerImg == null ? null : brokerImg,
         "BrokerAffiliate": brokerAffiliate == null ? null : brokerAffiliate,
+        "BrokerPromo": brokerPromo == null
+            ? null
+            : List<dynamic>.from(brokerPromo.map((x) => x.toMap())),
+      };
+}
+
+class BrokerPromo {
+  BrokerPromo({
+    this.prmBrokerId,
+    this.brokerId,
+    this.prmBrokerTitle,
+    this.prmBrokerCaption,
+    this.prmBrokerLink,
+    this.prmBrokerImg,
+  });
+
+  String prmBrokerId;
+  String brokerId;
+  String prmBrokerTitle;
+  String prmBrokerCaption;
+  String prmBrokerLink;
+  String prmBrokerImg;
+
+  factory BrokerPromo.fromJson(String str) =>
+      BrokerPromo.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  factory BrokerPromo.fromMap(Map<String, dynamic> json) => BrokerPromo(
+        prmBrokerId: json["prmBrokerID"] == null ? null : json["prmBrokerID"],
+        brokerId: json["BrokerID"] == null ? null : json["BrokerID"],
+        prmBrokerTitle:
+            json["prmBrokerTitle"] == null ? null : json["prmBrokerTitle"],
+        prmBrokerCaption:
+            json["prmBrokerCaption"] == null ? null : json["prmBrokerCaption"],
+        prmBrokerLink:
+            json["prmBrokerLink"] == null ? null : json["prmBrokerLink"],
+        prmBrokerImg:
+            json["prmBrokerImg"] == null ? null : json["prmBrokerImg"],
+      );
+
+  Map<String, dynamic> toMap() => {
+        "prmBrokerID": prmBrokerId == null ? null : prmBrokerId,
+        "BrokerID": brokerId == null ? null : brokerId,
+        "prmBrokerTitle": prmBrokerTitle == null ? null : prmBrokerTitle,
+        "prmBrokerCaption": prmBrokerCaption == null ? null : prmBrokerCaption,
+        "prmBrokerLink": prmBrokerLink == null ? null : prmBrokerLink,
+        "prmBrokerImg": prmBrokerImg == null ? null : prmBrokerImg,
       };
 }
