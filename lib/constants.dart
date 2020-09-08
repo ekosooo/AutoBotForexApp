@@ -9,3 +9,5 @@ const kBackgroundColor = Color(0xFFFCFCFC);
 
 const kBaseUrlApi = "https://signalforex.id/apis/";
 const kMasterUrl = "https://signalforex.id/";
+
+const kMasterUrlLocal = "http://192.168.100.5:8000/";

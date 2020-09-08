@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:signalforex/constants.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:signalforex/model/top_broker_model.dart';
 import 'package:signalforex/widget/something_wrong.dart';

@@ -68,7 +68,7 @@ class CalendarPageState extends State<CalendarPage> {
       ),
       pageScrollPhysics: NeverScrollableScrollPhysics(),
       thisMonthDayBorderColor: Colors.grey,
-      weekFormat: false,
+      weekFormat: true,
       showHeader: true,
       iconColor: kPrimaryColor,
       headerTextStyle: TextStyle(
@@ -77,7 +77,7 @@ class CalendarPageState extends State<CalendarPage> {
         fontSize: 30.ssp,
       ),
       //markedDatesMap: main.getMarkCalendar(),
-      height: 720.w,
+      height: 270.w,
       headerMargin: EdgeInsets.symmetric(vertical: 2.0),
       selectedDateTime: _currentDate,
       customGridViewPhysics: NeverScrollableScrollPhysics(),
@@ -156,8 +156,8 @@ class CalendarPageState extends State<CalendarPage> {
 
   SlidingUpPanel buildSlidingUpPanel() {
     return SlidingUpPanel(
-      minHeight: 450.w,
-      maxHeight: 1050.w,
+      minHeight: 950.w,
+      maxHeight: 950.w,
       backdropEnabled: false,
       borderRadius: BorderRadius.only(
           topRight: Radius.circular(35.w), topLeft: Radius.circular(35.w)),
@@ -210,7 +210,7 @@ class CalendarPageState extends State<CalendarPage> {
         children: <Widget>[
           Container(
             width: double.infinity,
-            height: 720.w,
+            height: 270.w,
             margin: EdgeInsets.symmetric(horizontal: 35.w),
             decoration: BoxDecoration(
               color: Colors.white,

@@ -57,9 +57,9 @@ class CalendarNews {
 
   List<CalendarNews> calendarFromJson(String jsonData) {
     //print(jsonData);
-      List data = json.decode(jsonData);
-      return List<CalendarNews>.from(
-          data.map((item) => CalendarNews.fromJson(item)));
+    List data = json.decode(jsonData);
+    return List<CalendarNews>.from(
+        data.map((item) => CalendarNews.fromJson(item)));
   }
 
   Future<List<CalendarNews>> getNews(String date) async {

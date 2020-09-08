@@ -367,7 +367,6 @@ class DetailTopBrokerPage extends StatelessWidget {
               return GestureDetector(
                 onTap: () {
                   launchURL(dataPromo.prmBrokerLink);
-                  print("AA");
                 },
                 child: Container(
                   margin:

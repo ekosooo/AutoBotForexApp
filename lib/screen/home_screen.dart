@@ -11,6 +11,11 @@ import 'calendar_screen.dart';
 import 'signal_screen.dart';
 import 'education_screen.dart';
 import 'top_broker_screen.dart';
+import 'package:http/http.dart' as http;
+import 'package:signalforex/model/banner_model.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:signalforex/func_global.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -20,6 +25,49 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> scaffoldState = new GlobalKey<ScaffoldState>();
   static final List<String> imgSlider = ['promo.jpg', 'promo.jpg', 'promo.jpg'];
+
+  Future getBanner() async {
+    final String baseUrl = "http://192.168.100.5:8000/api/banner";
+    final response = await http.get("$baseUrl");
+    if (response.statusCode == 200) {
+      return Banners.fromJson(response.body);
+    } else {
+      throw Exception('Fail to load data');
+    }
+  }
+
+  timeZone() {
+    String strTimeZone = FunctionGlobal().getGMTbySystem().toString();
+    String timeZone = "";
+    if (strTimeZone.contains("-")) {
+      timeZone = strTimeZone;
+    } else {
+      timeZone = "+" + strTimeZone;
+    }
+
+    return timeZone;
+  }
+
+  launchURL(String url) async {
+    //const url = 'https://flutter.io';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  valTimeMarket(int open, int close) {
+    var time = DateTime.now();
+    String strTime = time.toString().substring(11, 13);
+    String statusMarket = "";
+    if (int.parse(strTime) >= open && int.parse(strTime) < close) {
+      statusMarket = "Open";
+    } else {
+      statusMarket = "Close";
+    }
+    return statusMarket;
+  }
 
   void buildSnackBar() {
     scaffoldState.currentState.showSnackBar(
@@ -47,7 +95,7 @@ class HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            buildCarouselSlider(),
+            buildCarouselSliderFuture(),
             SizedBox(height: 60.w),
             buildFrameMenu(),
             SizedBox(height: 60.w),
@@ -81,23 +129,27 @@ class HomePageState extends State<HomePage> {
             children: <Widget>[
               MarketHoursCard(
                 location: "London",
-                open: "01.00 WIB",
-                close: "10.00 WIB",
+                open: "01.00 UTC" + timeZone(),
+                close: "10.00 UTC" + timeZone(),
+                statusMarket: valTimeMarket(01, 10),
               ),
               MarketHoursCard(
                 location: "Sydney",
-                open: "05.00 WIB",
-                close: "14.00 WIB",
+                open: "05.00 UTC" + timeZone(),
+                close: "14.00 UTC" + timeZone(),
+                statusMarket: valTimeMarket(05, 14),
               ),
               MarketHoursCard(
                 location: "Tokyo",
-                open: "07.00 WIB",
-                close: "16.00 WIB",
+                open: "07.00 UTC" + timeZone(),
+                close: "16.00 UTC" + timeZone(),
+                statusMarket: valTimeMarket(07, 16),
               ),
               MarketHoursCard(
                 location: "New York",
-                open: "20.00 WIB",
-                close: "05.00 WIB",
+                open: "20.00 UTC" + timeZone(),
+                close: "05.00 UTC" + timeZone(),
+                statusMarket: valTimeMarket(20, 05),
               ),
             ],
           ),
@@ -130,12 +182,12 @@ class HomePageState extends State<HomePage> {
             physics: NeverScrollableScrollPhysics(),
             children: <Widget>[
               buildMenu("Calendar", FeatherIcons.calendar),
-              buildMenu("Education", FeatherIcons.book),
               buildMenu("Signal", FeatherIcons.trendingUp),
-              buildMenu("EA Forex", FeatherIcons.gitlab),
-              buildMenu("Tools", FeatherIcons.settings),
-              buildMenu("Indicator", FeatherIcons.thermometer),
               buildMenu("Top Broker", FeatherIcons.award),
+              buildMenu("Education", FeatherIcons.book),
+              buildMenu("EA Forex", FeatherIcons.gitlab),
+              buildMenu("Indicator", FeatherIcons.thermometer),
+              buildMenu("Tools", FeatherIcons.settings),
               buildMenu("More", FeatherIcons.moreHorizontal)
             ],
           ),
@@ -144,24 +196,58 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  CarouselSlider buildCarouselSlider() {
+  FutureBuilder buildCarouselSliderFuture() {
+    return FutureBuilder(
+      future: getBanner(),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.hasError) {
+          return Center(
+            child: Text(
+              "Something Wrong",
+              style: TextStyle(fontFamily: "Nunito", fontSize: 24.ssp),
+            ),
+          );
+        } else if (snapshot.connectionState == ConnectionState.done) {
+          return buildCarouselSlider(snapshot.data.data);
+        } else {
+          return Center(
+            child: shimmerBanner(),
+          );
+
+          // Center(
+          //   child: CircularProgressIndicator(
+          //     valueColor: AlwaysStoppedAnimation<Color>(kPrimaryColor),
+          //   ),
+          // );
+        }
+      },
+    );
+  }
+
+  CarouselSlider buildCarouselSlider(List<DataBanner> dataBannerList) {
     return CarouselSlider(
-      items: imgSlider.map((fileImage) {
-        return Container(
-          height: 450.w,
-          // margin: EdgeInsets.all(5.0),
-          child: ClipRRect(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-            child: Image.asset(
-              'assets/images/$fileImage',
-              width: 650.w,
-              fit: BoxFit.fill,
+      items: <Widget>[
+        for (var i = 0; i < dataBannerList.length; i++)
+          GestureDetector(
+            onTap: () {
+              launchURL(dataBannerList[i].bnrLink);
+            },
+            child: Container(
+              //height: 450.w,
+              // margin: EdgeInsets.all(5.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.all(Radius.circular(10.w)),
+                child: Image.network(
+                  kMasterUrlLocal + "images/banner/" + dataBannerList[i].bnrImg,
+                  width: 650.w,
+                  fit: BoxFit.fill,
+                ),
+              ),
             ),
           ),
-        );
-      }).toList(),
+      ],
       options: CarouselOptions(
-        //height: 650,
+        height: 450.w,
         autoPlay: true,
         enlargeCenterPage: true,
         aspectRatio: 2.0,
@@ -225,6 +311,25 @@ class HomePageState extends State<HomePage> {
             style: TextStyle(fontFamily: "Nunito", fontSize: 22.ssp),
           ),
         ],
+      ),
+    );
+  }
+
+  SizedBox shimmerBanner() {
+    return SizedBox(
+      width: 670.w,
+      height: 400.w,
+      child: Shimmer.fromColors(
+        child: Container(
+          height: 400.w,
+          width: 670.w,
+          decoration: BoxDecoration(
+            color: Colors.grey[300],
+            borderRadius: BorderRadius.circular(10.w),
+          ),
+        ),
+        baseColor: Colors.grey[300],
+        highlightColor: Colors.grey[400],
       ),
     );
   }

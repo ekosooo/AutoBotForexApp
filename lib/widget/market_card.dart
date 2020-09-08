@@ -7,122 +7,157 @@ class MarketHoursCard extends StatelessWidget {
   final String location;
   final String open;
   final String close;
+  final String statusMarket;
 
-  const MarketHoursCard({Key key, this.location, this.open, this.close});
+  const MarketHoursCard(
+      {Key key, this.location, this.open, this.close, this.statusMarket})
+      : super(key: key);
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, width: 750, height: 1334);
     return LayoutBuilder(
       builder: (context, constrains) {
-        return Container(
-          padding: EdgeInsets.symmetric(horizontal: 25.w, vertical: 25.w),
-          width: constrains.maxWidth / 2 - 11.w,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20.w),
-            boxShadow: [
-              BoxShadow(
-                offset: Offset(8.w, 21.w),
-                blurRadius: 53.w,
-                color: Colors.black.withOpacity(0.05),
+        return Stack(
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 25.w),
+              width: constrains.maxWidth / 2 - 11.w,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20.w),
+                boxShadow: [
+                  BoxShadow(
+                    offset: Offset(8.w, 21.w),
+                    blurRadius: 53.w,
+                    color: Colors.black.withOpacity(0.05),
+                  ),
+                ],
               ),
-            ],
-          ),
-          child: Column(
-            children: <Widget>[
-              Row(
+              child: Column(
                 children: <Widget>[
-                  SvgPicture.asset(
-                    "assets/images/mark.svg",
-                    height: 30.w,
-                    width: 30.w,
+                  Row(
+                    children: <Widget>[
+                      SvgPicture.asset(
+                        'assets/images/mark.svg',
+                        width: 31.w,
+                        height: 31.w,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 8.w, bottom: 10.w),
+                      ),
+                      Text(
+                        location,
+                        style: TextStyle(
+                          fontFamily: "Nunito-ExtraBold",
+                          fontSize: 30.ssp,
+                          color: kTextColor,
+                        ),
+                      ),
+                    ],
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 8.w, bottom: 10.w),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      SvgPicture.asset(
+                        'assets/images/time.svg',
+                        width: 31.w,
+                        height: 31.w,
+                      ),
+                      Container(
+                        padding: EdgeInsets.only(left: 8.w),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              "Open",
+                              style: TextStyle(
+                                fontFamily: "Nunito",
+                                fontSize: 20.ssp,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 3.w,
+                            ),
+                            Text(
+                              open,
+                              style: TextStyle(
+                                fontFamily: "Nunito-Bold",
+                                fontSize: 19.ssp,
+                                color: kTextColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        width: 20.w,
+                      ),
+                      Container(
+                        margin: EdgeInsets.only(
+                          left: 12.w,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              "Close",
+                              style: TextStyle(
+                                fontFamily: "Nunito",
+                                fontSize: 20.ssp,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 3.w,
+                            ),
+                            Text(
+                              close,
+                              style: TextStyle(
+                                fontFamily: "Nunito-Bold",
+                                fontSize: 20.ssp,
+                                color: kTextColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
                   ),
-                  Text(
-                    location,
+                ],
+              ),
+            ),
+
+            //-------------label container ----------
+            Positioned(
+              top: 0,
+              right: 0,
+              child: Container(
+                width: 100.w,
+                height: 33.w,
+                decoration: BoxDecoration(
+                  //color: kPrimaryColor,
+                  gradient: LinearGradient(
+                    colors: [kPrimaryColor, Colors.teal[600]],
+                  ),
+                  borderRadius: BorderRadius.only(
+                    topRight: Radius.circular(20.w),
+                    bottomLeft: Radius.circular(20.w),
+                  ),
+                ),
+                child: Center(
+                  child: Text(
+                    statusMarket,
                     style: TextStyle(
-                      fontFamily: "Nunito-ExtraBold",
-                      fontSize: 30.ssp,
-                      color: kTextColor,
+                      fontFamily: "Nunito-Bold",
+                      fontSize: 18.ssp,
+                      color: Colors.white,
                     ),
                   ),
-                ],
+                ),
               ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    child: SvgPicture.asset(
-                      "assets/images/time.svg",
-                      height: 30.w,
-                      width: 30.w,
-                    ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.only(left: 8.w),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          "Open",
-                          style: TextStyle(
-                            fontFamily: "Nunito",
-                            fontSize: 20.ssp,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 3.w,
-                        ),
-                        Text(
-                          open,
-                          style: TextStyle(
-                            fontFamily: "Nunito-Bold",
-                            fontSize: 20.ssp,
-                            color: kTextColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    width: 20.w,
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(
-                      left: 12.w,
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          "Close",
-                          style: TextStyle(
-                            fontFamily: "Nunito",
-                            fontSize: 20.ssp,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 3.w,
-                        ),
-                        Text(
-                          close,
-                          style: TextStyle(
-                            fontFamily: "Nunito-Bold",
-                            fontSize: 20.ssp,
-                            color: kTextColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            ],
-          ),
+            ),
+          ],
         );
       },
     );
