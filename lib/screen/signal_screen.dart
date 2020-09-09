@@ -6,6 +6,8 @@ import 'package:expandable/expandable.dart';
 import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:signalforex/widget/profit_chart.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:http/http.dart' as http;
+import 'package:signalforex/model/signal_model.dart';
 
 class SignalPage extends StatefulWidget {
   final selectedPage;
@@ -25,6 +27,16 @@ class SignalPageState extends State<SignalPage>
     super.initState();
   }
 
+  Future getSignal() async {
+    final String baseUrl = kBaseUrlApi + "signal/msSignal";
+    final response = await http.get("$baseUrl");
+    if (response.statusCode == 200) {
+      return Signal.fromJson(response.body);
+    } else {
+      throw Exception('Fail load data');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, width: 750, height: 1334);
@@ -34,18 +46,27 @@ class SignalPageState extends State<SignalPage>
       body: TabBarView(
         children: <Widget>[
           Container(
-            margin: EdgeInsets.only(top: 25.w),
-            child: ListView(
-              physics: BouncingScrollPhysics(),
-              shrinkWrap: true,
-              scrollDirection: Axis.vertical,
-              children: <Widget>[
-                buildSingalList(),
-                SizedBox(height: 20.w),
-                buildSingalList(),
-                SizedBox(height: 20.w),
-                buildSingalList(),
-              ],
+            margin: EdgeInsets.only(top: 35.w),
+            child: FutureBuilder(
+              future: getSignal(),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Text(
+                      "Something Wrong",
+                      style: TextStyle(fontFamily: "Nunito", fontSize: 27.ssp),
+                    ),
+                  );
+                } else if (snapshot.connectionState == ConnectionState.done) {
+                  return buildSignalList(snapshot.data.data);
+                } else {
+                  return Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(kPrimaryColor),
+                    ),
+                  );
+                }
+              },
             ),
           ),
 
@@ -287,294 +308,366 @@ class SignalPageState extends State<SignalPage>
     );
   }
 
-  ExpandableNotifier buildSingalList() {
-    return ExpandableNotifier(
-      child: ScrollOnExpand(
-        child: Card(
-          //clipBehavior: Clip.antiAlias,
-          shadowColor: Colors.black.withOpacity(0.2),
-          elevation: 25.w,
-          margin: EdgeInsets.symmetric(horizontal: 25.w),
-          child: Column(
-            children: <Widget>[
-              ExpandablePanel(
-                theme: const ExpandableThemeData(
-                  headerAlignment: ExpandablePanelHeaderAlignment.center,
-                  tapBodyToExpand: true,
-                  tapBodyToCollapse: true,
-                  hasIcon: false,
-                ),
-                header: Container(
-                  padding: EdgeInsets.all(15.w),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Row(
-                            children: <Widget>[
-                              SvgPicture.asset(
-                                'assets/images/eurusd.svg',
-                                height: 35.w,
-                                width: 70.w,
-                              ),
-                              SizedBox(width: 10),
-                              Text(
-                                "EUR USD",
-                                style: TextStyle(
-                                  fontFamily: "Nunito-ExtraBold",
-                                  fontSize: 25.ssp,
-                                  color: kTextColor,
+  buildSignalList(List<DataSignal> dataSignalList) {
+    if (dataSignalList.length == 0) {
+      //return empty record
+    } else {
+      return ListView.builder(
+        shrinkWrap: true,
+        itemCount: dataSignalList.length,
+        itemBuilder: (context, index) {
+          DataSignal dataSignal = dataSignalList[index];
+          var textTitle = TextStyle(
+            fontFamily: "Nunito-ExtraBold",
+            fontSize: 25.ssp,
+            color: kTextColor,
+          );
+          return ExpandableNotifier(
+            child: ScrollOnExpand(
+              child: Card(
+                //clipBehavior: Clip.antiAlias,
+                shadowColor: Colors.black.withOpacity(0.2),
+                elevation: 25.w,
+                margin: EdgeInsets.only(left: 35.w, right: 35.w, bottom: 15.w),
+                child: Column(
+                  children: <Widget>[
+                    ExpandablePanel(
+                      theme: const ExpandableThemeData(
+                        headerAlignment: ExpandablePanelHeaderAlignment.center,
+                        tapBodyToExpand: true,
+                        tapBodyToCollapse: true,
+                        hasIcon: false,
+                      ),
+                      header: Container(
+                        padding: EdgeInsets.all(15.w),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Row(
+                                  children: <Widget>[
+                                    SvgPicture.network(
+                                      kMasterUrl +
+                                          "img/pairs/" +
+                                          dataSignal.pairImg,
+                                      height: 35.w,
+                                      width: 70.w,
+                                    ),
+                                    SizedBox(width: 10),
+                                    Text(
+                                      dataSignal.pairName,
+                                      style: TextStyle(
+                                        fontFamily: "Nunito-ExtraBold",
+                                        fontSize: 25.ssp,
+                                        color: kTextColor,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                            ],
-                          ),
-                          Text(
-                            "1.17649",
-                            style: TextStyle(
-                              fontFamily: "Nunito-ExtraBold",
-                              fontSize: 25.ssp,
-                              color: kTextColor,
-                            ),
-                          ),
-                          Row(
-                            children: <Widget>[
-                              Text(
-                                "Buy",
-                                style: TextStyle(
-                                  fontFamily: "Nunito-Bold",
-                                  fontSize: 25.ssp,
-                                  color: kPrimaryColor,
+                                Text(
+                                  dataSignal.sigPrice,
+                                  style: TextStyle(
+                                    fontFamily: "Nunito-ExtraBold",
+                                    fontSize: 25.ssp,
+                                    color: kTextColor,
+                                  ),
                                 ),
-                              ),
-                              SizedBox(width: 8.w),
-                              Icon(
-                                FeatherIcons.trendingUp,
-                                color: kPrimaryColor,
-                                size: 30.w,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 4.w),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text(
-                            "Aug 7, 2020 - 13.00",
-                            style: TextStyle(
-                              fontFamily: "Nunito-Light",
-                              fontSize: 18.ssp,
-                              color: kTextLightColor,
+                                Row(
+                                  children: <Widget>[
+                                    Text(
+                                      dataSignal.oTypeName,
+                                      style: TextStyle(
+                                        fontFamily: "Nunito-Bold",
+                                        fontSize: 25.ssp,
+                                        color: (dataSignal.oTypeId == 0)
+                                            ? kPrimaryColor
+                                            : Colors.red,
+                                      ),
+                                    ),
+                                    SizedBox(width: 8.w),
+                                    Icon(
+                                      (dataSignal.oTypeId == 0)
+                                          ? FeatherIcons.trendingUp
+                                          : FeatherIcons.trendingDown,
+                                      color: (dataSignal.oTypeId == 0)
+                                          ? kPrimaryColor
+                                          : Colors.red,
+                                      size: 30.w,
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
-                          ),
-                          Text(
-                            "ACTIVE",
-                            style: TextStyle(
-                              fontFamily: "Nunito-Bold",
-                              fontSize: 20.ssp,
-                              color: kPrimaryColor,
+                            SizedBox(height: 4.w),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text(
+                                  dataSignal.sigCreatedAt.toString(),
+                                  style: TextStyle(
+                                    fontFamily: "Nunito-Light",
+                                    fontSize: 18.ssp,
+                                    color: kTextLightColor,
+                                  ),
+                                ),
+                                Text(
+                                  (dataSignal.sigStatus == 8) //8 = code active
+                                      ? "Active"
+                                      : "Expired",
+                                  style: TextStyle(
+                                    fontFamily: "Nunito-Bold",
+                                    fontSize: 20.ssp,
+                                    color: (dataSignal.sigStatus == 8)
+                                        ? kPrimaryColor
+                                        : Colors.red,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
-                ),
-                expanded: Container(
-                  padding: EdgeInsets.all(15.w),
-                  color: Colors.white,
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        height: 4.w,
-                        color: kBackgroundColor,
-                      ),
-                      SizedBox(
-                        height: 15.w,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text(
-                            "Take Profit 1",
-                            style: TextStyle(
-                              fontFamily: "Nunito-ExtraBold",
-                              fontSize: 25.ssp,
-                              color: kTextColor,
+                      expanded: Container(
+                        padding: EdgeInsets.all(15.w),
+                        color: Colors.white,
+                        child: Column(
+                          children: <Widget>[
+                            Container(
+                              height: 4.w,
+                              color: kBackgroundColor,
                             ),
-                          ),
-                          Text(
-                            "1.17749",
-                            style: TextStyle(
-                              fontFamily: "Nunito-ExtraBold",
-                              fontSize: 25.ssp,
-                              color: kPrimaryColor,
+                            SizedBox(
+                              height: 15.w,
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 10.w,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text(
-                            "Take Profit 2",
-                            style: TextStyle(
-                              fontFamily: "Nunito-ExtraBold",
-                              fontSize: 25.ssp,
-                              color: kTextColor,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text(
+                                  "Take Profit 1",
+                                  style: textTitle,
+                                ),
+                                Row(
+                                  children: <Widget>[
+                                    Text(
+                                      dataSignal.sigTp1,
+                                      style: TextStyle(
+                                        fontFamily: "Nunito-ExtraBold",
+                                        fontSize: 25.ssp,
+                                        color: kPrimaryColor,
+                                      ),
+                                    ),
+                                    if (dataSignal.sigStatusFloating ==
+                                        1) // 1 = signal hit TP 1
+                                      Container(
+                                        margin: EdgeInsets.only(left: 5.w),
+                                        child: Icon(
+                                          FeatherIcons.checkCircle,
+                                          size: 25.w,
+                                          color: kPrimaryColor,
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ],
                             ),
-                          ),
-                          Text(
-                            "1.17849",
-                            style: TextStyle(
-                              fontFamily: "Nunito-ExtraBold",
-                              fontSize: 25.ssp,
-                              color: kPrimaryColor,
+                            SizedBox(
+                              height: 10.w,
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 10.w,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text(
-                            "Take Profit 3",
-                            style: TextStyle(
-                              fontFamily: "Nunito-ExtraBold",
-                              fontSize: 25.ssp,
-                              color: kTextColor,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text(
+                                  "Take Profit 2",
+                                  style: textTitle,
+                                ),
+                                Row(
+                                  children: <Widget>[
+                                    Text(
+                                      dataSignal.sigTp2,
+                                      style: TextStyle(
+                                        fontFamily: "Nunito-ExtraBold",
+                                        fontSize: 25.ssp,
+                                        color: kPrimaryColor,
+                                      ),
+                                    ),
+                                    if (dataSignal.sigStatusFloating ==
+                                        2) // 2 = signal hit TP 2
+                                      Container(
+                                        margin: EdgeInsets.only(left: 5.w),
+                                        child: Icon(
+                                          FeatherIcons.checkCircle,
+                                          size: 25.w,
+                                          color: kPrimaryColor,
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ],
                             ),
-                          ),
-                          Text(
-                            "1.17949",
-                            style: TextStyle(
-                              fontFamily: "Nunito-ExtraBold",
-                              fontSize: 25.ssp,
-                              color: kPrimaryColor,
+                            SizedBox(
+                              height: 10.w,
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 10.w,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text(
-                            "Stop Loss",
-                            style: TextStyle(
-                              fontFamily: "Nunito-ExtraBold",
-                              fontSize: 25.ssp,
-                              color: kTextColor,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text(
+                                  "Take Profit 3",
+                                  style: textTitle,
+                                ),
+                                Row(
+                                  children: <Widget>[
+                                    Text(
+                                      dataSignal.sigTp3,
+                                      style: TextStyle(
+                                        fontFamily: "Nunito-ExtraBold",
+                                        fontSize: 25.ssp,
+                                        color: kPrimaryColor,
+                                      ),
+                                    ),
+                                    if (dataSignal.sigStatusFloating ==
+                                        3) // 3 = signal hit TP 3
+                                      Container(
+                                        margin: EdgeInsets.only(left: 5.w),
+                                        child: Icon(
+                                          FeatherIcons.checkCircle,
+                                          size: 25.w,
+                                          color: kPrimaryColor,
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ],
                             ),
-                          ),
-                          Text(
-                            "1.17549",
-                            style: TextStyle(
-                              fontFamily: "Nunito-ExtraBold",
-                              fontSize: 25.ssp,
-                              color: Colors.red[600],
+                            SizedBox(
+                              height: 10.w,
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 15.w,
-                      ),
-                      Container(
-                        height: 4.w,
-                        color: kBackgroundColor,
-                      ),
-                      SizedBox(
-                        height: 15.w,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text(
-                            "Trade Result",
-                            style: TextStyle(
-                              fontFamily: "Nunito-ExtraBold",
-                              fontSize: 25.ssp,
-                              color: kTextColor,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text(
+                                  "Stop Loss",
+                                  style: TextStyle(
+                                    fontFamily: "Nunito-ExtraBold",
+                                    fontSize: 25.ssp,
+                                    color: kTextColor,
+                                  ),
+                                ),
+                                Row(
+                                  children: <Widget>[
+                                    Text(
+                                      dataSignal.sigTp3,
+                                      style: TextStyle(
+                                        fontFamily: "Nunito-ExtraBold",
+                                        fontSize: 25.ssp,
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                    if (dataSignal.sigStatusFloating ==
+                                        -1) // -1 = signal hit SL -1
+                                      Container(
+                                        margin: EdgeInsets.only(left: 5.w),
+                                        child: Icon(
+                                          FeatherIcons.checkCircle,
+                                          size: 25.w,
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ],
                             ),
-                          ),
-                          Text(
-                            "-",
-                            style: TextStyle(
-                              fontFamily: "Nunito-ExtraBold",
-                              fontSize: 25.ssp,
-                              color: kTextColor,
+                            SizedBox(
+                              height: 15.w,
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 10.w,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text(
-                            "Trade Close",
-                            style: TextStyle(
-                              fontFamily: "Nunito-ExtraBold",
-                              fontSize: 25.ssp,
-                              color: kTextColor,
+                            Container(
+                              height: 4.w,
+                              color: kBackgroundColor,
                             ),
-                          ),
-                          Text(
-                            "-",
-                            style: TextStyle(
-                              fontFamily: "Nunito-ExtraBold",
-                              fontSize: 25.ssp,
-                              color: kTextColor,
+                            SizedBox(
+                              height: 15.w,
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 10.w,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text(
-                            "Last Update",
-                            style: TextStyle(
-                              fontFamily: "Nunito-ExtraBold",
-                              fontSize: 25.ssp,
-                              color: kTextColor,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text(
+                                  "Trade Result",
+                                  style: TextStyle(
+                                    fontFamily: "Nunito-ExtraBold",
+                                    fontSize: 25.ssp,
+                                    color: kTextColor,
+                                  ),
+                                ),
+                                Text(
+                                  dataSignal.sigResult,
+                                  style: TextStyle(
+                                    fontFamily: "Nunito-ExtraBold",
+                                    fontSize: 25.ssp,
+                                    color: kTextColor,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                          Text(
-                            "Aug 7, 2020 - 13.00",
-                            style: TextStyle(
-                              fontFamily: "Nunito",
-                              fontSize: 25.ssp,
-                              color: kTextLightColor,
+                            SizedBox(
+                              height: 10.w,
                             ),
-                          ),
-                        ],
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text(
+                                  "Trade Close",
+                                  style: TextStyle(
+                                    fontFamily: "Nunito-ExtraBold",
+                                    fontSize: 25.ssp,
+                                    color: kTextColor,
+                                  ),
+                                ),
+                                Text(
+                                  dataSignal.sigClose,
+                                  style: TextStyle(
+                                    fontFamily: "Nunito-ExtraBold",
+                                    fontSize: 25.ssp,
+                                    color: kTextColor,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 10.w,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text(
+                                  "Last Update",
+                                  style: TextStyle(
+                                    fontFamily: "Nunito-ExtraBold",
+                                    fontSize: 25.ssp,
+                                    color: kTextColor,
+                                  ),
+                                ),
+                                Text(
+                                  dataSignal.sigCreatedAt.toString(),
+                                  style: TextStyle(
+                                    fontFamily: "Nunito",
+                                    fontSize: 25.ssp,
+                                    color: kTextLightColor,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
-    );
+            ),
+          );
+        },
+      );
+    }
   }
 }

@@ -41,8 +41,11 @@ class CalendarNews {
         // ffUpdatedAt: DateTime.parse(json["FFUpdatedAt"]),
         ffTitle: json["FFTitle"] == null ? null : json["FFTitle"],
         ffCountry: json["FFCountry"] == null ? null : json["FFCountry"],
-        ffDate: json["FFDate"] == null ? null : DateTime.parse(json["FFDate"]),
-        ffTime: json["FFTime"] == null ? null : json["FFTime"],
+        ffDate: json["FFDate"] == null
+            ? null
+            : DateTime.parse(json["FFDate"] + " " + json["FFTime"]).add(
+                Duration(seconds: (FunctionGlobal().getGMTbySystem()) * 3600)),
+        //ffTime: json["FFTime"] == null ? null : json["FFTime"],
         ffImpact: json["FFImpact"] == null ? null : json["FFImpact"],
         ffForecast: json["FFForecast"] == null ? null : json["FFForecast"],
         ffPrevious: json["FFPrevious"] == null ? null : json["FFPrevious"],

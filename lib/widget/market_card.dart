@@ -91,7 +91,7 @@ class MarketHoursCard extends StatelessWidget {
                         ),
                       ),
                       SizedBox(
-                        width: 20.w,
+                        width: 2.w,
                       ),
                       Container(
                         margin: EdgeInsets.only(
@@ -137,9 +137,13 @@ class MarketHoursCard extends StatelessWidget {
                 height: 33.w,
                 decoration: BoxDecoration(
                   //color: kPrimaryColor,
-                  gradient: LinearGradient(
-                    colors: [kPrimaryColor, Colors.teal[600]],
-                  ),
+                  gradient: (statusMarket == 'Open')
+                      ? LinearGradient(
+                          colors: [kPrimaryColor, Colors.teal[600]],
+                        )
+                      : LinearGradient(
+                          colors: [Colors.red[400], Colors.red[700]],
+                        ),
                   borderRadius: BorderRadius.only(
                     topRight: Radius.circular(20.w),
                     bottomLeft: Radius.circular(20.w),

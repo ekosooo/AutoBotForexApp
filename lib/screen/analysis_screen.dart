@@ -62,8 +62,10 @@ class AnalysisPageState extends State<AnalysisPage>
                   future: getListPair(),
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     if (snapshot.hasError) {
-                      return SomethingWrong(
-                        textColor: "black",
+                      return Center(
+                        child: SomethingWrong(
+                          textColor: "black",
+                        ),
                       );
                     } else if (snapshot.connectionState ==
                         ConnectionState.done) {

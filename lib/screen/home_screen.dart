@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:signalforex/constants.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:signalforex/model/markethours_model.dart';
 import 'package:signalforex/screen/ea_forex_screen.dart';
 import 'package:signalforex/screen/signal_screen.dart';
 import 'package:signalforex/widget/market_card.dart';
@@ -26,11 +27,28 @@ class HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> scaffoldState = new GlobalKey<ScaffoldState>();
   static final List<String> imgSlider = ['promo.jpg', 'promo.jpg', 'promo.jpg'];
 
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   this.getBanner();
+  //   this.getMarketHours();
+  // }
+
   Future getBanner() async {
     final String baseUrl = "http://192.168.100.5:8000/api/banner";
     final response = await http.get("$baseUrl");
     if (response.statusCode == 200) {
       return Banners.fromJson(response.body);
+    } else {
+      throw Exception('Fail to load data');
+    }
+  }
+
+  Future getMarketHours() async {
+    final String baseUrl = kMasterUrlLocal + "api/markethours";
+    final response = await http.get("$baseUrl");
+    if (response.statusCode == 200) {
+      return MarketHours.fromJson(response.body);
     } else {
       throw Exception('Fail to load data');
     }
@@ -99,7 +117,8 @@ class HomePageState extends State<HomePage> {
             SizedBox(height: 60.w),
             buildFrameMenu(),
             SizedBox(height: 60.w),
-            buildMarketHours(),
+            //buildMarketHours(),
+            buildMarketHoursFuture(),
             SizedBox(height: 25.w),
           ],
         ),
@@ -107,7 +126,29 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  Container buildMarketHours() {
+  FutureBuilder buildMarketHoursFuture() {
+    return FutureBuilder(
+      future: getMarketHours(),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.hasError) {
+          return Center(
+            child: Text(
+              "Something Wrong",
+              style: TextStyle(fontFamily: "Nunito", fontSize: 27.ssp),
+            ),
+          );
+        } else if (snapshot.connectionState == ConnectionState.done) {
+          return buildMarketHours(snapshot.data.data);
+        } else {
+          return Center(
+            child: shimmerMarketHours(),
+          );
+        }
+      },
+    );
+  }
+
+  Container buildMarketHours(List<DataMarketHours> marketHoursList) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 35.w),
       child: Column(
@@ -127,30 +168,32 @@ class HomePageState extends State<HomePage> {
             spacing: 20.w,
             runSpacing: 20.w,
             children: <Widget>[
-              MarketHoursCard(
-                location: "London",
-                open: "01.00 UTC" + timeZone(),
-                close: "10.00 UTC" + timeZone(),
-                statusMarket: valTimeMarket(01, 10),
-              ),
-              MarketHoursCard(
-                location: "Sydney",
-                open: "05.00 UTC" + timeZone(),
-                close: "14.00 UTC" + timeZone(),
-                statusMarket: valTimeMarket(05, 14),
-              ),
-              MarketHoursCard(
-                location: "Tokyo",
-                open: "07.00 UTC" + timeZone(),
-                close: "16.00 UTC" + timeZone(),
-                statusMarket: valTimeMarket(07, 16),
-              ),
-              MarketHoursCard(
-                location: "New York",
-                open: "20.00 UTC" + timeZone(),
-                close: "05.00 UTC" + timeZone(),
-                statusMarket: valTimeMarket(20, 05),
-              ),
+              for (var i = 0; i < marketHoursList.length; i++)
+                MarketHoursCard(
+                  location: marketHoursList[i].marketCenter,
+                  open: marketHoursList[i]
+                          .marketOpen
+                          .toString()
+                          .substring(11, 16) + // substr ambil jam dan menit
+                      " UTC" +
+                      timeZone(),
+                  close: marketHoursList[i]
+                          .marketClose
+                          .toString()
+                          .substring(11, 16) + // substr ambil jam dan menit
+                      " UTC" +
+                      timeZone(),
+                  statusMarket: valTimeMarket(
+                    int.parse(marketHoursList[i]
+                        .marketOpen
+                        .toString()
+                        .substring(11, 13)), // substr hanya ambil jam
+                    int.parse(marketHoursList[i]
+                        .marketClose
+                        .toString()
+                        .substring(11, 13)), // substr hanya ambil jam
+                  ),
+                ),
             ],
           ),
         ],
@@ -213,12 +256,6 @@ class HomePageState extends State<HomePage> {
           return Center(
             child: shimmerBanner(),
           );
-
-          // Center(
-          //   child: CircularProgressIndicator(
-          //     valueColor: AlwaysStoppedAnimation<Color>(kPrimaryColor),
-          //   ),
-          // );
         }
       },
     );
@@ -316,6 +353,25 @@ class HomePageState extends State<HomePage> {
   }
 
   SizedBox shimmerBanner() {
+    return SizedBox(
+      width: 670.w,
+      height: 400.w,
+      child: Shimmer.fromColors(
+        child: Container(
+          height: 400.w,
+          width: 670.w,
+          decoration: BoxDecoration(
+            color: Colors.grey[300],
+            borderRadius: BorderRadius.circular(10.w),
+          ),
+        ),
+        baseColor: Colors.grey[300],
+        highlightColor: Colors.grey[400],
+      ),
+    );
+  }
+
+  SizedBox shimmerMarketHours() {
     return SizedBox(
       width: 670.w,
       height: 400.w,
