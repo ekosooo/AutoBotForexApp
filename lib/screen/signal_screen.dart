@@ -23,7 +23,7 @@ class SignalPageState extends State<SignalPage>
   @override
   void initState() {
     _tabController = TabController(
-        length: 2, vsync: this, initialIndex: widget.selectedPage);
+        length: 3, vsync: this, initialIndex: widget.selectedPage);
     super.initState();
   }
 
@@ -70,8 +70,12 @@ class SignalPageState extends State<SignalPage>
             ),
           ),
 
-          // ---------------------- profit weekly
-          buildProfit(),
+          //----------------------- History -----------------
+          Text("AA"),
+          //-------------------------------------------------
+
+          // ---------------------- summary ------------------
+          buildSummary(),
           //------------------------------------
         ],
         controller: _tabController,
@@ -79,161 +83,242 @@ class SignalPageState extends State<SignalPage>
     );
   }
 
-  Container buildProfit() {
-    var textStyle = TextStyle(
-      fontFamily: "Nunito-SemiBold",
-      fontSize: 20.ssp,
-      color: kTextLightColor,
-    );
+  Container buildSummary() {
     return Container(
-      margin: EdgeInsets.all(25.w),
+      width: double.infinity,
+      margin: EdgeInsets.only(left: 35.w, right: 35.w, top: 15.w),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 50.w),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(15.w),
-              boxShadow: [
-                BoxShadow(
-                  offset: Offset(8.w, 21.w),
-                  blurRadius: 53.w,
-                  color: Colors.black.withOpacity(0.05),
-                )
+          //Expanded(
+          //child:
+          Align(
+            alignment: Alignment.centerRight,
+            child: DropdownButton(
+              underline: SizedBox(),
+              value: _valueDropDown,
+              items: [
+                DropdownMenuItem(
+                  value: 1,
+                  child: Text(
+                    "Weekly",
+                    style: TextStyle(
+                      fontFamily: "Nunito-Bold",
+                      fontSize: 25.ssp,
+                      color: kPrimaryColor,
+                    ),
+                  ),
+                ),
+                DropdownMenuItem(
+                  value: 2,
+                  child: Text(
+                    "Monthly",
+                    style: TextStyle(
+                      fontFamily: "Nunito-Bold",
+                      fontSize: 25.ssp,
+                      color: kPrimaryColor,
+                    ),
+                  ),
+                ),
               ],
+              onChanged: (value) {
+                setState(() {
+                  _valueDropDown = value;
+                });
+                print(_valueDropDown);
+              },
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          ),
+          //),
+          SizedBox(height: 60.w),
+          Align(
+            alignment: Alignment.center,
+            child: Text(
+              '4892.0 pips',
+              style: TextStyle(
+                fontFamily: 'Nunito-Bold',
+                fontSize: 60.ssp,
+                color: kPrimaryColor,
+              ),
+            ),
+          ),
+
+          //-------------- Profit lose ---------------------
+          SizedBox(height: 80.w),
+          Container(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //---------- profit ------------
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      "Profit",
+                      'Profit',
                       style: TextStyle(
-                        fontFamily: "Nunito-SemiBold",
+                        fontFamily: "Nunito",
                         fontSize: 25.ssp,
                         color: kTextLightColor,
                       ),
                     ),
-                    DropdownButton(
-                      underline: SizedBox(),
-                      value: _valueDropDown,
-                      items: [
-                        DropdownMenuItem(
-                          value: 1,
-                          child: Text(
-                            "Weekly",
-                            style: TextStyle(
-                              fontFamily: "Nunito-Bold",
-                              fontSize: 25.ssp,
-                              color: kPrimaryColor,
-                            ),
-                          ),
-                        ),
-                        DropdownMenuItem(
-                          value: 2,
-                          child: Text(
-                            "Monthly",
-                            style: TextStyle(
-                              fontFamily: "Nunito-Bold",
-                              fontSize: 25.ssp,
-                              color: kPrimaryColor,
-                            ),
-                          ),
-                        ),
-                      ],
-                      onChanged: (value) {
-                        setState(() {
-                          _valueDropDown = value;
-                        });
-                        print(_valueDropDown);
-                      },
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 10.w,
-                ),
-                Text(
-                  "+91230 Pips",
-                  style: TextStyle(
-                    fontFamily: "Nunito-Bold",
-                    fontSize: 55.ssp,
-                    color: kPrimaryColor,
-                  ),
-                ),
-                SizedBox(
-                  height: 30.w,
-                ),
-                Text(
-                  "Profit per pair",
-                  style: TextStyle(
-                    fontFamily: "Nunito-SemiBold",
-                    fontSize: 25.ssp,
-                    color: kTextLightColor,
-                  ),
-                ),
-                SizedBox(
-                  height: 25.w,
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w),
-                  child: ProfitChart(),
-                ),
-                SizedBox(
-                  height: 30.w,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    SizedBox(height: 8.w),
+                    Row(
                       children: <Widget>[
+                        Container(
+                          width: 60.w,
+                          height: 60.w,
+                          child: Center(
+                            child: Icon(
+                              FeatherIcons.arrowUpCircle,
+                              color: kPrimaryColor,
+                              size: 35.w,
+                            ),
+                          ),
+                          decoration: BoxDecoration(
+                            color: kPrimaryColor.withOpacity(0.06),
+                            borderRadius: BorderRadius.circular(10.w),
+                          ),
+                        ),
+                        SizedBox(width: 10.w),
                         Text(
-                          "+70023 Pips",
+                          '+5492.0 pips',
                           style: TextStyle(
-                            fontFamily: "Nunito-Bold",
+                            fontFamily: "Nunito",
                             fontSize: 30.ssp,
                             color: kPrimaryColor,
                           ),
                         ),
-                        _valueDropDown == 1
-                            ? Text(
-                                "Profit Last Week",
-                                style: textStyle,
-                              )
-                            : Text(
-                                "Profit Last Month",
-                                style: textStyle,
-                              ),
                       ],
                     ),
+                  ],
+                ),
+
+                //--------------lose --------------
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      'Lose',
+                      style: TextStyle(
+                        fontFamily: "Nunito",
+                        fontSize: 25.ssp,
+                        color: kTextLightColor,
+                      ),
+                    ),
+                    SizedBox(height: 8.w),
+                    Row(
+                      children: <Widget>[
+                        Container(
+                          width: 60.w,
+                          height: 60.w,
+                          child: Center(
+                            child: Icon(
+                              FeatherIcons.arrowDownCircle,
+                              color: Colors.red,
+                              size: 35.w,
+                            ),
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.red.withOpacity(0.06),
+                            borderRadius: BorderRadius.circular(10.w),
+                          ),
+                        ),
+                        SizedBox(width: 10.w),
+                        Text(
+                          '-600.0 pips',
+                          style: TextStyle(
+                            fontFamily: "Nunito",
+                            fontSize: 30.ssp,
+                            color: Colors.red,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
+          //----------- Detail profit lose ----------------
+          SizedBox(height: 40.w),
+          Text(
+            "Detail",
+            style: TextStyle(
+              fontFamily: 'Nunito',
+              fontSize: 25.ssp,
+              color: kTextLightColor,
+            ),
+          ),
+          SizedBox(height: 8.w),
+          Container(
+            padding: EdgeInsets.all(15.w),
+            width: double.infinity,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    SvgPicture.asset(
+                      'assets/images/eurusd.svg',
+                      width: 75.w,
+                      height: 35.w,
+                    ),
+                    SizedBox(width: 10.w),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          "-250 Pips",
+                          'EURUSD',
                           style: TextStyle(
-                            fontFamily: "Nunito-Bold",
-                            fontSize: 30.ssp,
-                            color: Colors.red[600],
+                            fontFamily: "Nunito-ExtraBold",
+                            fontSize: 25.ssp,
+                            color: kTextColor,
                           ),
                         ),
-                        _valueDropDown == 1
-                            ? Text(
-                                "Loss This Week",
-                                style: textStyle,
-                              )
-                            : Text(
-                                "Loss This Month",
-                                style: textStyle,
-                              ),
+                        Text(
+                          'EURO vs US Dollar',
+                          style: TextStyle(
+                            fontFamily: "Nunito",
+                            fontSize: 22.ssp,
+                            color: kTextLightColor,
+                          ),
+                        ),
                       ],
                     ),
                   ],
-                )
+                ),
+                Column(
+                  children: <Widget>[
+                    Text(
+                      '+160.0 pips',
+                      style: TextStyle(
+                        fontFamily: "Nunito",
+                        fontSize: 22.ssp,
+                        color: kPrimaryColor,
+                      ),
+                    ),
+                    Text(
+                      '-160.0 pips',
+                      style: TextStyle(
+                        fontFamily: "Nunito",
+                        fontSize: 22.ssp,
+                        color: Colors.red,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10.w),
+              boxShadow: [
+                BoxShadow(
+                  offset: Offset(8.w, 21.w),
+                  blurRadius: 35.w,
+                  color: Colors.black.withOpacity(0.01),
+                ),
               ],
             ),
           ),
@@ -241,6 +326,169 @@ class SignalPageState extends State<SignalPage>
       ),
     );
   }
+
+  // Container buildSummary() {
+  //   var textStyle = TextStyle(
+  //     fontFamily: "Nunito-SemiBold",
+  //     fontSize: 20.ssp,
+  //     color: kTextLightColor,
+  //   );
+  //   return Container(
+  //     margin: EdgeInsets.all(25.w),
+  //     child: Column(
+  //       children: <Widget>[
+  //         Container(
+  //           width: double.infinity,
+  //           padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 50.w),
+  //           decoration: BoxDecoration(
+  //             color: Colors.white,
+  //             borderRadius: BorderRadius.circular(15.w),
+  //             boxShadow: [
+  //               BoxShadow(
+  //                 offset: Offset(8.w, 21.w),
+  //                 blurRadius: 53.w,
+  //                 color: Colors.black.withOpacity(0.05),
+  //               )
+  //             ],
+  //           ),
+  //           child: Column(
+  //             crossAxisAlignment: CrossAxisAlignment.start,
+  //             children: <Widget>[
+  //               Row(
+  //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                 children: <Widget>[
+  //                   Text(
+  //                     "Profit",
+  //                     style: TextStyle(
+  //                       fontFamily: "Nunito-SemiBold",
+  //                       fontSize: 25.ssp,
+  //                       color: kTextLightColor,
+  //                     ),
+  //                   ),
+  //                   DropdownButton(
+  //                     underline: SizedBox(),
+  //                     value: _valueDropDown,
+  //                     items: [
+  //                       DropdownMenuItem(
+  //                         value: 1,
+  //                         child: Text(
+  //                           "Weekly",
+  //                           style: TextStyle(
+  //                             fontFamily: "Nunito-Bold",
+  //                             fontSize: 25.ssp,
+  //                             color: kPrimaryColor,
+  //                           ),
+  //                         ),
+  //                       ),
+  //                       DropdownMenuItem(
+  //                         value: 2,
+  //                         child: Text(
+  //                           "Monthly",
+  //                           style: TextStyle(
+  //                             fontFamily: "Nunito-Bold",
+  //                             fontSize: 25.ssp,
+  //                             color: kPrimaryColor,
+  //                           ),
+  //                         ),
+  //                       ),
+  //                     ],
+  //                     onChanged: (value) {
+  //                       setState(() {
+  //                         _valueDropDown = value;
+  //                       });
+  //                       print(_valueDropDown);
+  //                     },
+  //                   ),
+  //                 ],
+  //               ),
+  //               SizedBox(
+  //                 height: 10.w,
+  //               ),
+  //               Text(
+  //                 "+91230 Pips",
+  //                 style: TextStyle(
+  //                   fontFamily: "Nunito-Bold",
+  //                   fontSize: 55.ssp,
+  //                   color: kPrimaryColor,
+  //                 ),
+  //               ),
+  //               SizedBox(
+  //                 height: 30.w,
+  //               ),
+  //               Text(
+  //                 "Profit per pair",
+  //                 style: TextStyle(
+  //                   fontFamily: "Nunito-SemiBold",
+  //                   fontSize: 25.ssp,
+  //                   color: kTextLightColor,
+  //                 ),
+  //               ),
+  //               SizedBox(
+  //                 height: 25.w,
+  //               ),
+  //               Container(
+  //                 padding: EdgeInsets.symmetric(horizontal: 20.w),
+  //                 child: ProfitChart(),
+  //               ),
+  //               SizedBox(
+  //                 height: 30.w,
+  //               ),
+  //               Row(
+  //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                 children: <Widget>[
+  //                   Column(
+  //                     crossAxisAlignment: CrossAxisAlignment.start,
+  //                     children: <Widget>[
+  //                       Text(
+  //                         "+70023 Pips",
+  //                         style: TextStyle(
+  //                           fontFamily: "Nunito-Bold",
+  //                           fontSize: 30.ssp,
+  //                           color: kPrimaryColor,
+  //                         ),
+  //                       ),
+  //                       _valueDropDown == 1
+  //                           ? Text(
+  //                               "Profit Last Week",
+  //                               style: textStyle,
+  //                             )
+  //                           : Text(
+  //                               "Profit Last Month",
+  //                               style: textStyle,
+  //                             ),
+  //                     ],
+  //                   ),
+  //                   Column(
+  //                     crossAxisAlignment: CrossAxisAlignment.start,
+  //                     children: <Widget>[
+  //                       Text(
+  //                         "-250 Pips",
+  //                         style: TextStyle(
+  //                           fontFamily: "Nunito-Bold",
+  //                           fontSize: 30.ssp,
+  //                           color: Colors.red[600],
+  //                         ),
+  //                       ),
+  //                       _valueDropDown == 1
+  //                           ? Text(
+  //                               "Loss This Week",
+  //                               style: textStyle,
+  //                             )
+  //                           : Text(
+  //                               "Loss This Month",
+  //                               style: textStyle,
+  //                             ),
+  //                     ],
+  //                   ),
+  //                 ],
+  //               )
+  //             ],
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   AppBar buildAppBar(BuildContext context) {
     return AppBar(
@@ -253,8 +501,6 @@ class SignalPageState extends State<SignalPage>
             color: kTextColor,
           ),
           onPressed: () {
-            //Navigator.of(context).pop();
-
             Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) => BottomNavPage()));
           }),
@@ -290,10 +536,24 @@ class SignalPageState extends State<SignalPage>
         ),
         Tab(
           child: Container(
+            child: Center(
+              child: Text(
+                "History",
+                style: TextStyle(
+                  fontFamily: "Nunito-ExtraBold",
+                  fontSize: 25.ssp,
+                  color: kTextColor,
+                ),
+              ),
+            ),
+          ),
+        ),
+        Tab(
+          child: Container(
             margin: EdgeInsets.only(left: 6.w, right: 6.w),
             child: Center(
               child: Text(
-                "Profit",
+                "Summary",
                 style: TextStyle(
                   fontFamily: "Nunito-ExtraBold",
                   fontSize: 25.ssp,
@@ -557,7 +817,7 @@ class SignalPageState extends State<SignalPage>
                                 Row(
                                   children: <Widget>[
                                     Text(
-                                      dataSignal.sigTp3,
+                                      dataSignal.sigSl,
                                       style: TextStyle(
                                         fontFamily: "Nunito-ExtraBold",
                                         fontSize: 25.ssp,

@@ -28,31 +28,27 @@ class MarketHours {
 
 class DataMarketHours {
   DataMarketHours({
-    this.marketId,
-    this.marketCenter,
-    this.marketOpen,
-    this.marketClose,
+    this.center,
+    this.open,
+    this.close,
   });
 
-  String marketId;
-  String marketCenter;
-  DateTime marketOpen;
-  DateTime marketClose;
+  String center;
+  DateTime open;
+  DateTime close;
 
   factory DataMarketHours.fromJson(String str) =>
       DataMarketHours.fromMap(json.decode(str));
 
   factory DataMarketHours.fromMap(Map<String, dynamic> json) => DataMarketHours(
-        marketId: json["MarketID"] == null ? null : json["MarketID"],
-        marketCenter:
-            json["MarketCenter"] == null ? null : json["MarketCenter"],
-        marketOpen: json["MarketOpen"] == null
+        center: json["center"] == null ? null : json["center"],
+        open: json["open"] == null
             ? null
-            : DateTime.parse(json["MarketOpen"]).add(
+            : DateTime.parse(json["open"]).add(
                 Duration(seconds: (FunctionGlobal().getGMTbySystem()) * 3600)),
-        marketClose: json["MarketClose"] == null
+        close: json["close"] == null
             ? null
-            : DateTime.parse(json["MarketClose"]).add(
+            : DateTime.parse(json["close"]).add(
                 Duration(seconds: (FunctionGlobal().getGMTbySystem()) * 3600)),
       );
 }

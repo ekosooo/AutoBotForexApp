@@ -25,24 +25,18 @@ class Banners {
 
 class DataBanner {
   DataBanner({
-    this.bnrId,
-    this.bnrLink,
-    this.bnrImg,
-    this.bnrStatus,
+    this.link,
+    this.img,
   });
 
-  String bnrId;
-  String bnrLink;
-  String bnrImg;
-  int bnrStatus;
+  String link;
+  String img;
 
   factory DataBanner.fromJson(String str) =>
       DataBanner.fromMap(json.decode(str));
 
   factory DataBanner.fromMap(Map<String, dynamic> json) => DataBanner(
-        bnrId: json["BnrID"] == null ? null : json["BnrID"],
-        bnrLink: json["BnrLink"] == null ? null : json["BnrLink"],
-        bnrImg: json["BnrImg"] == null ? null : json["BnrImg"],
-        bnrStatus: json["BnrStatus"] == null ? null : json["BnrStatus"],
+        link: json["link"] == null ? null : json["link"],
+        img: json["img"] == null ? null : json["img"],
       );
 }

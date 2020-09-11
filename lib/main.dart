@@ -55,6 +55,8 @@ class SplashScreenPageState extends State<SplashScreenPage> {
     fm.getToken().then((token) => setState(() {
           this.token = token;
         }));
+
+    fm.subscribeToTopic('signal');
     super.initState();
     this.startSplashScreen();
   }
@@ -63,11 +65,13 @@ class SplashScreenPageState extends State<SplashScreenPage> {
     switch (screenPage) {
       case "SIGNAL_PAGE":
         Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => SignalPage(
-                      selectedPage: 1,
-                    )));
+          context,
+          MaterialPageRoute(
+            builder: (context) => SignalPage(
+              selectedPage: 0,
+            ),
+          ),
+        );
         break;
       default:
         break;

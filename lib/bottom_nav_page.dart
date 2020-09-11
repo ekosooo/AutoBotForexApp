@@ -3,7 +3,7 @@ import 'package:signalforex/constants.dart';
 import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:signalforex/screen/home_screen.dart';
 import 'package:signalforex/screen/analysis_screen.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+//import 'package:firebase_messaging/firebase_messaging.dart';
 
 class BottomNavPage extends StatefulWidget {
   @override
@@ -11,15 +11,15 @@ class BottomNavPage extends StatefulWidget {
 }
 
 class BottomNavPageState extends State<BottomNavPage> {
-  //----- fcm ---
-  FirebaseMessaging fm = FirebaseMessaging();
-  String token = '';
+  // //----- fcm ---
+  // FirebaseMessaging fm = FirebaseMessaging();
+  // String token = '';
 
-  @override
-  void initState() {
-    super.initState();
-  }
-  //----- end fcm ---
+  // @override
+  // void initState() {
+  //   super.initState();
+  // }
+  // //----- end fcm ---
 
   int _selectedTabIndex = 0;
 
@@ -34,14 +34,23 @@ class BottomNavPageState extends State<BottomNavPage> {
     final _listPage = <Widget>[
       HomePage(),
       Center(
-        child: Text("News"),
+        child: Text(
+          "Coming Soon",
+          style: TextStyle(fontFamily: 'Nunito-Bold', fontSize: 30.0),
+        ),
       ),
       AnalysisPage(),
       Center(
-        child: Text("Services"),
+        child: Text(
+          "Coming Soon",
+          style: TextStyle(fontFamily: 'Nunito-Bold', fontSize: 30.0),
+        ),
       ),
       Center(
-        child: Text("Profile"),
+        child: Text(
+          "Coming Soon",
+          style: TextStyle(fontFamily: 'Nunito-Bold', fontSize: 30.0),
+        ),
       ),
     ];
 

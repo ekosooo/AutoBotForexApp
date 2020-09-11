@@ -35,7 +35,7 @@ class HomePageState extends State<HomePage> {
   // }
 
   Future getBanner() async {
-    final String baseUrl = "http://192.168.100.5:8000/api/banner";
+    final String baseUrl = kBaseUrlApi + "banner";
     final response = await http.get("$baseUrl");
     if (response.statusCode == 200) {
       return Banners.fromJson(response.body);
@@ -45,7 +45,7 @@ class HomePageState extends State<HomePage> {
   }
 
   Future getMarketHours() async {
-    final String baseUrl = kMasterUrlLocal + "api/markethours";
+    final String baseUrl = kBaseUrlApi + "markethours";
     final response = await http.get("$baseUrl");
     if (response.statusCode == 200) {
       return MarketHours.fromJson(response.body);
@@ -75,6 +75,11 @@ class HomePageState extends State<HomePage> {
     }
   }
 
+  Future refreshData() async {
+    await Future.delayed(Duration(seconds: 2));
+    setState(() {});
+  }
+
   valTimeMarket(int open, int close) {
     var time = DateTime.now();
     String strTime = time.toString().substring(11, 13);
@@ -90,7 +95,7 @@ class HomePageState extends State<HomePage> {
   void buildSnackBar() {
     scaffoldState.currentState.showSnackBar(
       SnackBar(
-        content: Text("Comming Soon !"),
+        content: Text("Coming Soon !"),
         action: SnackBarAction(
             label: 'Close',
             textColor: kPrimaryColor,
@@ -108,19 +113,23 @@ class HomePageState extends State<HomePage> {
       key: scaffoldState,
       backgroundColor: kBackgroundColor,
       appBar: buildAppBar(),
-      body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            buildCarouselSliderFuture(),
-            SizedBox(height: 60.w),
-            buildFrameMenu(),
-            SizedBox(height: 60.w),
-            //buildMarketHours(),
-            buildMarketHoursFuture(),
-            SizedBox(height: 25.w),
-          ],
+      body: RefreshIndicator(
+        onRefresh: refreshData,
+        color: kPrimaryColor,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              buildCarouselSliderFuture(),
+              SizedBox(height: 60.w),
+              buildFrameMenu(),
+              SizedBox(height: 60.w),
+              //buildMarketHours(),
+              buildMarketHoursFuture(),
+              SizedBox(height: 25.w),
+            ],
+          ),
         ),
       ),
     );
@@ -170,26 +179,23 @@ class HomePageState extends State<HomePage> {
             children: <Widget>[
               for (var i = 0; i < marketHoursList.length; i++)
                 MarketHoursCard(
-                  location: marketHoursList[i].marketCenter,
-                  open: marketHoursList[i]
-                          .marketOpen
-                          .toString()
-                          .substring(11, 16) + // substr ambil jam dan menit
+                  location: marketHoursList[i].center,
+                  open: marketHoursList[i].open.toString().substring(11, 16) +
                       " UTC" +
                       timeZone(),
                   close: marketHoursList[i]
-                          .marketClose
+                          .close
                           .toString()
                           .substring(11, 16) + // substr ambil jam dan menit
                       " UTC" +
                       timeZone(),
                   statusMarket: valTimeMarket(
                     int.parse(marketHoursList[i]
-                        .marketOpen
+                        .open
                         .toString()
                         .substring(11, 13)), // substr hanya ambil jam
                     int.parse(marketHoursList[i]
-                        .marketClose
+                        .close
                         .toString()
                         .substring(11, 13)), // substr hanya ambil jam
                   ),
@@ -267,7 +273,7 @@ class HomePageState extends State<HomePage> {
         for (var i = 0; i < dataBannerList.length; i++)
           GestureDetector(
             onTap: () {
-              launchURL(dataBannerList[i].bnrLink);
+              launchURL(dataBannerList[i].link);
             },
             child: Container(
               //height: 450.w,
@@ -275,7 +281,7 @@ class HomePageState extends State<HomePage> {
               child: ClipRRect(
                 borderRadius: BorderRadius.all(Radius.circular(10.w)),
                 child: Image.network(
-                  kMasterUrlLocal + "images/banner/" + dataBannerList[i].bnrImg,
+                  kMasterUrlLocal + "images/banner/" + dataBannerList[i].img,
                   width: 650.w,
                   fit: BoxFit.fill,
                 ),
@@ -365,8 +371,8 @@ class HomePageState extends State<HomePage> {
             borderRadius: BorderRadius.circular(10.w),
           ),
         ),
-        baseColor: Colors.grey[300],
-        highlightColor: Colors.grey[400],
+        baseColor: Colors.grey[200],
+        highlightColor: Colors.grey[300],
       ),
     );
   }
@@ -376,16 +382,55 @@ class HomePageState extends State<HomePage> {
       width: 670.w,
       height: 400.w,
       child: Shimmer.fromColors(
-        child: Container(
-          height: 400.w,
-          width: 670.w,
-          decoration: BoxDecoration(
-            color: Colors.grey[300],
-            borderRadius: BorderRadius.circular(10.w),
-          ),
+        child: Column(
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Container(
+                  height: 140.w,
+                  width: 320.w,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(10.w),
+                  ),
+                ),
+                Container(
+                  height: 140.w,
+                  width: 320.w,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(10.w),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 30.w),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Container(
+                  height: 140.w,
+                  width: 320.w,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(10.w),
+                  ),
+                ),
+                Container(
+                  height: 140.w,
+                  width: 320.w,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(10.w),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
-        baseColor: Colors.grey[300],
-        highlightColor: Colors.grey[400],
+        baseColor: Colors.grey[200],
+        highlightColor: Colors.grey[300],
       ),
     );
   }

@@ -80,11 +80,10 @@ class MarketHoursCard extends StatelessWidget {
                               height: 3.w,
                             ),
                             Text(
-                              open,
+                              "Close",
                               style: TextStyle(
-                                fontFamily: "Nunito-Bold",
-                                fontSize: 19.ssp,
-                                color: kTextColor,
+                                fontFamily: "Nunito",
+                                fontSize: 20.ssp,
                               ),
                             ),
                           ],
@@ -102,10 +101,11 @@ class MarketHoursCard extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Text(
-                              "Close",
+                              open,
                               style: TextStyle(
-                                fontFamily: "Nunito",
+                                fontFamily: "Nunito-Bold",
                                 fontSize: 20.ssp,
+                                color: kTextColor,
                               ),
                             ),
                             SizedBox(
