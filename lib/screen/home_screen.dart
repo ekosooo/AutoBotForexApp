@@ -84,7 +84,12 @@ class HomePageState extends State<HomePage> {
     var time = DateTime.now();
     String strTime = time.toString().substring(11, 13);
     String statusMarket = "";
-    if (int.parse(strTime) >= open && int.parse(strTime) < close) {
+    if (open < close &&
+        open <= int.parse(strTime) &&
+        int.parse(strTime) <= close) {
+      statusMarket = "Open";
+    } else if (open > close &&
+        (open <= int.parse(strTime) || int.parse(strTime) < close)) {
       statusMarket = "Open";
     } else {
       statusMarket = "Close";
@@ -281,7 +286,7 @@ class HomePageState extends State<HomePage> {
               child: ClipRRect(
                 borderRadius: BorderRadius.all(Radius.circular(10.w)),
                 child: Image.network(
-                  kMasterUrlLocal + "images/banner/" + dataBannerList[i].img,
+                  kMasterUrl + "img/banner/" + dataBannerList[i].img,
                   width: 650.w,
                   fit: BoxFit.fill,
                 ),

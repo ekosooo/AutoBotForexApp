@@ -25,85 +25,64 @@ class Signal {
 
 class DataSignal {
   DataSignal({
-    this.sigId,
-    this.sigProvId,
-    this.sigOrderType,
-    this.sigPrice,
-    this.sigTp1,
-    this.sigTp2,
-    this.sigTp3,
-    this.sigSl,
-    this.sigStatusFloating,
-    this.sigClose,
-    this.sigResult,
-    this.sigStatus,
-    this.sigCreatedAt,
-    this.sigUpdatedAt,
-    this.provsigId,
-    this.provsigTech,
-    this.provsigName,
-    this.pairName,
-    this.pairDesc,
-    this.pairImg,
-    this.oTypeId,
-    this.oTypeName,
+    this.pairname,
+    this.pairimg,
+    this.ordertype,
+    this.provider,
+    this.timeopen,
+    this.timeclose,
+    this.price,
+    this.tp1,
+    this.tp2,
+    this.tp3,
+    this.sl,
+    this.close,
+    this.result,
+    this.statusfloating,
+    this.provId,
+    this.status,
   });
 
-  int sigId;
-  String sigProvId;
-  String sigOrderType;
-  String sigPrice;
-  String sigTp1;
-  String sigTp2;
-  String sigTp3;
-  String sigSl;
-  int sigStatusFloating;
-  String sigClose;
-  String sigResult;
-  int sigStatus;
-  DateTime sigCreatedAt;
-  DateTime sigUpdatedAt;
-  String provsigId;
-  String provsigTech;
-  String provsigName;
-  String pairName;
-  String pairDesc;
-  String pairImg;
-  int oTypeId;
-  String oTypeName;
+  String pairname;
+  String pairimg;
+  String ordertype;
+  String provider;
+  DateTime timeopen;
+  DateTime timeclose;
+  String price;
+  String tp1;
+  String tp2;
+  String tp3;
+  String sl;
+  String close;
+  String result;
+  int status;
+  int statusfloating;
+  String provId;
 
   factory DataSignal.fromJson(String str) =>
       DataSignal.fromMap(json.decode(str));
 
   factory DataSignal.fromMap(Map<String, dynamic> json) => DataSignal(
-        sigId: json["sigID"] == null ? null : json["sigID"],
-        sigProvId: json["sigProvID"] == null ? null : json["sigProvID"],
-        sigOrderType:
-            json["sigOrderType"] == null ? null : json["sigOrderType"],
-        sigPrice: json["sigPrice"] == null ? null : json["sigPrice"],
-        sigTp1: json["sigTP1"] == null ? null : json["sigTP1"],
-        sigTp2: json["sigTP2"] == null ? null : json["sigTP2"],
-        sigTp3: json["sigTP3"] == null ? null : json["sigTP3"],
-        sigSl: json["sigSL"] == null ? null : json["sigSL"],
-        sigStatusFloating: json["sigStatusFloating"] == null
+        pairname: json["pairname"] == null ? null : json["pairname"],
+        pairimg: json["pairimg"] == null ? null : json["pairimg"],
+        ordertype: json["ordertype"] == null ? null : json["ordertype"],
+        provider: json["provider"] == null ? null : json["provider"],
+        timeopen:
+            json["timeopen"] == null ? null : DateTime.parse(json["timeopen"]),
+        timeclose: json["timeclose"] == null
             ? null
-            : json["sigStatusFloating"],
-        sigClose: json["sigClose"] == null ? null : json["sigClose"],
-        sigResult: json["sigResult"] == null ? null : json["sigResult"],
-        sigStatus: json["sigStatus"] == null ? null : json["sigStatus"],
-        sigCreatedAt: json["sigCreatedAt"] == null
-            ? null
-            : DateTime.parse(json["sigCreatedAt"]),
-        sigUpdatedAt: json["sigUpdatedAt"] == null
-            ? null
-            : DateTime.parse(json["sigUpdatedAt"]),
-        provsigId: json["provsigID"] == null ? null : json["provsigID"],
-        provsigTech: json["provsigTech"] == null ? null : json["provsigTech"],
-        provsigName: json["provsigName"] == null ? null : json["provsigName"],
-        pairName: json["PairName"] == null ? null : json["PairName"],
-        pairDesc: json["PairDesc"] == null ? null : json["PairDesc"],
-        pairImg: json["PairImg"] == null ? null : json["PairImg"],
-        oTypeId: json["OTypeID"] == null ? null : json["OTypeID"],
-        oTypeName: json["OTypeName"] == null ? null : json["OTypeName"],
+            : DateTime.parse(json["timeclose"]),
+        price: json["price"] == null ? null : json["price"],
+        tp1: json["tp1"] == null ? null : json["tp1"],
+        tp2: json["tp2"] == null ? null : json["tp2"],
+        tp3: json["tp3"] == null ? null : json["tp3"],
+        sl: json["sl"] == null ? null : json["sl"],
+        close: json["close"] == null ? null : json["close"],
+        result: json["result"] == null ? null : json["result"],
+        statusfloating:
+            json["statusfloating"] == null ? null : json["statusfloating"],
+        provId: json["provID"] == null ? null : json["provID"],
+        status: json["status"] == null ? null : json["status"],
       );
 }

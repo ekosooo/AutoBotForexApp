@@ -43,7 +43,8 @@ class SplashScreenPageState extends State<SplashScreenPage> {
   @override
   void initState() {
     fm.configure(onMessage: (Map<String, dynamic> message) async {
-      debugPrint('onMessage : $message');
+      //debugPrint('onMessage : $message');
+      this.directPageNotif(message['data']['screen']);
     }, onResume: (Map<String, dynamic> message) async {
       //debugPrint('onResume : $message');
       this.directPageNotif(message['data']['screen']);
