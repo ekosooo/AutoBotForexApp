@@ -37,47 +37,47 @@ class SplashScreenPage extends StatefulWidget {
 
 class SplashScreenPageState extends State<SplashScreenPage> {
   //----- fcm ---
-  FirebaseMessaging fm = FirebaseMessaging();
-  String token = '';
+  // FirebaseMessaging fm = FirebaseMessaging();
+  // String token = '';
 
   @override
   void initState() {
-    fm.configure(onMessage: (Map<String, dynamic> message) async {
-      //debugPrint('onMessage : $message');
-      this.directPageNotif(message['data']['screen']);
-    }, onResume: (Map<String, dynamic> message) async {
-      //debugPrint('onResume : $message');
-      this.directPageNotif(message['data']['screen']);
-    }, onLaunch: (Map<String, dynamic> message) async {
-      this.directPageNotif(message['data']['screen']);
-      //debugPrint('onLunch : $message');
-    });
+    // fm.configure(onMessage: (Map<String, dynamic> message) async {
+    //   //debugPrint('onMessage : $message');
+    //   this.directPageNotif(message['data']['screen']);
+    // }, onResume: (Map<String, dynamic> message) async {
+    //   //debugPrint('onResume : $message');
+    //   this.directPageNotif(message['data']['screen']);
+    // }, onLaunch: (Map<String, dynamic> message) async {
+    //   this.directPageNotif(message['data']['screen']);
+    //   //debugPrint('onLunch : $message');
+    // });
 
-    fm.getToken().then((token) => setState(() {
-          this.token = token;
-        }));
+    // fm.getToken().then((token) => setState(() {
+    //       this.token = token;
+    //     }));
 
-    fm.subscribeToTopic('signal');
+    // fm.subscribeToTopic('signal');
     super.initState();
     this.startSplashScreen();
   }
 
-  directPageNotif(String screenPage) async {
-    switch (screenPage) {
-      case "SIGNAL_PAGE":
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => SignalPage(
-              selectedPage: 0,
-            ),
-          ),
-        );
-        break;
-      default:
-        break;
-    }
-  }
+  // directPageNotif(String screenPage) async {
+  //   switch (screenPage) {
+  //     case "SIGNAL_PAGE":
+  //       Navigator.pushReplacement(
+  //         context,
+  //         MaterialPageRoute(
+  //           builder: (context) => SignalPage(
+  //             selectedPage: 0,
+  //           ),
+  //         ),
+  //       );
+  //       break;
+  //     default:
+  //       break;
+  //   }
+  // }
 
   startSplashScreen() async {
     var duration = const Duration(seconds: 3);
@@ -90,7 +90,7 @@ class SplashScreenPageState extends State<SplashScreenPage> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('token : $token');
+    //debugPrint('token : $token');
     ScreenUtil.init(context, width: 750, height: 1334);
     return Scaffold(
       backgroundColor: kBackgroundColor,

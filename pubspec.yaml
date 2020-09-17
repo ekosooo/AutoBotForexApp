@@ -58,6 +58,8 @@ dependencies:
   shimmer: ^1.1.1
   #photoview zoom
   photo_view: ^0.10.2
+  #youtube player
+  youtube_player_flutter: ^7.0.0+7
  
 
 dev_dependencies:

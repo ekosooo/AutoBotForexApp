@@ -3,59 +3,48 @@ import '../func_global.dart';
 import 'package:http/http.dart' as http;
 
 class CalendarNews {
-  String ffTitle;
-  String ffCountry;
-  DateTime ffDate;
-  String ffTime;
-  String ffImpact;
-  String ffForecast;
-  String ffPrevious;
-  dynamic ffActual;
-  DateTime ffCreatedAt;
-  DateTime ffUpdatedAt;
+  String title;
+  String country;
+  DateTime date;
+  String time;
+  String impact;
+  String forecast;
+  String previous;
+  String actual;
+  DateTime createdat;
+  DateTime updatedat;
 
   CalendarNews({
-    this.ffTitle,
-    this.ffCountry,
-    this.ffDate,
-    this.ffTime,
-    this.ffImpact,
-    this.ffForecast,
-    this.ffPrevious,
-    this.ffActual,
-    this.ffCreatedAt,
-    this.ffUpdatedAt,
+    this.title,
+    this.country,
+    this.date,
+    this.time,
+    this.impact,
+    this.forecast,
+    this.previous,
+    this.actual,
+    this.createdat,
+    this.updatedat,
   });
 
   factory CalendarNews.fromJson(Map<String, dynamic> json) => CalendarNews(
-        // ffTitle: json["FFTitle"],
-        // ffCountry: json["FFCountry"],
-        // ffDate: DateTime.parse(json["FFDate"] + " " + json["FFTime"])
-        //     .add(Duration(seconds: (FunctionGlobal().getGMTbySystem()) * 3600)),
-        // //ffTime: json["FFTime"],
-        // ffImpact: json["FFImpact"],
-        // ffForecast: json["FFForecast"],
-        // ffPrevious: json["FFPrevious"],
-        // ffActual: json["FFActual"],
-        // ffCreatedAt: DateTime.parse(json["FFCreatedAt"]),
-        // ffUpdatedAt: DateTime.parse(json["FFUpdatedAt"]),
-        ffTitle: json["FFTitle"] == null ? null : json["FFTitle"],
-        ffCountry: json["FFCountry"] == null ? null : json["FFCountry"],
-        ffDate: json["FFDate"] == null
+        title: json["title"] == null ? null : json["title"],
+        country: json["country"] == null ? null : json["country"],
+        date: json["date"] == null
             ? null
-            : DateTime.parse(json["FFDate"] + " " + json["FFTime"]).add(
+            : DateTime.parse(json["date"] + " " + json["time"]).add(
                 Duration(seconds: (FunctionGlobal().getGMTbySystem()) * 3600)),
         //ffTime: json["FFTime"] == null ? null : json["FFTime"],
-        ffImpact: json["FFImpact"] == null ? null : json["FFImpact"],
-        ffForecast: json["FFForecast"] == null ? null : json["FFForecast"],
-        ffPrevious: json["FFPrevious"] == null ? null : json["FFPrevious"],
-        ffActual: json["FFActual"],
-        ffCreatedAt: json["FFCreatedAt"] == null
+        impact: json["impact"] == null ? null : json["impact"],
+        forecast: json["forecast"] == null ? null : json["forecast"],
+        previous: json["previous"] == null ? null : json["previous"],
+        actual: json["actual"],
+        createdat: json["createdat"] == null
             ? null
-            : DateTime.parse(json["FFCreatedAt"]),
-        ffUpdatedAt: json["FFUpdatedAt"] == null
+            : DateTime.parse(json["createdat"]),
+        updatedat: json["updatedat"] == null
             ? null
-            : DateTime.parse(json["FFUpdatedAt"]),
+            : DateTime.parse(json["updatedat"]),
       );
 
   List<CalendarNews> calendarFromJson(String jsonData) {

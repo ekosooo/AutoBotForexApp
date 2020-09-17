@@ -10,6 +10,7 @@
         android:label="Signal Forex"
         android:icon="@mipmap/launcher_icon_dark">
         <activity
+             android:screenOrientation="portrait"
             android:name=".MainActivity"
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"

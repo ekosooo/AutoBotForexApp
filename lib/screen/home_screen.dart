@@ -5,6 +5,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:signalforex/model/markethours_model.dart';
 import 'package:signalforex/screen/ea_forex_screen.dart';
+import 'package:signalforex/screen/indicator_screen.dart';
 import 'package:signalforex/screen/signal_screen.dart';
 import 'package:signalforex/widget/market_card.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,7 +15,7 @@ import 'education_screen.dart';
 import 'top_broker_screen.dart';
 import 'package:http/http.dart' as http;
 import 'package:signalforex/model/banner_model.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:signalforex/func_global.dart';
 
@@ -27,12 +28,59 @@ class HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> scaffoldState = new GlobalKey<ScaffoldState>();
   static final List<String> imgSlider = ['promo.jpg', 'promo.jpg', 'promo.jpg'];
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   this.getBanner();
-  //   this.getMarketHours();
-  // }
+  //----- fcm ---
+  FirebaseMessaging fm = FirebaseMessaging();
+  String token = '';
+
+  @override
+  void initState() {
+    fm.configure(onMessage: (Map<String, dynamic> message) async {
+      //debugPrint('onMessage : $message');
+      this.directPageNotif(message['data']['screen']);
+    }, onResume: (Map<String, dynamic> message) async {
+      //debugPrint('onResume : $message');
+      this.directPageNotif(message['data']['screen']);
+    }, onLaunch: (Map<String, dynamic> message) async {
+      this.directPageNotif(message['data']['screen']);
+      //debugPrint('onLunch : $message');
+    });
+
+    fm.getToken().then((token) => setState(() {
+          this.token = token;
+        }));
+
+    fm.subscribeToTopic('signal');
+    super.initState();
+    this.getBanner();
+    this.getMarketHours();
+  }
+
+  directPageNotif(String screenPage) async {
+    switch (screenPage) {
+      case "SIGNAL_SCREEN":
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SignalPage(
+              selectedPage: 0,
+            ),
+          ),
+        );
+        break;
+      case "HISSIGNAL_SCREEN":
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SignalPage(
+              selectedPage: 1,
+            ),
+          ),
+        );
+        break;
+      default:
+        break;
+    }
+  }
 
   Future getBanner() async {
     final String baseUrl = kBaseUrlApi + "banner";
@@ -66,15 +114,6 @@ class HomePageState extends State<HomePage> {
     return timeZone;
   }
 
-  launchURL(String url) async {
-    //const url = 'https://flutter.io';
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
-
   Future refreshData() async {
     await Future.delayed(Duration(seconds: 2));
     setState(() {});
@@ -86,7 +125,7 @@ class HomePageState extends State<HomePage> {
     String statusMarket = "";
     if (open < close &&
         open <= int.parse(strTime) &&
-        int.parse(strTime) <= close) {
+        int.parse(strTime) < close) {
       statusMarket = "Open";
     } else if (open > close &&
         (open <= int.parse(strTime) || int.parse(strTime) < close)) {
@@ -278,7 +317,7 @@ class HomePageState extends State<HomePage> {
         for (var i = 0; i < dataBannerList.length; i++)
           GestureDetector(
             onTap: () {
-              launchURL(dataBannerList[i].link);
+              FunctionGlobal().launchURL(dataBannerList[i].link);
             },
             child: Container(
               //height: 450.w,
@@ -328,7 +367,8 @@ class HomePageState extends State<HomePage> {
               } else if (_titleMenu == "Tools") {
                 buildSnackBar();
               } else if (_titleMenu == "Indicator") {
-                buildSnackBar();
+                Navigator.push(context,
+                    CupertinoPageRoute(builder: (context) => IndicatorPage()));
               } else if (_titleMenu == "Top Broker") {
                 Navigator.push(context,
                     CupertinoPageRoute(builder: (context) => TopBrokerPage()));

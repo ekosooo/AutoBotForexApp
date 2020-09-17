@@ -56,8 +56,8 @@ class DataSignal {
   String sl;
   String close;
   String result;
-  int status;
-  int statusfloating;
+  String status;
+  String statusfloating;
   String provId;
 
   factory DataSignal.fromJson(String str) =>

@@ -14,8 +14,6 @@ class ListAnalysisSignal {
   factory ListAnalysisSignal.fromJson(String str) =>
       ListAnalysisSignal.fromMap(json.decode(str));
 
-  String toJson() => json.encode(toMap());
-
   factory ListAnalysisSignal.fromMap(Map<String, dynamic> json) =>
       ListAnalysisSignal(
         status: json["status"] == null ? null : json["status"],
@@ -24,14 +22,6 @@ class ListAnalysisSignal {
             ? null
             : List<DataPair>.from(json["data"].map((x) => DataPair.fromMap(x))),
       );
-
-  Map<String, dynamic> toMap() => {
-        "status": status == null ? null : status,
-        "message": message == null ? null : message,
-        "data": data == null
-            ? null
-            : List<dynamic>.from(data.map((x) => x.toMap())),
-      };
 }
 
 class DataPair {
@@ -57,36 +47,20 @@ class DataPair {
   String iPriceLow;
   String iPriceHigh;
   String iAdrPersen;
-  int iAdrDirection;
+  String iAdrDirection;
 
   factory DataPair.fromJson(String str) => DataPair.fromMap(json.decode(str));
 
-  String toJson() => json.encode(toMap());
-
   factory DataPair.fromMap(Map<String, dynamic> json) => DataPair(
-        pairName: json["PairName"] == null ? null : json["PairName"],
-        pairDesc: json["PairDesc"] == null ? null : json["PairDesc"],
-        pairId: json["PairID"] == null ? null : json["PairID"],
-        pairImg: json["PairImg"] == null ? null : json["PairImg"],
-        iPriceClose: json["iPriceClose"] == null ? null : json["iPriceClose"],
-        iPriceOpen: json["iPriceOpen"] == null ? null : json["iPriceOpen"],
-        iPriceLow: json["iPriceLow"] == null ? null : json["iPriceLow"],
-        iPriceHigh: json["iPriceHigh"] == null ? null : json["iPriceHigh"],
-        iAdrPersen: json["iADRPersen"] == null ? null : json["iADRPersen"],
-        iAdrDirection:
-            json["iADRDirection"] == null ? null : json["iADRDirection"],
+        pairName: json["pair"] == null ? null : json["pair"],
+        pairDesc: json["desc"] == null ? null : json["desc"],
+        pairId: json["id"] == null ? null : json["id"],
+        pairImg: json["img"] == null ? null : json["img"],
+        iPriceClose: json["close"] == null ? null : json["close"],
+        iPriceOpen: json["open"] == null ? null : json["open"],
+        iPriceLow: json["low"] == null ? null : json["low"],
+        iPriceHigh: json["high"] == null ? null : json["high"],
+        iAdrPersen: json["persen"] == null ? null : json["persen"],
+        iAdrDirection: json["0"] == null ? null : json["0"],
       );
-
-  Map<String, dynamic> toMap() => {
-        "PairName": pairName == null ? null : pairName,
-        "PairDesc": pairDesc == null ? null : pairDesc,
-        "PairID": pairId == null ? null : pairId,
-        "PairImg": pairImg == null ? null : pairImg,
-        "iPriceClose": iPriceClose == null ? null : iPriceClose,
-        "iPriceOpen": iPriceOpen == null ? null : iPriceOpen,
-        "iPriceLow": iPriceLow == null ? null : iPriceLow,
-        "iPriceHigh": iPriceHigh == null ? null : iPriceHigh,
-        "iADRPersen": iAdrPersen == null ? null : iAdrPersen,
-        "iADRDirection": iAdrDirection == null ? null : iAdrDirection,
-      };
 }

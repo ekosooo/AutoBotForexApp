@@ -238,20 +238,20 @@ class CalendarPageState extends State<CalendarPage> {
 
     if (_isALL) {
       filterNewsList = calendarNewsData
-          .where((data) => data.ffDate.toString().contains(dateSelectedStr))
+          .where((data) => data.date.toString().contains(dateSelectedStr))
           .toList();
     } else {
       filterNewsList = calendarNewsData
           .where((data) =>
-              data.ffDate.toString().contains(dateSelectedStr) &&
-              ((data.ffImpact.contains("High") && _isHigh == true) ||
-                  (data.ffImpact.contains("Medium") && _isMedium == true) ||
-                  (data.ffImpact.contains("Low") && _isLow == true)))
+              data.date.toString().contains(dateSelectedStr) &&
+              ((data.impact.contains("High") && _isHigh == true) ||
+                  (data.impact.contains("Medium") && _isMedium == true) ||
+                  (data.impact.contains("Low") && _isLow == true)))
           .toList();
     }
 
     // sorting data berdsarkan tanggal
-    filterNewsList.sort((a, b) => a.ffDate.compareTo(b.ffDate));
+    filterNewsList.sort((a, b) => a.date.compareTo(b.date));
 
     if (filterNewsList.length == 0) {
       return buildEmptyRecords();
@@ -264,9 +264,9 @@ class CalendarPageState extends State<CalendarPage> {
           itemBuilder: (context, index) {
             CalendarNews calendarNewsBuilder = filterNewsList[index];
             String dateNews =
-                calendarNewsBuilder.ffDate.toString().substring(0, 10);
+                calendarNewsBuilder.date.toString().substring(0, 10);
             String timeNews =
-                calendarNewsBuilder.ffDate.toString().substring(11, 16);
+                calendarNewsBuilder.date.toString().substring(11, 16);
 
             return Container(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.w),
@@ -282,7 +282,7 @@ class CalendarPageState extends State<CalendarPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Text(
-                        calendarNewsBuilder.ffTitle,
+                        calendarNewsBuilder.title,
                         style: TextStyle(
                           fontFamily: "Nunito-Bold",
                           fontSize: 25.ssp,
@@ -290,7 +290,7 @@ class CalendarPageState extends State<CalendarPage> {
                         ),
                       ),
                       Text(
-                        calendarNewsBuilder.ffCountry,
+                        calendarNewsBuilder.country,
                         style: TextStyle(
                           fontFamily: "Nunito-Bold",
                           fontSize: 25.ssp,
@@ -320,7 +320,7 @@ class CalendarPageState extends State<CalendarPage> {
                             width: 93.w,
                             child: Center(
                               child: Text(
-                                calendarNewsBuilder.ffImpact,
+                                calendarNewsBuilder.impact,
                                 style: TextStyle(
                                   fontFamily: "Nunito",
                                   fontSize: 20.ssp,
@@ -330,8 +330,7 @@ class CalendarPageState extends State<CalendarPage> {
                             ),
                             decoration:
                                 //boxDecorationImpact(calendarNewsBuilder.impact),
-                                boxDecorationImpact(
-                                    calendarNewsBuilder.ffImpact),
+                                boxDecorationImpact(calendarNewsBuilder.impact),
                           ),
                         ],
                       ),
@@ -339,9 +338,9 @@ class CalendarPageState extends State<CalendarPage> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            calendarNewsBuilder.ffActual == null
+                            calendarNewsBuilder.actual == null
                                 ? "-"
-                                : calendarNewsBuilder.ffActual,
+                                : calendarNewsBuilder.actual,
                             style: TextStyle(
                                 fontFamily: "Nunito-Light",
                                 fontSize: 22.ssp,
@@ -361,7 +360,7 @@ class CalendarPageState extends State<CalendarPage> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            calendarNewsBuilder.ffForecast,
+                            calendarNewsBuilder.actual,
                             style: TextStyle(
                                 fontFamily: "Nunito-Light",
                                 fontSize: 22.ssp,
@@ -381,7 +380,7 @@ class CalendarPageState extends State<CalendarPage> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            calendarNewsBuilder.ffPrevious,
+                            calendarNewsBuilder.previous,
                             style: TextStyle(
                                 fontFamily: "Nunito-Light",
                                 fontSize: 22.ssp,
@@ -759,9 +758,9 @@ class CalendarPageState extends State<CalendarPage> {
       month = int.parse(date.toString().substring(5, 7));
 
       for (var i = 0; i < value.length; i++) {
-        day = int.parse(value[i].ffDate.toString().substring(8, 10));
+        day = int.parse(value[i].date.toString().substring(8, 10));
         //day = int.parse(value[i].ffDate.toString());
-        impact = value[i].ffImpact;
+        impact = value[i].impact;
 
         //-------------------------------
 

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:signalforex/bottom_nav_page.dart';
 import 'package:signalforex/constants.dart';
 import 'package:expandable/expandable.dart';
 import 'package:feather_icons_flutter/feather_icons_flutter.dart';
+import 'package:signalforex/model/summary_model.dart';
 import 'package:signalforex/widget/no_data_record.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:signalforex/model/signal_model.dart';
+import 'package:signalforex/widget/something_wrong.dart';
 
 class SignalPage extends StatefulWidget {
   final selectedPage;
@@ -18,12 +19,31 @@ class SignalPage extends StatefulWidget {
 class SignalPageState extends State<SignalPage>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
+
+  int valueDropDownHistory = 1;
+  String dateStartHistory;
+  String dateEndHistory;
   int valueDropDownSummary = 1;
+  String dateStartSummary;
+  String dateEndSummary;
+  DataSumSignal dataSumSignal;
+  DateTime timeCurrent;
 
   @override
   void initState() {
     _tabController = TabController(
         length: 3, vsync: this, initialIndex: widget.selectedPage);
+
+    //---- history -------
+    timeCurrent = DateTime.now();
+    dateStartHistory =
+        timeCurrent.subtract(Duration(days: 7)).toString().substring(0, 10);
+    dateEndHistory = timeCurrent.toString().substring(0, 10);
+
+    //--- summary ---
+    dateStartSummary =
+        timeCurrent.subtract(Duration(days: 7)).toString().substring(0, 10);
+    dateEndSummary = timeCurrent.toString().substring(0, 10);
     super.initState();
   }
 
@@ -32,6 +52,32 @@ class SignalPageState extends State<SignalPage>
     final response = await http.get("$baseUrl");
     if (response.statusCode == 200) {
       return Signal.fromJson(response.body);
+    } else {
+      throw Exception('Fail load data');
+    }
+  }
+
+  Future getHistory() async {
+    final String baseUrl = kBaseUrlApi + "signal/HisSignal";
+    final response = await http.post("$baseUrl", body: {
+      'dateStart': dateStartHistory,
+      'dateEnd': dateEndHistory,
+    });
+    if (response.statusCode == 200) {
+      return Signal.fromJson(response.body);
+    } else {
+      throw Exception('Fail load data');
+    }
+  }
+
+  Future getSummary() async {
+    final String baseUrl = kBaseUrlApi + "signal/SummSignal";
+    final response = await http.post("$baseUrl", body: {
+      'dateStart': dateStartSummary,
+      'dateEnd': dateEndSummary,
+    });
+    if (response.statusCode == 200) {
+      return SummarySignals.fromJson(response.body);
     } else {
       throw Exception('Fail load data');
     }
@@ -60,11 +106,7 @@ class SignalPageState extends State<SignalPage>
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   if (snapshot.hasError) {
                     return Center(
-                      child: Text(
-                        "Something Wrong",
-                        style:
-                            TextStyle(fontFamily: "Nunito", fontSize: 27.ssp),
-                      ),
+                      child: SomethingWrong(textColor: 'black'),
                     );
                   } else if (snapshot.connectionState == ConnectionState.done) {
                     return buildSignalList(snapshot.data.data);
@@ -82,256 +124,14 @@ class SignalPageState extends State<SignalPage>
           ),
 
           //----------------------- History -----------------
-          HistorySignal(),
+          buildHistorySignal(),
           //-------------------------------------------------
 
           // ---------------------- summary ------------------
           buildSummary(),
-          //------------------------------------
+          //--------------------------------------------------
         ],
         controller: _tabController,
-      ),
-    );
-  }
-
-  Container buildSummary() {
-    return Container(
-      width: double.infinity,
-      margin: EdgeInsets.only(left: 35.w, right: 35.w, top: 15.w),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Align(
-            alignment: Alignment.centerRight,
-            child: DropdownButton(
-              underline: SizedBox(),
-              value: valueDropDownSummary,
-              items: [
-                DropdownMenuItem(
-                  value: 1,
-                  child: Text(
-                    "Weekly",
-                    style: TextStyle(
-                      fontFamily: "Nunito-Bold",
-                      fontSize: 25.ssp,
-                      color: kPrimaryColor,
-                    ),
-                  ),
-                ),
-                DropdownMenuItem(
-                  value: 2,
-                  child: Text(
-                    "Monthly",
-                    style: TextStyle(
-                      fontFamily: "Nunito-Bold",
-                      fontSize: 25.ssp,
-                      color: kPrimaryColor,
-                    ),
-                  ),
-                ),
-              ],
-              onChanged: (value) {
-                setState(() {
-                  valueDropDownSummary = value;
-                });
-                print(valueDropDownSummary);
-              },
-            ),
-          ),
-          //),
-          SizedBox(height: 60.w),
-          Align(
-            alignment: Alignment.center,
-            child: Text(
-              '4892.0 pips',
-              style: TextStyle(
-                fontFamily: 'Nunito-Bold',
-                fontSize: 60.ssp,
-                color: kPrimaryColor,
-              ),
-            ),
-          ),
-
-          //-------------- Profit lose ---------------------
-          SizedBox(height: 80.w),
-          Container(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                //---------- profit ------------
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      'Profit',
-                      style: TextStyle(
-                        fontFamily: "Nunito",
-                        fontSize: 25.ssp,
-                        color: kTextLightColor,
-                      ),
-                    ),
-                    SizedBox(height: 8.w),
-                    Row(
-                      children: <Widget>[
-                        Container(
-                          width: 60.w,
-                          height: 60.w,
-                          child: Center(
-                            child: Icon(
-                              FeatherIcons.arrowUpCircle,
-                              color: kPrimaryColor,
-                              size: 35.w,
-                            ),
-                          ),
-                          decoration: BoxDecoration(
-                            color: kPrimaryColor.withOpacity(0.06),
-                            borderRadius: BorderRadius.circular(10.w),
-                          ),
-                        ),
-                        SizedBox(width: 10.w),
-                        Text(
-                          '+5492.0 pips',
-                          style: TextStyle(
-                            fontFamily: "Nunito",
-                            fontSize: 30.ssp,
-                            color: kPrimaryColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-
-                //--------------lose --------------
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      'Lose',
-                      style: TextStyle(
-                        fontFamily: "Nunito",
-                        fontSize: 25.ssp,
-                        color: kTextLightColor,
-                      ),
-                    ),
-                    SizedBox(height: 8.w),
-                    Row(
-                      children: <Widget>[
-                        Container(
-                          width: 60.w,
-                          height: 60.w,
-                          child: Center(
-                            child: Icon(
-                              FeatherIcons.arrowDownCircle,
-                              color: Colors.red,
-                              size: 35.w,
-                            ),
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.red.withOpacity(0.06),
-                            borderRadius: BorderRadius.circular(10.w),
-                          ),
-                        ),
-                        SizedBox(width: 10.w),
-                        Text(
-                          '-600.0 pips',
-                          style: TextStyle(
-                            fontFamily: "Nunito",
-                            fontSize: 30.ssp,
-                            color: Colors.red,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-
-          //----------- Detail profit lose ----------------
-          SizedBox(height: 40.w),
-          Text(
-            "Detail",
-            style: TextStyle(
-              fontFamily: 'Nunito',
-              fontSize: 25.ssp,
-              color: kTextLightColor,
-            ),
-          ),
-          SizedBox(height: 8.w),
-          Container(
-            padding: EdgeInsets.all(15.w),
-            width: double.infinity,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    SvgPicture.asset(
-                      'assets/images/eurusd.svg',
-                      width: 75.w,
-                      height: 35.w,
-                    ),
-                    SizedBox(width: 10.w),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          'EURUSD',
-                          style: TextStyle(
-                            fontFamily: "Nunito-ExtraBold",
-                            fontSize: 25.ssp,
-                            color: kTextColor,
-                          ),
-                        ),
-                        Text(
-                          'EURO vs US Dollar',
-                          style: TextStyle(
-                            fontFamily: "Nunito",
-                            fontSize: 22.ssp,
-                            color: kTextLightColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                Column(
-                  children: <Widget>[
-                    Text(
-                      '+160.0 pips',
-                      style: TextStyle(
-                        fontFamily: "Nunito",
-                        fontSize: 22.ssp,
-                        color: kPrimaryColor,
-                      ),
-                    ),
-                    Text(
-                      '-160.0 pips',
-                      style: TextStyle(
-                        fontFamily: "Nunito",
-                        fontSize: 22.ssp,
-                        color: Colors.red,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10.w),
-              boxShadow: [
-                BoxShadow(
-                  offset: Offset(8.w, 21.w),
-                  blurRadius: 35.w,
-                  color: Colors.black.withOpacity(0.01),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -347,8 +147,7 @@ class SignalPageState extends State<SignalPage>
             color: kTextColor,
           ),
           onPressed: () {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => BottomNavPage()));
+            Navigator.of(context).pop();
           }),
       title: Text(
         "Signal",
@@ -413,53 +212,11 @@ class SignalPageState extends State<SignalPage>
       controller: _tabController,
     );
   }
-}
 
-class HistorySignal extends StatefulWidget {
-  @override
-  HistorySignalState createState() => HistorySignalState();
-}
-
-class HistorySignalState extends State<HistorySignal> {
-  int valueDropDownHistory = 1;
-  String dateStartHistory;
-  String dateEndHistory;
-  DateTime timeCurrent;
-
-  @override
-  void initState() {
-    super.initState();
-    timeCurrent = DateTime.now();
-    dateStartHistory =
-        timeCurrent.subtract(Duration(days: 7)).toString().substring(0, 10);
-    dateEndHistory = timeCurrent.toString().substring(0, 10);
-  }
-
-  Future refreshData() async {
-    await Future.delayed(Duration(seconds: 2));
-    setState(() {});
-  }
-
-  Future getHistory() async {
-    final String baseUrl = kBaseUrlApi + "signal/HisSignal";
-    final response = await http.post("$baseUrl", body: {
-      'dateStart': dateStartHistory,
-      'dateEnd': dateEndHistory,
-    });
-    if (response.statusCode == 200) {
-      return Signal.fromJson(response.body);
-    } else {
-      throw Exception('Fail load data');
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    ScreenUtil.init(context, width: 750, height: 1344);
-    return Scaffold(
-      backgroundColor: kBackgroundColor,
-      body: ListView(
-        shrinkWrap: true,
+  //--------- History Signal ----------------
+  buildHistorySignal() {
+    return SingleChildScrollView(
+      child: Column(
         children: <Widget>[
           Container(
             margin: EdgeInsets.only(left: 35.w, right: 35.w, top: 25.w),
@@ -562,15 +319,14 @@ class HistorySignalState extends State<HistorySignal> {
           //---------future
           RefreshIndicator(
             onRefresh: refreshData,
+            color: kPrimaryColor,
             child: FutureBuilder(
               future: getHistory(),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
                 if (snapshot.hasError) {
-                  return Center(
-                    child: Text(
-                      "Something Wrong",
-                      style: TextStyle(
-                          fontFamily: "Nunito-Bold", fontSize: 30.ssp),
+                  return Expanded(
+                    child: Center(
+                      child: SomethingWrong(textColor: 'black'),
                     ),
                   );
                 } else if (snapshot.connectionState == ConnectionState.done) {
@@ -589,6 +345,350 @@ class HistorySignalState extends State<HistorySignal> {
       ),
     );
   }
+
+  //----------- summary -------
+  buildSummary() {
+    return SingleChildScrollView(
+      child: Container(
+        width: double.infinity,
+        margin: EdgeInsets.only(left: 35.w, right: 35.w, top: 15.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Align(
+              alignment: Alignment.centerRight,
+              child: DropdownButton(
+                underline: SizedBox(),
+                value: valueDropDownSummary,
+                items: [
+                  DropdownMenuItem(
+                    value: 0,
+                    child: Text(
+                      "ToDay",
+                      style: TextStyle(
+                        fontFamily: "Nunito-Bold",
+                        fontSize: 25.ssp,
+                        color: kPrimaryColor,
+                      ),
+                    ),
+                  ),
+                  DropdownMenuItem(
+                    value: 1,
+                    child: Text(
+                      "Last Week",
+                      style: TextStyle(
+                        fontFamily: "Nunito-Bold",
+                        fontSize: 25.ssp,
+                        color: kPrimaryColor,
+                      ),
+                    ),
+                  ),
+                  DropdownMenuItem(
+                    value: 2,
+                    child: Text(
+                      "Last Month",
+                      style: TextStyle(
+                        fontFamily: "Nunito-Bold",
+                        fontSize: 25.ssp,
+                        color: kPrimaryColor,
+                      ),
+                    ),
+                  ),
+                  DropdownMenuItem(
+                    value: 3,
+                    child: Text(
+                      "Last 3 Month",
+                      style: TextStyle(
+                        fontFamily: "Nunito-Bold",
+                        fontSize: 25.ssp,
+                        color: kPrimaryColor,
+                      ),
+                    ),
+                  ),
+                ],
+                onChanged: (value) {
+                  setState(() {
+                    valueDropDownSummary = value;
+                  });
+                  // print(_valueDropDownHistory);
+                  if (valueDropDownSummary == 0) {
+                    //to day
+                    dateStartSummary = timeCurrent
+                        .toString()
+                        .substring(0, 10); //hanya ambil tahun bln dan tgl
+                    dateEndSummary = timeCurrent.toString().substring(0, 10);
+                  } else if (valueDropDownSummary == 1) {
+                    //last week
+                    dateStartSummary = timeCurrent
+                        .subtract(Duration(days: 7))
+                        .toString()
+                        .substring(0, 10);
+                    dateEndSummary = timeCurrent.toString().substring(0, 10);
+                  } else if (valueDropDownSummary == 2) {
+                    //last month
+                    dateStartSummary =
+                        timeCurrent.subtract(Duration(days: 30)).toString();
+                    dateEndSummary = timeCurrent.toString().substring(0, 10);
+                  } else if (valueDropDownSummary == 3) {
+                    //last 3 month
+                    dateStartSummary =
+                        timeCurrent.subtract(Duration(days: 90)).toString();
+                    dateEndSummary = timeCurrent.toString().substring(0, 10);
+                  }
+                },
+              ),
+            ),
+
+            //----------- Detail profit / lose ----------------
+            RefreshIndicator(
+              onRefresh: refreshData,
+              color: kPrimaryColor,
+              child: FutureBuilder(
+                future: getSummary(),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.hasError) {
+                    return Expanded(
+                      child: Center(
+                        child: NoDataRecord(),
+                      ),
+                    );
+                  } else if (snapshot.connectionState == ConnectionState.done) {
+                    return buildSummaryList(snapshot.data.data.dataSignal,
+                        snapshot.data.data.dataSummary);
+                  } else {
+                    return Center(
+                      child: CircularProgressIndicator(
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(kPrimaryColor),
+                      ),
+                    );
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+buildSummaryList(List<DataSumSignal> dataSumSignalList, DataSummary summary) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: <Widget>[
+      SizedBox(height: 60.w),
+      Align(
+        alignment: Alignment.center,
+        child: Text(
+          summary.sumDifference + " pips",
+          style: TextStyle(
+            fontFamily: 'Nunito-Bold',
+            fontSize: 60.ssp,
+            color: (summary.sumDifference.contains('-'))
+                ? Colors.red
+                : kPrimaryColor,
+          ),
+        ),
+      ),
+
+      //-------------- Profit lose ---------------------
+      SizedBox(height: 80.w),
+      Container(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            //---------- profit ------------
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  'Profit',
+                  style: TextStyle(
+                    fontFamily: "Nunito",
+                    fontSize: 25.ssp,
+                    color: kTextLightColor,
+                  ),
+                ),
+                SizedBox(height: 8.w),
+                Row(
+                  children: <Widget>[
+                    Container(
+                      width: 60.w,
+                      height: 60.w,
+                      child: Center(
+                        child: Icon(
+                          FeatherIcons.arrowUpCircle,
+                          color: kPrimaryColor,
+                          size: 35.w,
+                        ),
+                      ),
+                      decoration: BoxDecoration(
+                        color: kPrimaryColor.withOpacity(0.06),
+                        borderRadius: BorderRadius.circular(10.w),
+                      ),
+                    ),
+                    SizedBox(width: 10.w),
+                    Text(
+                      "+" + summary.sumProfit + " pips",
+                      style: TextStyle(
+                        fontFamily: "Nunito",
+                        fontSize: 30.ssp,
+                        color: kPrimaryColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+
+            //--------------lose --------------
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  'Lose',
+                  style: TextStyle(
+                    fontFamily: "Nunito",
+                    fontSize: 25.ssp,
+                    color: kTextLightColor,
+                  ),
+                ),
+                SizedBox(height: 8.w),
+                Row(
+                  children: <Widget>[
+                    Container(
+                      width: 60.w,
+                      height: 60.w,
+                      child: Center(
+                        child: Icon(
+                          FeatherIcons.arrowDownCircle,
+                          color: Colors.red,
+                          size: 35.w,
+                        ),
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.red.withOpacity(0.06),
+                        borderRadius: BorderRadius.circular(10.w),
+                      ),
+                    ),
+                    SizedBox(width: 10.w),
+                    Text(
+                      summary.sumLoss + " pips",
+                      style: TextStyle(
+                        fontFamily: "Nunito",
+                        fontSize: 30.ssp,
+                        color: Colors.red,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+      SizedBox(height: 40.w),
+      Text(
+        "Detail",
+        style: TextStyle(
+          fontFamily: 'Nunito',
+          fontSize: 25.ssp,
+          color: kTextLightColor,
+        ),
+      ),
+
+      //----------- list detail pair ---------
+      (dataSumSignalList.length == 0)
+          ? NoDataRecord()
+          : ListView.builder(
+              physics: ScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: dataSumSignalList.length,
+              itemBuilder: (BuildContext contex, int index) {
+                DataSumSignal dataSumSignal = dataSumSignalList[index];
+                return Column(
+                  children: <Widget>[
+                    SizedBox(height: 8.w),
+                    Container(
+                      margin: EdgeInsets.only(bottom: 10.w),
+                      padding: EdgeInsets.all(15.w),
+                      width: double.infinity,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              SvgPicture.network(
+                                kMasterUrl + "img/pairs/" + dataSumSignal.img,
+                                width: 75.w,
+                                height: 35.w,
+                              ),
+                              SizedBox(width: 10.w),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    dataSumSignal.pairname,
+                                    style: TextStyle(
+                                      fontFamily: "Nunito-ExtraBold",
+                                      fontSize: 25.ssp,
+                                      color: kTextColor,
+                                    ),
+                                  ),
+                                  Text(
+                                    dataSumSignal.desc,
+                                    style: TextStyle(
+                                      fontFamily: "Nunito",
+                                      fontSize: 22.ssp,
+                                      color: kTextLightColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: <Widget>[
+                              Text(
+                                "+" + dataSumSignal.sumProfit + " pips",
+                                style: TextStyle(
+                                  fontFamily: "Nunito",
+                                  fontSize: 22.ssp,
+                                  color: kPrimaryColor,
+                                ),
+                              ),
+                              Text(
+                                dataSumSignal.sumLoss + " pips",
+                                style: TextStyle(
+                                  fontFamily: "Nunito",
+                                  fontSize: 22.ssp,
+                                  color: Colors.red,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10.w),
+                        boxShadow: [
+                          BoxShadow(
+                            offset: Offset(8.w, 21.w),
+                            blurRadius: 35.w,
+                            color: Colors.black.withOpacity(0.01),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+    ],
+  );
 }
 
 buildSignalList(List<DataSignal> dataSignalList) {
@@ -596,7 +696,7 @@ buildSignalList(List<DataSignal> dataSignalList) {
     return NoDataRecord();
   } else {
     return ListView.builder(
-      physics: ScrollPhysics(),
+      physics: BouncingScrollPhysics(),
       shrinkWrap: true,
       itemCount: dataSignalList.length,
       itemBuilder: (context, index) {
@@ -610,8 +710,8 @@ buildSignalList(List<DataSignal> dataSignalList) {
           child: ScrollOnExpand(
             child: Card(
               //clipBehavior: Clip.antiAlias,
-              shadowColor: Colors.black.withOpacity(0.2),
-              elevation: 25.w,
+              shadowColor: Colors.black.withOpacity(0.1),
+              elevation: 35.w,
               margin: EdgeInsets.only(left: 35.w, right: 35.w, bottom: 15.w),
               child: Column(
                 children: <Widget>[
@@ -697,13 +797,13 @@ buildSignalList(List<DataSignal> dataSignalList) {
                                 ),
                               ),
                               Text(
-                                (dataSignal.status == 8) //8 = code active
+                                (dataSignal.status == "8") //8 = code active
                                     ? "Active"
                                     : "Expired",
                                 style: TextStyle(
                                   fontFamily: "Nunito-Bold",
                                   fontSize: 20.ssp,
-                                  color: (dataSignal.status == 8)
+                                  color: (dataSignal.status == "8")
                                       ? kPrimaryColor
                                       : Colors.red,
                                 ),
@@ -743,7 +843,7 @@ buildSignalList(List<DataSignal> dataSignalList) {
                                     ),
                                   ),
                                   if (dataSignal.statusfloating ==
-                                      1) // 1 = signal hit TP 1
+                                      "1") // 1 = signal hit TP 1
                                     Container(
                                       margin: EdgeInsets.only(left: 5.w),
                                       child: Icon(
@@ -777,7 +877,7 @@ buildSignalList(List<DataSignal> dataSignalList) {
                                     ),
                                   ),
                                   if (dataSignal.statusfloating ==
-                                      2) // 2 = signal hit TP 2
+                                      "2") // 2 = signal hit TP 2
                                     Container(
                                       margin: EdgeInsets.only(left: 5.w),
                                       child: Icon(
@@ -811,7 +911,7 @@ buildSignalList(List<DataSignal> dataSignalList) {
                                     ),
                                   ),
                                   if (dataSignal.statusfloating ==
-                                      3) // 3 = signal hit TP 3
+                                      "3") // 3 = signal hit TP 3
                                     Container(
                                       margin: EdgeInsets.only(left: 5.w),
                                       child: Icon(
@@ -849,7 +949,7 @@ buildSignalList(List<DataSignal> dataSignalList) {
                                     ),
                                   ),
                                   if (dataSignal.statusfloating ==
-                                      -1) // -1 = signal hit SL -1
+                                      "-1") // -1 = signal hit SL -1
                                     Container(
                                       margin: EdgeInsets.only(left: 5.w),
                                       child: Icon(

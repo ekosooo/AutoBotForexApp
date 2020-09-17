@@ -14,20 +14,12 @@ class DetailAnalysisSignal {
   factory DetailAnalysisSignal.fromJson(String str) =>
       DetailAnalysisSignal.fromMap(json.decode(str));
 
-  String toJson() => json.encode(toMap());
-
   factory DetailAnalysisSignal.fromMap(Map<String, dynamic> json) =>
       DetailAnalysisSignal(
         status: json["status"] == null ? null : json["status"],
         message: json["message"] == null ? null : json["message"],
         data: json["data"] == null ? null : Data.fromMap(json["data"]),
       );
-
-  Map<String, dynamic> toMap() => {
-        "status": status == null ? null : status,
-        "message": message == null ? null : message,
-        "data": data == null ? null : data.toMap(),
-      };
 }
 
 class Data {
@@ -43,8 +35,6 @@ class Data {
 
   factory Data.fromJson(String str) => Data.fromMap(json.decode(str));
 
-  String toJson() => json.encode(toMap());
-
   factory Data.fromMap(Map<String, dynamic> json) => Data(
         price: json["price"] == null
             ? null
@@ -56,15 +46,6 @@ class Data {
             ? null
             : Indicator.fromMap(json["indicator"]),
       );
-
-  Map<String, dynamic> toMap() => {
-        "price": price == null
-            ? null
-            : List<dynamic>.from(price.map((x) => x.toMap())),
-        "adr":
-            adr == null ? null : List<dynamic>.from(adr.map((x) => x.toMap())),
-        "indicator": indicator == null ? null : indicator.toMap(),
-      };
 }
 
 class Adr {
@@ -80,28 +61,17 @@ class Adr {
   String iAdrLower;
   String iAdrRange;
   String iAdrPersen;
-  int iAdrDirection;
+  String iAdrDirection;
 
   factory Adr.fromJson(String str) => Adr.fromMap(json.decode(str));
 
-  String toJson() => json.encode(toMap());
-
   factory Adr.fromMap(Map<String, dynamic> json) => Adr(
-        iAdrUpper: json["iADRUpper"] == null ? null : json["iADRUpper"],
-        iAdrLower: json["iADRLower"] == null ? null : json["iADRLower"],
-        iAdrRange: json["iADRRange"] == null ? null : json["iADRRange"],
-        iAdrPersen: json["iADRPersen"] == null ? null : json["iADRPersen"],
-        iAdrDirection:
-            json["iADRDirection"] == null ? null : json["iADRDirection"],
+        iAdrUpper: json["upper"] == null ? null : json["upper"],
+        iAdrLower: json["lower"] == null ? null : json["lower"],
+        iAdrRange: json["range"] == null ? null : json["range"],
+        iAdrPersen: json["persen"] == null ? null : json["persen"],
+        iAdrDirection: json["direction"] == null ? null : json["direction"],
       );
-
-  Map<String, dynamic> toMap() => {
-        "iADRUpper": iAdrUpper == null ? null : iAdrUpper,
-        "iADRLower": iAdrLower == null ? null : iAdrLower,
-        "iADRRange": iAdrRange == null ? null : iAdrRange,
-        "iADRPersen": iAdrPersen == null ? null : iAdrPersen,
-        "iADRDirection": iAdrDirection == null ? null : iAdrDirection,
-      };
 }
 
 class Indicator {
@@ -125,8 +95,6 @@ class Indicator {
   SumSignal sumSignal;
 
   factory Indicator.fromJson(String str) => Indicator.fromMap(json.decode(str));
-
-  String toJson() => json.encode(toMap());
 
   factory Indicator.fromMap(Map<String, dynamic> json) => Indicator(
         bb: json["BB"] == null
@@ -157,25 +125,6 @@ class Indicator {
             ? null
             : SumSignal.fromMap(json["SumSignal"]),
       );
-
-  Map<String, dynamic> toMap() => {
-        "BB": bb == null ? null : List<dynamic>.from(bb.map((x) => x.toMap())),
-        "Envelopes": envelopes == null
-            ? null
-            : List<dynamic>.from(envelopes.map((x) => x.toMap())),
-        "MA": ma == null ? null : List<dynamic>.from(ma.map((x) => x.toMap())),
-        "Ichimoku": ichimoku == null
-            ? null
-            : List<dynamic>.from(ichimoku.map((x) => x.toMap())),
-        "RSI":
-            rsi == null ? null : List<dynamic>.from(rsi.map((x) => x.toMap())),
-        "Stochastic": stochastic == null
-            ? null
-            : List<dynamic>.from(stochastic.map((x) => x.toMap())),
-        "WPR":
-            wpr == null ? null : List<dynamic>.from(wpr.map((x) => x.toMap())),
-        "SumSignal": sumSignal == null ? null : sumSignal.toMap(),
-      };
 }
 
 class SumSignal {
@@ -235,31 +184,21 @@ class Bb {
     this.iBbSignal,
   });
 
-  int iBbPeriod;
+  String iBbPeriod;
   String iBbTop;
   String iBbMid;
   String iBbBottom;
-  int iBbSignal;
+  String iBbSignal;
 
   factory Bb.fromJson(String str) => Bb.fromMap(json.decode(str));
 
-  String toJson() => json.encode(toMap());
-
   factory Bb.fromMap(Map<String, dynamic> json) => Bb(
-        iBbPeriod: json["iBBPeriod"] == null ? null : json["iBBPeriod"],
-        iBbTop: json["iBBTop"] == null ? null : json["iBBTop"],
-        iBbMid: json["iBBMid"] == null ? null : json["iBBMid"],
-        iBbBottom: json["iBBBottom"] == null ? null : json["iBBBottom"],
-        iBbSignal: json["iBBSignal"] == null ? null : json["iBBSignal"],
+        iBbPeriod: json["period"] == null ? null : json["period"],
+        iBbTop: json["top"] == null ? null : json["top"],
+        iBbMid: json["mid"] == null ? null : json["mid"],
+        iBbBottom: json["bottom"] == null ? null : json["bottom"],
+        iBbSignal: json["signal"] == null ? null : json["signal"],
       );
-
-  Map<String, dynamic> toMap() => {
-        "iBBPeriod": iBbPeriod == null ? null : iBbPeriod,
-        "iBBTop": iBbTop == null ? null : iBbTop,
-        "iBBMid": iBbMid == null ? null : iBbMid,
-        "iBBBottom": iBbBottom == null ? null : iBbBottom,
-        "iBBSignal": iBbSignal == null ? null : iBbSignal,
-      };
 }
 
 class Envelope {
@@ -270,28 +209,19 @@ class Envelope {
     this.iEnvSignal,
   });
 
-  int iEnvPeriod;
+  String iEnvPeriod;
   String iEnvUpper;
   String iEnvLower;
-  int iEnvSignal;
+  String iEnvSignal;
 
   factory Envelope.fromJson(String str) => Envelope.fromMap(json.decode(str));
 
-  String toJson() => json.encode(toMap());
-
   factory Envelope.fromMap(Map<String, dynamic> json) => Envelope(
-        iEnvPeriod: json["iEnvPeriod"] == null ? null : json["iEnvPeriod"],
-        iEnvUpper: json["iEnvUpper"] == null ? null : json["iEnvUpper"],
-        iEnvLower: json["iEnvLower"] == null ? null : json["iEnvLower"],
-        iEnvSignal: json["iEnvSignal"] == null ? null : json["iEnvSignal"],
+        iEnvPeriod: json["period"] == null ? null : json["period"],
+        iEnvUpper: json["upper"] == null ? null : json["upper"],
+        iEnvLower: json["lower"] == null ? null : json["lower"],
+        iEnvSignal: json["signal"] == null ? null : json["signal"],
       );
-
-  Map<String, dynamic> toMap() => {
-        "iEnvPeriod": iEnvPeriod == null ? null : iEnvPeriod,
-        "iEnvUpper": iEnvUpper == null ? null : iEnvUpper,
-        "iEnvLower": iEnvLower == null ? null : iEnvLower,
-        "iEnvSignal": iEnvSignal == null ? null : iEnvSignal,
-      };
 }
 
 class Ichimoku {
@@ -309,29 +239,18 @@ class Ichimoku {
   String iMokuSsa;
   String iMokuSsb;
   String iMokuChikou;
-  int iMokuSignal;
+  String iMokuSignal;
 
   factory Ichimoku.fromJson(String str) => Ichimoku.fromMap(json.decode(str));
 
-  String toJson() => json.encode(toMap());
-
   factory Ichimoku.fromMap(Map<String, dynamic> json) => Ichimoku(
-        iMokuTenkan: json["iMokuTenkan"] == null ? null : json["iMokuTenkan"],
-        iMokuKijun: json["iMokuKijun"] == null ? null : json["iMokuKijun"],
-        iMokuSsa: json["iMokuSSA"] == null ? null : json["iMokuSSA"],
-        iMokuSsb: json["iMokuSSB"] == null ? null : json["iMokuSSB"],
-        iMokuChikou: json["iMokuChikou"] == null ? null : json["iMokuChikou"],
-        iMokuSignal: json["iMokuSignal"] == null ? null : json["iMokuSignal"],
+        iMokuTenkan: json["tenkan"] == null ? null : json["tenkan"],
+        iMokuKijun: json["kijun"] == null ? null : json["kijun"],
+        iMokuSsa: json["ssa"] == null ? null : json["ssa"],
+        iMokuSsb: json["ssb"] == null ? null : json["ssb"],
+        iMokuChikou: json["chikou"] == null ? null : json["chikou"],
+        iMokuSignal: json["signal"] == null ? null : json["signal"],
       );
-
-  Map<String, dynamic> toMap() => {
-        "iMokuTenkan": iMokuTenkan == null ? null : iMokuTenkan,
-        "iMokuKijun": iMokuKijun == null ? null : iMokuKijun,
-        "iMokuSSA": iMokuSsa == null ? null : iMokuSsa,
-        "iMokuSSB": iMokuSsb == null ? null : iMokuSsb,
-        "iMokuChikou": iMokuChikou == null ? null : iMokuChikou,
-        "iMokuSignal": iMokuSignal == null ? null : iMokuSignal,
-      };
 }
 
 class Ma {
@@ -347,49 +266,30 @@ class Ma {
     this.iMaSigLw,
   });
 
-  int iMaPeriod;
+  String iMaPeriod;
   String iMaSimple;
   String iMaExponential;
   String iMaSmoothed;
   String iMalw;
-  int iMaSigSimple;
-  int iMaSigExponential;
-  int iMaSigSmoothed;
-  int iMaSigLw;
+  String iMaSigSimple;
+  String iMaSigExponential;
+  String iMaSigSmoothed;
+  String iMaSigLw;
 
   factory Ma.fromJson(String str) => Ma.fromMap(json.decode(str));
 
-  String toJson() => json.encode(toMap());
-
   factory Ma.fromMap(Map<String, dynamic> json) => Ma(
-        iMaPeriod: json["iMAPeriod"] == null ? null : json["iMAPeriod"],
-        iMaSimple: json["iMASimple"] == null ? null : json["iMASimple"],
+        iMaPeriod: json["period"] == null ? null : json["period"],
+        iMaSimple: json["simple"] == null ? null : json["simple"],
         iMaExponential:
-            json["iMAExponential"] == null ? null : json["iMAExponential"],
-        iMaSmoothed: json["iMASmoothed"] == null ? null : json["iMASmoothed"],
-        iMalw: json["iMALW"] == null ? null : json["iMALW"],
-        iMaSigSimple:
-            json["iMASigSimple"] == null ? null : json["iMASigSimple"],
-        iMaSigExponential: json["iMASigExponential"] == null
-            ? null
-            : json["iMASigExponential"],
-        iMaSigSmoothed:
-            json["iMASigSmoothed"] == null ? null : json["iMASigSmoothed"],
+            json["exponential"] == null ? null : json["exponential"],
+        iMaSmoothed: json["smoothed"] == null ? null : json["smoothed"],
+        iMalw: json["lw"] == null ? null : json["lw"],
+        iMaSigSimple: json["sigsimple"] == null ? null : json["sigsimple"],
+        iMaSigExponential: json["sigsimple"] == null ? null : json["sigsimple"],
+        iMaSigSmoothed: json["siglw"] == null ? null : json["siglw"],
         iMaSigLw: json["iMASigLW"] == null ? null : json["iMASigLW"],
       );
-
-  Map<String, dynamic> toMap() => {
-        "iMAPeriod": iMaPeriod == null ? null : iMaPeriod,
-        "iMASimple": iMaSimple == null ? null : iMaSimple,
-        "iMAExponential": iMaExponential == null ? null : iMaExponential,
-        "iMASmoothed": iMaSmoothed == null ? null : iMaSmoothed,
-        "iMALW": iMalw == null ? null : iMalw,
-        "iMASigSimple": iMaSigSimple == null ? null : iMaSigSimple,
-        "iMASigExponential":
-            iMaSigExponential == null ? null : iMaSigExponential,
-        "iMASigSmoothed": iMaSigSmoothed == null ? null : iMaSigSmoothed,
-        "iMASigLW": iMaSigLw == null ? null : iMaSigLw,
-      };
 }
 
 class Rsi {
@@ -399,25 +299,17 @@ class Rsi {
     this.iRsiSignal,
   });
 
-  int iRsiPeriod;
+  String iRsiPeriod;
   String iRsiValue;
-  int iRsiSignal;
+  String iRsiSignal;
 
   factory Rsi.fromJson(String str) => Rsi.fromMap(json.decode(str));
 
-  String toJson() => json.encode(toMap());
-
   factory Rsi.fromMap(Map<String, dynamic> json) => Rsi(
-        iRsiPeriod: json["iRSIPeriod"] == null ? null : json["iRSIPeriod"],
-        iRsiValue: json["iRSIValue"] == null ? null : json["iRSIValue"],
-        iRsiSignal: json["iRSISignal"] == null ? null : json["iRSISignal"],
+        iRsiPeriod: json["period"] == null ? null : json["period"],
+        iRsiValue: json["value"] == null ? null : json["value"],
+        iRsiSignal: json["signal"] == null ? null : json["signal"],
       );
-
-  Map<String, dynamic> toMap() => {
-        "iRSIPeriod": iRsiPeriod == null ? null : iRsiPeriod,
-        "iRSIValue": iRsiValue == null ? null : iRsiValue,
-        "iRSISignal": iRsiSignal == null ? null : iRsiSignal,
-      };
 }
 
 class Stochastic {
@@ -428,32 +320,20 @@ class Stochastic {
     this.iStochsigStoch,
   });
 
-  int iStochPeriod;
+  String iStochPeriod;
   String iStochValue;
   String iStochsigValue;
-  int iStochsigStoch;
+  String iStochsigStoch;
 
   factory Stochastic.fromJson(String str) =>
       Stochastic.fromMap(json.decode(str));
 
-  String toJson() => json.encode(toMap());
-
   factory Stochastic.fromMap(Map<String, dynamic> json) => Stochastic(
-        iStochPeriod:
-            json["iStochPeriod"] == null ? null : json["iStochPeriod"],
-        iStochValue: json["iStochValue"] == null ? null : json["iStochValue"],
-        iStochsigValue:
-            json["iStochsigValue"] == null ? null : json["iStochsigValue"],
-        iStochsigStoch:
-            json["iStochsigStoch"] == null ? null : json["iStochsigStoch"],
+        iStochPeriod: json["period"] == null ? null : json["period"],
+        iStochValue: json["value"] == null ? null : json["value"],
+        iStochsigValue: json["sigvalue"] == null ? null : json["sigvalue"],
+        iStochsigStoch: json["sigstoch"] == null ? null : json["sigstoch"],
       );
-
-  Map<String, dynamic> toMap() => {
-        "iStochPeriod": iStochPeriod == null ? null : iStochPeriod,
-        "iStochValue": iStochValue == null ? null : iStochValue,
-        "iStochsigValue": iStochsigValue == null ? null : iStochsigValue,
-        "iStochsigStoch": iStochsigStoch == null ? null : iStochsigStoch,
-      };
 }
 
 class Wpr {
@@ -463,25 +343,17 @@ class Wpr {
     this.iWprSignal,
   });
 
-  int iWprPeriod;
+  String iWprPeriod;
   String iWprValue;
-  int iWprSignal;
+  String iWprSignal;
 
   factory Wpr.fromJson(String str) => Wpr.fromMap(json.decode(str));
 
-  String toJson() => json.encode(toMap());
-
   factory Wpr.fromMap(Map<String, dynamic> json) => Wpr(
-        iWprPeriod: json["iWPRPeriod"] == null ? null : json["iWPRPeriod"],
-        iWprValue: json["iWPRValue"] == null ? null : json["iWPRValue"],
-        iWprSignal: json["iWPRSignal"] == null ? null : json["iWPRSignal"],
+        iWprPeriod: json["period"] == null ? null : json["period"],
+        iWprValue: json["value"] == null ? null : json["value"],
+        iWprSignal: json["signal"] == null ? null : json["signal"],
       );
-
-  Map<String, dynamic> toMap() => {
-        "iWPRPeriod": iWprPeriod == null ? null : iWprPeriod,
-        "iWPRValue": iWprValue == null ? null : iWprValue,
-        "iWPRSignal": iWprSignal == null ? null : iWprSignal,
-      };
 }
 
 class Price {
@@ -493,7 +365,7 @@ class Price {
     this.iPriceClose,
   });
 
-  int iPricePeriod;
+  String iPricePeriod;
   String iPriceOpen;
   String iPriceHigh;
   String iPriceLow;
@@ -501,22 +373,11 @@ class Price {
 
   factory Price.fromJson(String str) => Price.fromMap(json.decode(str));
 
-  String toJson() => json.encode(toMap());
-
   factory Price.fromMap(Map<String, dynamic> json) => Price(
-        iPricePeriod:
-            json["iPricePeriod"] == null ? null : json["iPricePeriod"],
-        iPriceOpen: json["iPriceOpen"] == null ? null : json["iPriceOpen"],
-        iPriceHigh: json["iPriceHigh"] == null ? null : json["iPriceHigh"],
-        iPriceLow: json["iPriceLow"] == null ? null : json["iPriceLow"],
-        iPriceClose: json["iPriceClose"] == null ? null : json["iPriceClose"],
+        iPricePeriod: json["period"] == null ? null : json["period"],
+        iPriceOpen: json["open"] == null ? null : json["open"],
+        iPriceHigh: json["high"] == null ? null : json["high"],
+        iPriceLow: json["low"] == null ? null : json["low"],
+        iPriceClose: json["close"] == null ? null : json["close"],
       );
-
-  Map<String, dynamic> toMap() => {
-        "iPricePeriod": iPricePeriod == null ? null : iPricePeriod,
-        "iPriceOpen": iPriceOpen == null ? null : iPriceOpen,
-        "iPriceHigh": iPriceHigh == null ? null : iPriceHigh,
-        "iPriceLow": iPriceLow == null ? null : iPriceLow,
-        "iPriceClose": iPriceClose == null ? null : iPriceClose,
-      };
 }

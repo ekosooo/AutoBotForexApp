@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:signalforex/constants.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:signalforex/screen/ea_forex_detail_screen.dart';
+import 'package:signalforex/screen/indicator_detail_screen.dart';
 
-class EAForexPage extends StatefulWidget {
-  EAForexPageState createState() => EAForexPageState();
+class IndicatorPage extends StatefulWidget {
+  @override
+  IndicatorPageState createState() => IndicatorPageState();
 }
 
-class EAForexPageState extends State<EAForexPage> {
+class IndicatorPageState extends State<IndicatorPage> {
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, width: 750, height: 1334.w);
+    ScreenUtil.init(context, width: 750, height: 1344);
     return Scaffold(
       backgroundColor: kBackgroundColor,
       appBar: buildAppBar(context),
@@ -32,7 +32,7 @@ class EAForexPageState extends State<EAForexPage> {
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              EAForexDetailPage(index.toString() + "a")));
+                              IndicatorDetailPage(index.toString() + "b")));
                 },
                 child: Stack(
                   children: <Widget>[
@@ -59,7 +59,7 @@ class EAForexPageState extends State<EAForexPage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
                                     Text(
-                                      "Super FX EA",
+                                      "iGodZilla",
                                       style: TextStyle(
                                         fontFamily: "Nunito-ExtraBold",
                                         fontSize: 28.ssp,
@@ -130,7 +130,7 @@ class EAForexPageState extends State<EAForexPage> {
                         height: 190.w,
                         width: 135.w,
                         child: Hero(
-                          tag: index.toString() + "a",
+                          tag: index.toString() + "b",
                           child: Image.asset(
                             'assets/images/superfx.png',
                             fit: BoxFit.fill,
@@ -173,7 +173,7 @@ class EAForexPageState extends State<EAForexPage> {
             Navigator.of(context).pop();
           }),
       title: Text(
-        "EA Forex",
+        "Indicator",
         style: TextStyle(
           fontFamily: "Nunito-ExtraBold",
           fontSize: 32.ssp,

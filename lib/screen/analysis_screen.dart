@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:signalforex/model/analysis_list_signal_model.dart';
 import 'package:signalforex/screen/detail_patterns_signal.dart';
 import 'package:http/http.dart' as http;
+import 'package:signalforex/widget/no_data_record.dart';
 import 'package:signalforex/widget/something_wrong.dart';
 
 import 'detail_analysis_signal_screen.dart';
@@ -175,9 +176,9 @@ class AnalysisPageState extends State<AnalysisPage>
   }
 
   buildListPair(List<DataPair> dataPairList) {
-    var textStyleLowPrice = TextStyle(
+    var textStyleLight = TextStyle(
       fontSize: 22.ssp,
-      fontFamily: "Nunito-Bold",
+      fontFamily: "Nunito",
       color: kTextLightColor,
     );
 
@@ -188,28 +189,7 @@ class AnalysisPageState extends State<AnalysisPage>
     );
 
     if (dataPairList.length == 0) {
-      return Container(
-        margin: EdgeInsets.only(top: 40.w),
-        height: 450.w,
-        child: Column(
-          children: <Widget>[
-            SvgPicture.asset(
-              'assets/images/empty.svg',
-              height: 300.w,
-              width: 300.w,
-            ),
-            SizedBox(height: 40.w),
-            Text(
-              "Ooops, Data Not Found",
-              style: TextStyle(
-                fontFamily: "Nunito-ExtraBold",
-                fontSize: 35.ssp,
-                color: Colors.white,
-              ),
-            ),
-          ],
-        ),
-      );
+      return NoDataRecord();
     } else {
       return ListView.builder(
           physics: BouncingScrollPhysics(),
@@ -279,7 +259,7 @@ class AnalysisPageState extends State<AnalysisPage>
                                           SizedBox(height: 2.w),
                                           Text(
                                             dataPair.pairDesc,
-                                            style: textStyleLowPrice,
+                                            style: textStyleLight,
                                           ),
                                         ],
                                       ),
@@ -300,11 +280,8 @@ class AnalysisPageState extends State<AnalysisPage>
                                       Row(
                                         children: <Widget>[
                                           Text(
-                                            "(" +
-                                                dataPair.iAdrPersen
-                                                    .substring(0, 5) +
-                                                "%)",
-                                            style: textStyleLowPrice,
+                                            "(" + dataPair.iAdrPersen + "%)",
+                                            style: textStyleLight,
                                           ),
                                           SizedBox(width: 10.w),
                                           buildIconAdrDirection(
@@ -326,25 +303,25 @@ class AnalysisPageState extends State<AnalysisPage>
                                       "O  : " +
                                           getValPrice(dataPair.pairName,
                                               dataPair.iPriceOpen),
-                                      style: textStylePrice,
+                                      style: textStyleLight,
                                     ),
                                     Text(
                                       "C  : " +
                                           getValPrice(dataPair.pairName,
                                               dataPair.iPriceClose),
-                                      style: textStylePrice,
+                                      style: textStyleLight,
                                     ),
                                     Text(
                                       "H  : " +
                                           getValPrice(dataPair.pairName,
                                               dataPair.iPriceHigh),
-                                      style: textStylePrice,
+                                      style: textStyleLight,
                                     ),
                                     Text(
                                       "L  : " +
                                           getValPrice(dataPair.pairName,
                                               dataPair.iPriceLow),
-                                      style: textStylePrice,
+                                      style: textStyleLight,
                                     ),
                                   ],
                                 ),
@@ -362,8 +339,8 @@ class AnalysisPageState extends State<AnalysisPage>
     }
   }
 
-  Icon buildIconAdrDirection(int adrDirection) {
-    if (adrDirection == 0) {
+  Icon buildIconAdrDirection(String adrDirection) {
+    if (adrDirection == '0') {
       return Icon(
         FeatherIcons.trendingUp,
         color: kPrimaryColor,
