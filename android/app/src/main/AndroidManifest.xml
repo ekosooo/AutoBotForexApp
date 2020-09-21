@@ -8,9 +8,11 @@
     <application
         android:name="io.flutter.app.FlutterApplication"
         android:label="Signal Forex"
-        android:icon="@mipmap/launcher_icon_dark">
+        android:icon="@mipmap/launcher_icon_dark"
+        android:usesCleartextTraffic="true">
+        
         <activity
-             android:screenOrientation="portrait"
+            android:screenOrientation="portrait"
             android:name=".MainActivity"
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"

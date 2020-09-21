@@ -23,7 +23,7 @@ class AnalysisPageState extends State<AnalysisPage>
   List<DataPair> dataPairList = [];
 
   Future getListPair() async {
-    final String baseUrl = kBaseUrlApi + "analisys/ListSignal";
+    final String baseUrl = kBaseUrlApi + "analysis/list";
     final response = await http.get("$baseUrl");
     if (response.statusCode == 200) {
       return ListAnalysisSignal.fromJson(response.body);

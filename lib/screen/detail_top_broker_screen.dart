@@ -3,30 +3,21 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:signalforex/constants.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:http/http.dart' as http;
-import 'package:signalforex/model/top_broker_model.dart';
+import 'package:signalforex/func_global.dart';
+import 'package:signalforex/model/broker_detail_model.dart';
 import 'package:signalforex/widget/something_wrong.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class DetailTopBrokerPage extends StatelessWidget {
   final broker;
   const DetailTopBrokerPage({Key key, this.broker}) : super(key: key);
 
   Future getDetailBroker() async {
-    final String baseUrl = "http://192.168.100.5:8000/api/broker/detail";
-    final response = await http.post("$baseUrl", body: {"brokerID": broker});
+    final String baseUrl = kBaseUrlApi + 'broker/detail';
+    final response = await http.post("$baseUrl", body: {"broker": broker});
     if (response.statusCode == 200) {
-      return TopBroker.fromJson(response.body);
+      return DetailBroker.fromJson(response.body);
     } else {
       throw Exception('Fail to load data');
-    }
-  }
-
-  launchURL(String url) async {
-    //const url = 'https://flutter.io';
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
     }
   }
 
@@ -49,7 +40,7 @@ class DetailTopBrokerPage extends StatelessWidget {
                 ),
               );
             } else if (snapshot.connectionState == ConnectionState.done) {
-              List<DataBroker> dataBroker = snapshot.data.data;
+              List<DataDetailBroker> dataBroker = snapshot.data.data;
               return buildContent(dataBroker);
             } else {
               return Container(
@@ -64,7 +55,7 @@ class DetailTopBrokerPage extends StatelessWidget {
     );
   }
 
-  ListView buildContent(List<DataBroker> dataBroker) {
+  ListView buildContent(List<DataDetailBroker> dataBroker) {
     var textStyleTitle = TextStyle(
       fontFamily: "Nunito-ExtraBold",
       fontSize: 27.ssp,
@@ -97,14 +88,13 @@ class DetailTopBrokerPage extends StatelessWidget {
                         width: 100.w,
                         height: 100.w,
                         child: Image.network(
-                          'http://192.168.100.5:8000/images/broker/' +
-                              dataBroker[0].brokerImg,
+                          kMasterUrl + "img/broker/" + dataBroker[0].brokerimg,
                           fit: BoxFit.fitWidth,
                         ),
                       ),
                       SizedBox(height: 10.w),
                       Text(
-                        dataBroker[0].brokerName,
+                        dataBroker[0].name,
                         style: TextStyle(
                           fontFamily: "Nunito-ExtraBold",
                           fontSize: 30.ssp,
@@ -117,7 +107,7 @@ class DetailTopBrokerPage extends StatelessWidget {
                           RatingBar(
                             itemSize: 35.w,
                             onRatingUpdate: null,
-                            initialRating: dataBroker[0].brokerRate,
+                            initialRating: double.tryParse(dataBroker[0].rate),
                             minRating: 1,
                             direction: Axis.horizontal,
                             allowHalfRating: true,
@@ -129,7 +119,7 @@ class DetailTopBrokerPage extends StatelessWidget {
                           ),
                           SizedBox(width: 10.w),
                           Text(
-                            dataBroker[0].brokerRate.toString(),
+                            dataBroker[0].rate,
                             style: TextStyle(
                               fontFamily: "Nunito-ExtraBold",
                               fontSize: 25.ssp,
@@ -142,7 +132,7 @@ class DetailTopBrokerPage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(18.0),
                         ),
                         onPressed: () {
-                          launchURL(dataBroker[0].brokerAffiliate);
+                          FunctionGlobal().launchURL(dataBroker[0].afflink);
                         },
                         elevation: 0.0,
                         color: kPrimaryColor,
@@ -170,7 +160,7 @@ class DetailTopBrokerPage extends StatelessWidget {
                     ),
                     SizedBox(height: 10.w),
                     Text(
-                      dataBroker[0].brokerIntro,
+                      dataBroker[0].intro,
                       textAlign: TextAlign.justify,
                       style: textStyleContent,
                     ),
@@ -195,7 +185,7 @@ class DetailTopBrokerPage extends StatelessWidget {
                           ),
                           SizedBox(height: 10.w),
                           Text(
-                            dataBroker[0].brokerRegulation,
+                            dataBroker[0].regulation,
                             style: textStyleContent,
                           ),
                         ],
@@ -211,7 +201,7 @@ class DetailTopBrokerPage extends StatelessWidget {
                           ),
                           SizedBox(height: 10.w),
                           Text(
-                            dataBroker[0].brokerModel,
+                            dataBroker[0].model,
                             style: textStyleContent,
                           ),
                         ],
@@ -233,7 +223,7 @@ class DetailTopBrokerPage extends StatelessWidget {
                     ),
                     SizedBox(height: 10.w),
                     Text(
-                      dataBroker[0].brokerDemo,
+                      dataBroker[0].demo,
                       style: textStyleContent,
                     ),
                   ],
@@ -257,7 +247,7 @@ class DetailTopBrokerPage extends StatelessWidget {
                           ),
                           SizedBox(height: 10.w),
                           Text(
-                            dataBroker[0].brokerMinDepo,
+                            dataBroker[0].mindepo,
                             style: textStyleContent,
                           ),
                         ],
@@ -273,7 +263,7 @@ class DetailTopBrokerPage extends StatelessWidget {
                           ),
                           SizedBox(height: 10.w),
                           Text(
-                            dataBroker[0].brokerFound,
+                            dataBroker[0].paymethod,
                             style: textStyleContent,
                           ),
                         ],
@@ -295,7 +285,7 @@ class DetailTopBrokerPage extends StatelessWidget {
                     ),
                     SizedBox(height: 10.w),
                     Text(
-                      dataBroker[0].brokerPros,
+                      dataBroker[0].pros,
                       style: textStyleContent,
                     ),
                   ],
@@ -314,7 +304,7 @@ class DetailTopBrokerPage extends StatelessWidget {
                     ),
                     SizedBox(height: 10.w),
                     Text(
-                      dataBroker[0].brokerCros,
+                      dataBroker[0].cons,
                       style: textStyleContent,
                     ),
                   ],
@@ -335,13 +325,13 @@ class DetailTopBrokerPage extends StatelessWidget {
           ),
         ),
         SizedBox(height: 20.w),
-        buildPromo(dataBroker[0].brokerPromo),
+        buildPromo(dataBroker[0].promobroker),
       ],
     );
   }
 
-  buildPromo(List<BrokerPromo> brokerPromo) {
-    if (brokerPromo.length != 0) {
+  buildPromo(List<Promobroker> brokerPromoList) {
+    if (brokerPromoList.length != 0) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -361,12 +351,12 @@ class DetailTopBrokerPage extends StatelessWidget {
           SizedBox(height: 10.w),
           ListView.builder(
             shrinkWrap: true,
-            itemCount: brokerPromo.length,
+            itemCount: brokerPromoList.length,
             itemBuilder: (BuildContext context, int index) {
-              BrokerPromo dataPromo = brokerPromo[index];
+              Promobroker dataPromo = brokerPromoList[index];
               return GestureDetector(
                 onTap: () {
-                  launchURL(dataPromo.prmBrokerLink);
+                  FunctionGlobal().launchURL(dataPromo.promolink);
                 },
                 child: Container(
                   margin:
@@ -380,8 +370,9 @@ class DetailTopBrokerPage extends StatelessWidget {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(10.w),
                           child: Image.network(
-                            "http://192.168.100.5:8000/images/promo/" +
-                                dataPromo.prmBrokerImg,
+                            kMasterUrl +
+                                "img/promo/broker/" +
+                                dataPromo.promoimg,
                             fit: BoxFit.fill,
                           ),
                         ),
@@ -394,7 +385,7 @@ class DetailTopBrokerPage extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Text(
-                                dataPromo.prmBrokerTitle,
+                                dataPromo.title,
                                 style: TextStyle(
                                   fontFamily: "Nunito-Bold",
                                   fontSize: 25.ssp,
@@ -402,7 +393,7 @@ class DetailTopBrokerPage extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                dataPromo.prmBrokerCaption,
+                                dataPromo.caption,
                                 style: TextStyle(
                                   fontFamily: "Nunito",
                                   fontSize: 22.ssp,

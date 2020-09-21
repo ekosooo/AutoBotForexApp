@@ -38,7 +38,7 @@ class CalendarNews {
         impact: json["impact"] == null ? null : json["impact"],
         forecast: json["forecast"] == null ? null : json["forecast"],
         previous: json["previous"] == null ? null : json["previous"],
-        actual: json["actual"],
+        actual: json["actual"] == null ? null : json["actual"],
         createdat: json["createdat"] == null
             ? null
             : DateTime.parse(json["createdat"]),

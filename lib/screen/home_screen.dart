@@ -18,6 +18,7 @@ import 'package:signalforex/model/banner_model.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:signalforex/func_global.dart';
+import 'package:intl/intl.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -26,7 +27,6 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> scaffoldState = new GlobalKey<ScaffoldState>();
-  static final List<String> imgSlider = ['promo.jpg', 'promo.jpg', 'promo.jpg'];
 
   //----- fcm ---
   FirebaseMessaging fm = FirebaseMessaging();
@@ -36,7 +36,7 @@ class HomePageState extends State<HomePage> {
   void initState() {
     fm.configure(onMessage: (Map<String, dynamic> message) async {
       //debugPrint('onMessage : $message');
-      this.directPageNotif(message['data']['screen']);
+      //this.directPageNotif(message['data']['screen']);
     }, onResume: (Map<String, dynamic> message) async {
       //debugPrint('onResume : $message');
       this.directPageNotif(message['data']['screen']);
@@ -120,19 +120,27 @@ class HomePageState extends State<HomePage> {
   }
 
   valTimeMarket(int open, int close) {
-    var time = DateTime.now();
+    DateTime time = DateTime.now();
+    String nameDays = DateFormat('EEEE').format(time);
     String strTime = time.toString().substring(11, 13);
     String statusMarket = "";
-    if (open < close &&
-        open <= int.parse(strTime) &&
-        int.parse(strTime) < close) {
-      statusMarket = "Open";
-    } else if (open > close &&
-        (open <= int.parse(strTime) || int.parse(strTime) < close)) {
-      statusMarket = "Open";
-    } else {
+
+    if (nameDays.toUpperCase() == 'SATURDAY' ||
+        nameDays.toUpperCase() == 'SUNDAY') {
       statusMarket = "Close";
+    } else {
+      if (open < close &&
+          open <= int.parse(strTime) &&
+          int.parse(strTime) < close) {
+        statusMarket = "Open";
+      } else if (open > close &&
+          (open <= int.parse(strTime) || int.parse(strTime) < close)) {
+        statusMarket = "Open";
+      } else {
+        statusMarket = "Close";
+      }
     }
+
     return statusMarket;
   }
 

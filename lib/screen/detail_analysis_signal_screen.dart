@@ -39,7 +39,7 @@ class DetailAnalysisSignalPageState extends State<DetailAnalysisSignalPage> {
   String summary = "";
 
   Future getAnalysisSignal() async {
-    final String baseUrl = kBaseUrlApi + "analisys/DetailSignal";
+    final String baseUrl = kBaseUrlApi + "analysis/detail";
     final response =
         await http.post("$baseUrl", body: {"pair": widget.pairID, "TF": tf});
     if (response.statusCode == 200) {

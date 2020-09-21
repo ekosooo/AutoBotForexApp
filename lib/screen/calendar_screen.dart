@@ -338,7 +338,7 @@ class CalendarPageState extends State<CalendarPage> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            calendarNewsBuilder.actual == null
+                            calendarNewsBuilder.actual == ''
                                 ? "-"
                                 : calendarNewsBuilder.actual,
                             style: TextStyle(
@@ -360,7 +360,9 @@ class CalendarPageState extends State<CalendarPage> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           Text(
-                            calendarNewsBuilder.actual,
+                            calendarNewsBuilder.forecast == ''
+                                ? '-'
+                                : calendarNewsBuilder.forecast,
                             style: TextStyle(
                                 fontFamily: "Nunito-Light",
                                 fontSize: 22.ssp,

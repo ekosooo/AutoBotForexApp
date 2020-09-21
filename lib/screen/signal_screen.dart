@@ -48,7 +48,7 @@ class SignalPageState extends State<SignalPage>
   }
 
   Future getSignal() async {
-    final String baseUrl = kBaseUrlApi + "signal/ListSignal";
+    final String baseUrl = kBaseUrlApi + "signal/list";
     final response = await http.get("$baseUrl");
     if (response.statusCode == 200) {
       return Signal.fromJson(response.body);
@@ -58,7 +58,7 @@ class SignalPageState extends State<SignalPage>
   }
 
   Future getHistory() async {
-    final String baseUrl = kBaseUrlApi + "signal/HisSignal";
+    final String baseUrl = kBaseUrlApi + "signal/history";
     final response = await http.post("$baseUrl", body: {
       'dateStart': dateStartHistory,
       'dateEnd': dateEndHistory,
@@ -71,7 +71,7 @@ class SignalPageState extends State<SignalPage>
   }
 
   Future getSummary() async {
-    final String baseUrl = kBaseUrlApi + "signal/SummSignal";
+    final String baseUrl = kBaseUrlApi + "signal/summary";
     final response = await http.post("$baseUrl", body: {
       'dateStart': dateStartSummary,
       'dateEnd': dateEndSummary,
@@ -215,26 +215,159 @@ class SignalPageState extends State<SignalPage>
 
   //--------- History Signal ----------------
   buildHistorySignal() {
-    return SingleChildScrollView(
-      child: Column(
-        children: <Widget>[
-          Container(
-            margin: EdgeInsets.only(left: 35.w, right: 35.w, top: 25.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  "Select Time Range",
-                  style: TextStyle(
-                    fontFamily: 'Nunito',
-                    fontSize: 25.ssp,
-                    color: kTextLightColor,
+    return RefreshIndicator(
+      onRefresh: refreshData,
+      color: kPrimaryColor,
+      child: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.only(left: 35.w, right: 35.w, top: 25.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    "Select Time Range",
+                    style: TextStyle(
+                      fontFamily: 'Nunito',
+                      fontSize: 25.ssp,
+                      color: kTextLightColor,
+                    ),
                   ),
-                ),
-                DropdownButton(
-                  isExpanded: true,
+                  DropdownButton(
+                    isExpanded: true,
+                    underline: SizedBox(),
+                    value: valueDropDownHistory,
+                    items: [
+                      DropdownMenuItem(
+                        value: 0,
+                        child: Text(
+                          "ToDay",
+                          style: TextStyle(
+                            fontFamily: "Nunito-Bold",
+                            fontSize: 25.ssp,
+                            color: kPrimaryColor,
+                          ),
+                        ),
+                      ),
+                      DropdownMenuItem(
+                        value: 1,
+                        child: Text(
+                          "Last Week",
+                          style: TextStyle(
+                            fontFamily: "Nunito-Bold",
+                            fontSize: 25.ssp,
+                            color: kPrimaryColor,
+                          ),
+                        ),
+                      ),
+                      DropdownMenuItem(
+                        value: 2,
+                        child: Text(
+                          "Last Month",
+                          style: TextStyle(
+                            fontFamily: "Nunito-Bold",
+                            fontSize: 25.ssp,
+                            color: kPrimaryColor,
+                          ),
+                        ),
+                      ),
+                      DropdownMenuItem(
+                        value: 3,
+                        child: Text(
+                          "Last 3 Month",
+                          style: TextStyle(
+                            fontFamily: "Nunito-Bold",
+                            fontSize: 25.ssp,
+                            color: kPrimaryColor,
+                          ),
+                        ),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      setState(() {
+                        valueDropDownHistory = value;
+                      });
+                      // print(_valueDropDownHistory);
+                      if (valueDropDownHistory == 0) {
+                        //to day
+                        dateStartHistory = timeCurrent
+                            .toString()
+                            .substring(0, 10); //hanya ambil tahun bln dan tgl
+                        dateEndHistory =
+                            timeCurrent.toString().substring(0, 10);
+                      } else if (valueDropDownHistory == 1) {
+                        //last week
+                        dateStartHistory = timeCurrent
+                            .subtract(Duration(days: 7))
+                            .toString()
+                            .substring(0, 10);
+                        dateEndHistory =
+                            timeCurrent.toString().substring(0, 10);
+                      } else if (valueDropDownHistory == 2) {
+                        //last month
+                        dateStartHistory =
+                            timeCurrent.subtract(Duration(days: 30)).toString();
+                        dateEndHistory =
+                            timeCurrent.toString().substring(0, 10);
+                      } else if (valueDropDownHistory == 3) {
+                        //last 3 month
+                        dateStartHistory =
+                            timeCurrent.subtract(Duration(days: 90)).toString();
+                        dateEndHistory =
+                            timeCurrent.toString().substring(0, 10);
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ),
+
+            //---------future
+
+            FutureBuilder(
+              future: getHistory(),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.hasError) {
+                  return Expanded(
+                    child: Center(
+                      child: SomethingWrong(textColor: 'black'),
+                    ),
+                  );
+                } else if (snapshot.connectionState == ConnectionState.done) {
+                  return buildSignalList(snapshot.data.data);
+                } else {
+                  return Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(kPrimaryColor),
+                    ),
+                  );
+                }
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  //----------- summary -------
+  buildSummary() {
+    return RefreshIndicator(
+      onRefresh: refreshData,
+      color: kPrimaryColor,
+      child: SingleChildScrollView(
+        child: Container(
+          width: double.infinity,
+          margin: EdgeInsets.only(left: 35.w, right: 35.w, top: 15.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Align(
+                alignment: Alignment.centerRight,
+                child: DropdownButton(
                   underline: SizedBox(),
-                  value: valueDropDownHistory,
+                  value: valueDropDownSummary,
                   items: [
                     DropdownMenuItem(
                       value: 0,
@@ -283,167 +416,39 @@ class SignalPageState extends State<SignalPage>
                   ],
                   onChanged: (value) {
                     setState(() {
-                      valueDropDownHistory = value;
+                      valueDropDownSummary = value;
                     });
                     // print(_valueDropDownHistory);
-                    if (valueDropDownHistory == 0) {
+                    if (valueDropDownSummary == 0) {
                       //to day
-                      dateStartHistory = timeCurrent
+                      dateStartSummary = timeCurrent
                           .toString()
                           .substring(0, 10); //hanya ambil tahun bln dan tgl
-                      dateEndHistory = timeCurrent.toString().substring(0, 10);
-                    } else if (valueDropDownHistory == 1) {
+                      dateEndSummary = timeCurrent.toString().substring(0, 10);
+                    } else if (valueDropDownSummary == 1) {
                       //last week
-                      dateStartHistory = timeCurrent
+                      dateStartSummary = timeCurrent
                           .subtract(Duration(days: 7))
                           .toString()
                           .substring(0, 10);
-                      dateEndHistory = timeCurrent.toString().substring(0, 10);
-                    } else if (valueDropDownHistory == 2) {
+                      dateEndSummary = timeCurrent.toString().substring(0, 10);
+                    } else if (valueDropDownSummary == 2) {
                       //last month
-                      dateStartHistory =
+                      dateStartSummary =
                           timeCurrent.subtract(Duration(days: 30)).toString();
-                      dateEndHistory = timeCurrent.toString().substring(0, 10);
-                    } else if (valueDropDownHistory == 3) {
+                      dateEndSummary = timeCurrent.toString().substring(0, 10);
+                    } else if (valueDropDownSummary == 3) {
                       //last 3 month
-                      dateStartHistory =
+                      dateStartSummary =
                           timeCurrent.subtract(Duration(days: 90)).toString();
-                      dateEndHistory = timeCurrent.toString().substring(0, 10);
+                      dateEndSummary = timeCurrent.toString().substring(0, 10);
                     }
                   },
                 ),
-              ],
-            ),
-          ),
-
-          //---------future
-          RefreshIndicator(
-            onRefresh: refreshData,
-            color: kPrimaryColor,
-            child: FutureBuilder(
-              future: getHistory(),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.hasError) {
-                  return Expanded(
-                    child: Center(
-                      child: SomethingWrong(textColor: 'black'),
-                    ),
-                  );
-                } else if (snapshot.connectionState == ConnectionState.done) {
-                  return buildSignalList(snapshot.data.data);
-                } else {
-                  return Center(
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(kPrimaryColor),
-                    ),
-                  );
-                }
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  //----------- summary -------
-  buildSummary() {
-    return SingleChildScrollView(
-      child: Container(
-        width: double.infinity,
-        margin: EdgeInsets.only(left: 35.w, right: 35.w, top: 15.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Align(
-              alignment: Alignment.centerRight,
-              child: DropdownButton(
-                underline: SizedBox(),
-                value: valueDropDownSummary,
-                items: [
-                  DropdownMenuItem(
-                    value: 0,
-                    child: Text(
-                      "ToDay",
-                      style: TextStyle(
-                        fontFamily: "Nunito-Bold",
-                        fontSize: 25.ssp,
-                        color: kPrimaryColor,
-                      ),
-                    ),
-                  ),
-                  DropdownMenuItem(
-                    value: 1,
-                    child: Text(
-                      "Last Week",
-                      style: TextStyle(
-                        fontFamily: "Nunito-Bold",
-                        fontSize: 25.ssp,
-                        color: kPrimaryColor,
-                      ),
-                    ),
-                  ),
-                  DropdownMenuItem(
-                    value: 2,
-                    child: Text(
-                      "Last Month",
-                      style: TextStyle(
-                        fontFamily: "Nunito-Bold",
-                        fontSize: 25.ssp,
-                        color: kPrimaryColor,
-                      ),
-                    ),
-                  ),
-                  DropdownMenuItem(
-                    value: 3,
-                    child: Text(
-                      "Last 3 Month",
-                      style: TextStyle(
-                        fontFamily: "Nunito-Bold",
-                        fontSize: 25.ssp,
-                        color: kPrimaryColor,
-                      ),
-                    ),
-                  ),
-                ],
-                onChanged: (value) {
-                  setState(() {
-                    valueDropDownSummary = value;
-                  });
-                  // print(_valueDropDownHistory);
-                  if (valueDropDownSummary == 0) {
-                    //to day
-                    dateStartSummary = timeCurrent
-                        .toString()
-                        .substring(0, 10); //hanya ambil tahun bln dan tgl
-                    dateEndSummary = timeCurrent.toString().substring(0, 10);
-                  } else if (valueDropDownSummary == 1) {
-                    //last week
-                    dateStartSummary = timeCurrent
-                        .subtract(Duration(days: 7))
-                        .toString()
-                        .substring(0, 10);
-                    dateEndSummary = timeCurrent.toString().substring(0, 10);
-                  } else if (valueDropDownSummary == 2) {
-                    //last month
-                    dateStartSummary =
-                        timeCurrent.subtract(Duration(days: 30)).toString();
-                    dateEndSummary = timeCurrent.toString().substring(0, 10);
-                  } else if (valueDropDownSummary == 3) {
-                    //last 3 month
-                    dateStartSummary =
-                        timeCurrent.subtract(Duration(days: 90)).toString();
-                    dateEndSummary = timeCurrent.toString().substring(0, 10);
-                  }
-                },
               ),
-            ),
 
-            //----------- Detail profit / lose ----------------
-            RefreshIndicator(
-              onRefresh: refreshData,
-              color: kPrimaryColor,
-              child: FutureBuilder(
+              //----------- Detail profit / lose ----------------
+              FutureBuilder(
                 future: getSummary(),
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   if (snapshot.hasError) {
@@ -465,8 +470,8 @@ class SignalPageState extends State<SignalPage>
                   }
                 },
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
