@@ -20,7 +20,7 @@ class SignalPageState extends State<SignalPage>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
 
-  int valueDropDownHistory = 1;
+  int valueDropDownHistory = 0;
   String dateStartHistory;
   String dateEndHistory;
   int valueDropDownSummary = 1;
@@ -36,8 +36,12 @@ class SignalPageState extends State<SignalPage>
 
     //---- history -------
     timeCurrent = DateTime.now();
+    // dateStartHistory =
+    //     timeCurrent.subtract(Duration(days: 7)).toString().substring(0, 10);
+    // dateEndHistory = timeCurrent.toString().substring(0, 10);
+    //to day
     dateStartHistory =
-        timeCurrent.subtract(Duration(days: 7)).toString().substring(0, 10);
+        timeCurrent.toString().substring(0, 10); //hanya ambil tahun bln dan tgl
     dateEndHistory = timeCurrent.toString().substring(0, 10);
 
     //--- summary ---
@@ -45,6 +49,12 @@ class SignalPageState extends State<SignalPage>
         timeCurrent.subtract(Duration(days: 7)).toString().substring(0, 10);
     dateEndSummary = timeCurrent.toString().substring(0, 10);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   Future getSignal() async {
@@ -95,6 +105,7 @@ class SignalPageState extends State<SignalPage>
     return Scaffold(
       appBar: buildAppBar(context),
       body: TabBarView(
+        controller: _tabController,
         children: <Widget>[
           Container(
             margin: EdgeInsets.only(top: 35.w),
@@ -131,7 +142,6 @@ class SignalPageState extends State<SignalPage>
           buildSummary(),
           //--------------------------------------------------
         ],
-        controller: _tabController,
       ),
     );
   }
@@ -162,6 +172,11 @@ class SignalPageState extends State<SignalPage>
   }
 
   TabBar buildTabBar() {
+    var textStyle = TextStyle(
+      fontFamily: "Nunito-ExtraBold",
+      fontSize: 25.ssp,
+      color: kTextColor,
+    );
     return TabBar(
       indicatorColor: kPrimaryColor,
       tabs: [
@@ -170,11 +185,7 @@ class SignalPageState extends State<SignalPage>
             child: Center(
               child: Text(
                 "Signal",
-                style: TextStyle(
-                  fontFamily: "Nunito-ExtraBold",
-                  fontSize: 25.ssp,
-                  color: kTextColor,
-                ),
+                style: textStyle,
               ),
             ),
           ),
@@ -184,11 +195,7 @@ class SignalPageState extends State<SignalPage>
             child: Center(
               child: Text(
                 "History",
-                style: TextStyle(
-                  fontFamily: "Nunito-ExtraBold",
-                  fontSize: 25.ssp,
-                  color: kTextColor,
-                ),
+                style: textStyle,
               ),
             ),
           ),
@@ -199,11 +206,7 @@ class SignalPageState extends State<SignalPage>
             child: Center(
               child: Text(
                 "Summary",
-                style: TextStyle(
-                  fontFamily: "Nunito-ExtraBold",
-                  fontSize: 25.ssp,
-                  color: kTextColor,
-                ),
+                style: textStyle,
               ),
             ),
           ),
@@ -497,7 +500,7 @@ buildSummaryList(List<DataSumSignal> dataSumSignalList, DataSummary summary) {
         ),
       ),
 
-      //-------------- Profit lose ---------------------
+      //-------------- Profit loss ---------------------
       SizedBox(height: 80.w),
       Container(
         child: Row(
@@ -547,12 +550,12 @@ buildSummaryList(List<DataSumSignal> dataSumSignalList, DataSummary summary) {
               ],
             ),
 
-            //--------------lose --------------
+            //--------------loss --------------
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  'Lose',
+                  'Loss',
                   style: TextStyle(
                     fontFamily: "Nunito",
                     fontSize: 25.ssp,
@@ -669,7 +672,7 @@ buildSummaryList(List<DataSumSignal> dataSumSignalList, DataSummary summary) {
                                 style: TextStyle(
                                   fontFamily: "Nunito",
                                   fontSize: 22.ssp,
-                                  color: Colors.red,
+                                  color: Colors.grey[400],
                                 ),
                               ),
                             ],

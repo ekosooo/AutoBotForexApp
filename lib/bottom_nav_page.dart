@@ -3,6 +3,7 @@ import 'package:signalforex/constants.dart';
 import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:signalforex/screen/home_screen.dart';
 import 'package:signalforex/screen/analysis_screen.dart';
+import 'package:signalforex/widget/coming_soon.dart';
 //import 'package:firebase_messaging/firebase_messaging.dart';
 
 class BottomNavPage extends StatefulWidget {
@@ -33,25 +34,10 @@ class BottomNavPageState extends State<BottomNavPage> {
   Widget build(BuildContext context) {
     final _listPage = <Widget>[
       HomePage(),
-      Center(
-        child: Text(
-          "Coming Soon",
-          style: TextStyle(fontFamily: 'Nunito-Bold', fontSize: 30.0),
-        ),
-      ),
+      ComingSoon(),
       AnalysisPage(),
-      Center(
-        child: Text(
-          "Coming Soon",
-          style: TextStyle(fontFamily: 'Nunito-Bold', fontSize: 30.0),
-        ),
-      ),
-      Center(
-        child: Text(
-          "Coming Soon",
-          style: TextStyle(fontFamily: 'Nunito-Bold', fontSize: 30.0),
-        ),
-      ),
+      ComingSoon(),
+      ComingSoon(),
     ];
 
     final _bottomNavBarItems = <BottomNavigationBarItem>[
@@ -107,10 +93,10 @@ class BottomNavPageState extends State<BottomNavPage> {
       unselectedItemColor: Colors.grey,
       selectedItemColor: kPrimaryColor,
       elevation: 0.0,
+      backgroundColor: kBackgroundColor,
     );
 
     return Scaffold(
-      backgroundColor: kBackgroundColor,
       body: _listPage[_selectedTabIndex],
       bottomNavigationBar: _bottomNavBar,
     );

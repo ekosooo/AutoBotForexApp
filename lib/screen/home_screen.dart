@@ -404,7 +404,11 @@ class HomePageState extends State<HomePage> {
           ),
           Text(
             _titleMenu,
-            style: TextStyle(fontFamily: "Nunito", fontSize: 22.ssp),
+            style: TextStyle(
+              fontFamily: "Nunito",
+              fontSize: 22.ssp,
+              color: kTextColor,
+            ),
           ),
         ],
       ),

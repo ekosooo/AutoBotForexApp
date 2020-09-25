@@ -329,7 +329,6 @@ class CalendarPageState extends State<CalendarPage> {
                               ),
                             ),
                             decoration:
-                                //boxDecorationImpact(calendarNewsBuilder.impact),
                                 boxDecorationImpact(calendarNewsBuilder.impact),
                           ),
                         ],

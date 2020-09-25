@@ -12,6 +12,8 @@ class SomethingWrong extends StatelessWidget {
       margin: EdgeInsets.only(top: 40.w),
       height: 450.w,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           SvgPicture.asset(
             'assets/images/no_connection.svg',
