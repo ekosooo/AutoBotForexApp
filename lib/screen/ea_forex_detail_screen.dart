@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:signalforex/constants.dart';
 import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:photo_view/photo_view.dart';
-import 'package:signalforex/func_global.dart';
 
 class EAForexDetailPage extends StatefulWidget {
   final String idEA;

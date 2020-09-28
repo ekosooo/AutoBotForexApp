@@ -64,6 +64,12 @@ dependencies:
   flutter_webview_plugin: ^0.3.11
   #slidable
   flutter_slidable: ^0.5.7
+  #showcaseview firs launch app
+  showcaseview: ^0.1.6
+  #sharedpref
+  shared_preferences: ^0.5.12
+  #local notif
+  flutter_local_notifications: ^1.4.4+4
  
 
 dev_dependencies:

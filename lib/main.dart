@@ -5,8 +5,6 @@ import 'package:signalforex/bottom_nav_page.dart';
 import 'package:signalforex/constants.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:signalforex/screen/signal_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -94,27 +92,41 @@ class SplashScreenPageState extends State<SplashScreenPage> {
     ScreenUtil.init(context, width: 750, height: 1334);
     return Scaffold(
       backgroundColor: kBackgroundColor,
-      body: Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Image.asset(
-              "assets/images/logo.png",
-              width: 200.w,
-              height: 200.w,
-            ),
-            SizedBox(width: 10.w),
-            Text(
-              "Signal\nForex",
-              style: TextStyle(
-                fontFamily: "Fins-Regular",
-                fontSize: 70.ssp,
-                color: kTextColor,
-                fontWeight: FontWeight.bold,
+      body: Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Image.asset(
+                "assets/images/logo.png",
+                width: 200.w,
+                height: 200.w,
               ),
+              SizedBox(width: 10.w),
+              Text(
+                "Signal\nForex",
+                style: TextStyle(
+                  fontFamily: "Fins-Regular",
+                  fontSize: 70.ssp,
+                  color: kTextColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 25.w),
+          Text(
+            "Beta Version",
+            style: TextStyle(
+              fontFamily: "Nunito",
+              fontSize: 25.ssp,
+              color: kTextColor,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

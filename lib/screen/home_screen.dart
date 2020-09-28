@@ -119,22 +119,26 @@ class HomePageState extends State<HomePage> {
     setState(() {});
   }
 
-  valTimeMarket(int open, int close) {
+  valTimeMarket(String centerMarket, int open, int close) {
     DateTime time = DateTime.now();
     String nameDays = DateFormat('EEEE').format(time);
-    String strTime = time.toString().substring(11, 13);
+    String strCurrTime = time.toString().substring(11, 13);
     String statusMarket = "";
 
     if (nameDays.toUpperCase() == 'SATURDAY' ||
         nameDays.toUpperCase() == 'SUNDAY') {
-      statusMarket = "Close";
+      if (centerMarket == 'NEW YORK' && int.parse(strCurrTime) < close) {
+        statusMarket = "Open";
+      } else {
+        statusMarket = "Close";
+      }
     } else {
       if (open < close &&
-          open <= int.parse(strTime) &&
-          int.parse(strTime) < close) {
+          open <= int.parse(strCurrTime) &&
+          int.parse(strCurrTime) < close) {
         statusMarket = "Open";
       } else if (open > close &&
-          (open <= int.parse(strTime) || int.parse(strTime) < close)) {
+          (open <= int.parse(strCurrTime) || int.parse(strCurrTime) < close)) {
         statusMarket = "Open";
       } else {
         statusMarket = "Close";
@@ -242,6 +246,7 @@ class HomePageState extends State<HomePage> {
                       " UTC" +
                       timeZone(),
                   statusMarket: valTimeMarket(
+                    marketHoursList[i].center.toUpperCase(),
                     int.parse(marketHoursList[i]
                         .open
                         .toString()

@@ -4,7 +4,6 @@ import 'package:signalforex/constants.dart';
 import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
-import 'package:flutter/services.dart';
 
 class IndicatorDetailPage extends StatefulWidget {
   final String idIndi;

@@ -10,6 +10,9 @@ import 'package:flutter_calendar_carousel/classes/event.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart'
     show CalendarCarousel;
 import 'package:intl/intl.dart' show DateFormat;
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:feather_icons_flutter/feather_icons_flutter.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 bool _isALL = true;
 bool _isHigh = false;
@@ -26,9 +29,11 @@ class CalendarPage extends StatefulWidget {
 }
 
 class CalendarPageState extends State<CalendarPage> {
+  GlobalKey<ScaffoldState> scaffoldState = new GlobalKey<ScaffoldState>();
   DateTime _currentDate = DateTime.now();
   String _currentMonth = DateFormat.yMMMM().format(DateTime.now());
   DateTime _targetDateTime = DateTime.now();
+  FlutterLocalNotificationsPlugin flutterNotif;
 
   bool _flagEventToDay = true;
   DateTime dateSelectedEvent;
@@ -41,6 +46,24 @@ class CalendarPageState extends State<CalendarPage> {
     super.initState();
     _markedDateMap.clear();
     this.getDataFromAPI(DateTime.now());
+
+    //-- local notif -----
+    var androidInitilize = AndroidInitializationSettings('launcher_icon_dark');
+    var iOSInitilize = IOSInitializationSettings();
+    var initilizationsSettings =
+        InitializationSettings(androidInitilize, iOSInitilize);
+    flutterNotif = FlutterLocalNotificationsPlugin();
+    flutterNotif.initialize(initilizationsSettings,
+        onSelectNotification: notificationSelected);
+  }
+
+  Future notificationSelected(String payload) async {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: Text("Notification : $payload"),
+      ),
+    );
   }
 
   void refresh(DateTime date) {
@@ -50,6 +73,7 @@ class CalendarPageState extends State<CalendarPage> {
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, width: 750, height: 1334);
+
     _calendarCarousel = CalendarCarousel<Event>(
       /// Example Calendar Carousel without header and custom prev & next button
       todayBorderColor: Colors.white,
@@ -122,7 +146,9 @@ class CalendarPageState extends State<CalendarPage> {
       },
     );
     //---------------------------------------------
+
     return Scaffold(
+      key: scaffoldState,
       backgroundColor: kBackgroundColor,
       appBar: buildAppBar(),
       body: Container(
@@ -154,7 +180,7 @@ class CalendarPageState extends State<CalendarPage> {
     );
   }
 
-  SlidingUpPanel buildSlidingUpPanel() {
+  buildSlidingUpPanel() {
     return SlidingUpPanel(
       minHeight: 950.w,
       maxHeight: 950.w,
@@ -257,7 +283,12 @@ class CalendarPageState extends State<CalendarPage> {
       return buildEmptyRecords();
     } else {
       return Container(
-        child: ListView.builder(
+        child: ListView.separated(
+          separatorBuilder: (context, index) {
+            return Divider(
+              height: 0.0,
+            );
+          },
           shrinkWrap: true,
           physics: ScrollPhysics(),
           itemCount: filterNewsList.length,
@@ -268,138 +299,161 @@ class CalendarPageState extends State<CalendarPage> {
             String timeNews =
                 calendarNewsBuilder.date.toString().substring(11, 16);
 
-            return Container(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.w),
-              margin: EdgeInsets.only(bottom: 10.w),
-              decoration: BoxDecoration(
-                //color: Colors.white.withOpacity(0.08),
+            return Slidable(
+              actionPane: SlidableDrawerActionPane(),
+              actionExtentRatio: 0.2,
+              secondaryActions: <Widget>[
+                IconSlideAction(
+                  caption: 'Set Alarm',
+                  color: kPrimaryColor.withOpacity(0.1),
+                  icon: FeatherIcons.clock,
+                  foregroundColor: Colors.white,
+                  onTap: () {
+                    showDialogAlarm(
+                      calendarNewsBuilder.title,
+                      calendarNewsBuilder.impact,
+                      calendarNewsBuilder.date,
+                    );
+                  },
+                ),
+              ],
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.w),
+                // margin: EdgeInsets.only(bottom: 10.w),
                 color: kPrimaryColor,
-                borderRadius: BorderRadius.circular(10.w),
-              ),
-              child: Column(
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(
-                        calendarNewsBuilder.title,
-                        style: TextStyle(
-                          fontFamily: "Nunito-Bold",
-                          fontSize: 25.ssp,
-                          color: Colors.white,
-                        ),
-                      ),
-                      Text(
-                        calendarNewsBuilder.country,
-                        style: TextStyle(
-                          fontFamily: "Nunito-Bold",
-                          fontSize: 25.ssp,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 5.w),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            dateNews + " " + timeNews,
-                            style: TextStyle(
-                              fontFamily: "Nunito-Light",
-                              fontSize: 20.ssp,
-                              color: Colors.white,
-                            ),
+                // decoration: BoxDecoration(
+                //   //color: Colors.white.withOpacity(0.08),
+                //   color: kPrimaryColor,
+                //   // borderRadius: BorderRadius.circular(10.w),
+                // ),
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(
+                          calendarNewsBuilder.title,
+                          style: TextStyle(
+                            fontFamily: "Nunito-Bold",
+                            fontSize: 25.ssp,
+                            color: Colors.white,
                           ),
-                          SizedBox(height: 4.w),
-                          Container(
-                            height: 40.w,
-                            width: 93.w,
-                            child: Center(
-                              child: Text(
-                                calendarNewsBuilder.impact,
-                                style: TextStyle(
-                                  fontFamily: "Nunito",
-                                  fontSize: 20.ssp,
-                                  color: Colors.white,
-                                ),
+                        ),
+                        Text(
+                          calendarNewsBuilder.country,
+                          style: TextStyle(
+                            fontFamily: "Nunito-Bold",
+                            fontSize: 25.ssp,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 5.w),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              dateNews + " " + timeNews,
+                              style: TextStyle(
+                                fontFamily: "Nunito-Light",
+                                fontSize: 20.ssp,
+                                color: Colors.white,
                               ),
                             ),
-                            decoration:
-                                boxDecorationImpact(calendarNewsBuilder.impact),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            calendarNewsBuilder.actual == ''
-                                ? "-"
-                                : calendarNewsBuilder.actual,
-                            style: TextStyle(
-                                fontFamily: "Nunito-Light",
-                                fontSize: 22.ssp,
-                                color: Colors.white),
-                          ),
-                          SizedBox(height: 4.w),
-                          Text(
-                            "Actual",
-                            style: TextStyle(
-                                fontFamily: "Nunito-Light",
-                                fontSize: 22.ssp,
-                                color: Colors.white),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            calendarNewsBuilder.forecast == ''
-                                ? '-'
-                                : calendarNewsBuilder.forecast,
-                            style: TextStyle(
-                                fontFamily: "Nunito-Light",
-                                fontSize: 22.ssp,
-                                color: Colors.white),
-                          ),
-                          SizedBox(height: 4.w),
-                          Text(
-                            "Forecast",
-                            style: TextStyle(
-                                fontFamily: "Nunito-Light",
-                                fontSize: 22.ssp,
-                                color: Colors.white),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            calendarNewsBuilder.previous,
-                            style: TextStyle(
-                                fontFamily: "Nunito-Light",
-                                fontSize: 22.ssp,
-                                color: Colors.white),
-                          ),
-                          SizedBox(height: 4.w),
-                          Text(
-                            "Previous",
-                            style: TextStyle(
-                                fontFamily: "Nunito-Light",
-                                fontSize: 22.ssp,
-                                color: Colors.white),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
+                            SizedBox(height: 4.w),
+                            Container(
+                              height: 40.w,
+                              width: 93.w,
+                              child: Center(
+                                child: Text(
+                                  calendarNewsBuilder.impact,
+                                  style: TextStyle(
+                                    fontFamily: "Nunito",
+                                    fontSize: 20.ssp,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                              decoration: boxDecorationImpact(
+                                calendarNewsBuilder.impact,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              calendarNewsBuilder.actual == ''
+                                  ? "-"
+                                  : calendarNewsBuilder.actual,
+                              style: TextStyle(
+                                  fontFamily: "Nunito-Light",
+                                  fontSize: 22.ssp,
+                                  color: Colors.white),
+                            ),
+                            SizedBox(height: 4.w),
+                            Text(
+                              "Actual",
+                              style: TextStyle(
+                                  fontFamily: "Nunito-Light",
+                                  fontSize: 22.ssp,
+                                  color: Colors.white),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              calendarNewsBuilder.forecast == ''
+                                  ? '-'
+                                  : calendarNewsBuilder.forecast,
+                              style: TextStyle(
+                                  fontFamily: "Nunito-Light",
+                                  fontSize: 22.ssp,
+                                  color: Colors.white),
+                            ),
+                            SizedBox(height: 4.w),
+                            Text(
+                              "Forecast",
+                              style: TextStyle(
+                                  fontFamily: "Nunito-Light",
+                                  fontSize: 22.ssp,
+                                  color: Colors.white),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              calendarNewsBuilder.previous == ''
+                                  ? '-'
+                                  : calendarNewsBuilder.previous,
+                              style: TextStyle(
+                                  fontFamily: "Nunito-Light",
+                                  fontSize: 22.ssp,
+                                  color: Colors.white),
+                            ),
+                            SizedBox(height: 4.w),
+                            Text(
+                              "Previous",
+                              style: TextStyle(
+                                  fontFamily: "Nunito-Light",
+                                  fontSize: 22.ssp,
+                                  color: Colors.white),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             );
           },
@@ -441,7 +495,202 @@ class CalendarPageState extends State<CalendarPage> {
     );
   }
 
-  Row buildFilterButton() {
+  //dialog set alarm
+  void showDialogAlarm(String titleNews, String impact, DateTime timeNews) {
+    int valueSelected = 0;
+    int second = 60;
+    var textStyleDropDown = TextStyle(
+      fontFamily: "Nunito-Bold",
+      fontSize: 25.ssp,
+      color: kPrimaryColor,
+    );
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          //title: Text('Set Alarm'),
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Text(
+                    'Reminders',
+                    style: TextStyle(
+                      fontFamily: 'Nunito-Bold',
+                      fontSize: 30.ssp,
+                      color: kTextLightColor,
+                    ),
+                  ),
+                  SizedBox(height: 20.w),
+                  Icon(
+                    FeatherIcons.clock,
+                    color: kPrimaryColor,
+                    size: 80.w,
+                  ),
+                  SizedBox(height: 20.w),
+                  Text(
+                    'When will we remind you before the release of the news ' +
+                        titleNews +
+                        ' with ' +
+                        impact.toLowerCase() +
+                        ' impact ' +
+                        timeNews.toString().substring(0, 10) +
+                        ' ' +
+                        timeNews.toString().substring(11, 16) +
+                        ' ?',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: 'Nunito',
+                      fontSize: 24.ssp,
+                      color: kTextLightColor,
+                    ),
+                  ),
+                  SizedBox(height: 20.w),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        'Time : ',
+                        style: TextStyle(
+                          fontFamily: 'Nunito',
+                          fontSize: 25.ssp,
+                          color: kTextLightColor,
+                        ),
+                      ),
+                      DropdownButton(
+                        //isExpanded: true,
+                        underline: SizedBox(),
+                        value: valueSelected,
+                        items: [
+                          DropdownMenuItem(
+                            value: 0,
+                            child: Text(
+                              "1 Minute",
+                              style: textStyleDropDown,
+                            ),
+                          ),
+                          DropdownMenuItem(
+                            value: 1,
+                            child: Text(
+                              "5 Minute",
+                              style: textStyleDropDown,
+                            ),
+                          ),
+                          DropdownMenuItem(
+                            value: 2,
+                            child: Text(
+                              "10 Minute",
+                              style: textStyleDropDown,
+                            ),
+                          ),
+                          DropdownMenuItem(
+                            value: 3,
+                            child: Text(
+                              "30 Minute",
+                              style: textStyleDropDown,
+                            ),
+                          ),
+                          DropdownMenuItem(
+                            value: 4,
+                            child: Text(
+                              "1 Hour",
+                              style: textStyleDropDown,
+                            ),
+                          ),
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            valueSelected = value;
+                          });
+                          if (valueSelected == 0) {
+                            second = 60;
+                          } else if (valueSelected == 1) {
+                            second = 300;
+                          } else if (valueSelected == 2) {
+                            second = 600;
+                          } else if (valueSelected == 3) {
+                            second = 1800;
+                          } else if (valueSelected == 4) {
+                            second = 3600;
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              );
+            },
+          ),
+
+          actions: <Widget>[
+            FlatButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                'No, Cancel',
+                style: TextStyle(
+                  fontFamily: 'Nunito',
+                  fontSize: 24.ssp,
+                  color: Colors.red,
+                ),
+              ),
+            ),
+            FlatButton(
+              color: kPrimaryColor,
+              child: Text(
+                'Yes, Set Alarm',
+                style: TextStyle(
+                  fontFamily: 'Nunito',
+                  fontSize: 24.ssp,
+                  color: Colors.white,
+                ),
+              ),
+              onPressed: () {
+                setNotification(timeNews, second, titleNews);
+                scaffoldState.currentState.showSnackBar(
+                  SnackBar(
+                    content: Text("succes set the alarm.."),
+                    action: SnackBarAction(
+                        label: 'Close',
+                        textColor: kPrimaryColor,
+                        onPressed: () {
+                          scaffoldState.currentState.hideCurrentSnackBar();
+                        }),
+                  ),
+                );
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  //--- send local notif ----
+  Future setNotification(
+      DateTime timeNews, int seconds, String titleNews) async {
+    DateTime scheduledTime = timeNews.subtract(Duration(seconds: seconds));
+    //DateTime scheduledTime = DateTime.now().add(Duration(minutes: 2));
+    var idSchedule = DateTime.now().millisecondsSinceEpoch;
+    var androidDetails = AndroidNotificationDetails(
+        'signal_forex', 'signal_froex', 'singal forex',
+        sound: RawResourceAndroidNotificationSound('newstime'),
+        playSound: true,
+        priority: Priority.High,
+        importance: Importance.Max);
+    var iOSDetails = IOSNotificationDetails();
+    var generalNotifDetail = NotificationDetails(androidDetails, iOSDetails);
+
+    await flutterNotif.schedule(
+        int.tryParse(idSchedule.toString().substring(0, 10)),
+        'News Alarm',
+        titleNews,
+        scheduledTime,
+        generalNotifDetail);
+  }
+
+  buildFilterButton() {
     var padding = EdgeInsets.symmetric(horizontal: 15.w, vertical: 10.w);
     return Row(
       children: <Widget>[
