@@ -587,14 +587,14 @@ class CalendarPageState extends State<CalendarPage> {
                           DropdownMenuItem(
                             value: 3,
                             child: Text(
-                              "30 Minute",
+                              "15 Minute",
                               style: textStyleDropDown,
                             ),
                           ),
                           DropdownMenuItem(
                             value: 4,
                             child: Text(
-                              "1 Hour",
+                              "30 Minute",
                               style: textStyleDropDown,
                             ),
                           ),
@@ -610,9 +610,9 @@ class CalendarPageState extends State<CalendarPage> {
                           } else if (valueSelected == 2) {
                             second = 600;
                           } else if (valueSelected == 3) {
-                            second = 1800;
+                            second = 900;
                           } else if (valueSelected == 4) {
-                            second = 3600;
+                            second = 1800;
                           }
                         },
                       ),
@@ -649,7 +649,7 @@ class CalendarPageState extends State<CalendarPage> {
                 setNotification(timeNews, second, titleNews);
                 scaffoldState.currentState.showSnackBar(
                   SnackBar(
-                    content: Text("succes set the alarm.."),
+                    content: Text("Success set Alarm.."),
                     action: SnackBarAction(
                         label: 'Close',
                         textColor: kPrimaryColor,

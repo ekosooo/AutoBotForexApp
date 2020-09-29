@@ -117,53 +117,52 @@ class SignalPageState extends State<SignalPage>
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context, width: 750, height: 1334);
-    return ShowCaseWidget(
-        builder: (Builder(builder: (context) {
-      myContext = context;
-      return Scaffold(
-        appBar: buildAppBar(context),
-        body: TabBarView(
-          controller: _tabController,
-          children: <Widget>[
-            Container(
-              margin: EdgeInsets.only(top: 35.w),
-              child: RefreshIndicator(
-                onRefresh: refreshData,
-                color: kPrimaryColor,
-                child: FutureBuilder(
-                  future: getSignal(),
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    if (snapshot.hasError) {
-                      return Center(
-                        child: SomethingWrong(textColor: 'black'),
-                      );
-                    } else if (snapshot.connectionState ==
-                        ConnectionState.done) {
-                      return buildSignalList(snapshot.data.data);
-                    } else {
-                      return Center(
-                        child: CircularProgressIndicator(
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(kPrimaryColor),
-                        ),
-                      );
-                    }
-                  },
-                ),
+    // return ShowCaseWidget(
+    //     builder: (Builder(builder: (context) {
+    //   myContext = context;
+    return Scaffold(
+      appBar: buildAppBar(context),
+      body: TabBarView(
+        controller: _tabController,
+        children: <Widget>[
+          Container(
+            margin: EdgeInsets.only(top: 35.w),
+            child: RefreshIndicator(
+              onRefresh: refreshData,
+              color: kPrimaryColor,
+              child: FutureBuilder(
+                future: getSignal(),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: SomethingWrong(textColor: 'black'),
+                    );
+                  } else if (snapshot.connectionState == ConnectionState.done) {
+                    return buildSignalList(snapshot.data.data);
+                  } else {
+                    return Center(
+                      child: CircularProgressIndicator(
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(kPrimaryColor),
+                      ),
+                    );
+                  }
+                },
               ),
             ),
+          ),
 
-            //----------------------- History -----------------
-            buildHistorySignal(),
-            //-------------------------------------------------
+          //----------------------- History -----------------
+          buildHistorySignal(),
+          //-------------------------------------------------
 
-            // ---------------------- summary ------------------
-            buildSummary(),
-            //--------------------------------------------------
-          ],
-        ),
-      );
-    })));
+          // ---------------------- summary ------------------
+          buildSummary(),
+          //--------------------------------------------------
+        ],
+      ),
+    );
+    //})));
   }
 
   AppBar buildAppBar(BuildContext context) {
@@ -214,35 +213,37 @@ class SignalPageState extends State<SignalPage>
             ),
           ),
         ),
-        Showcase(
-          key: _two,
-          description: 'click this',
-          child: Tab(
-            child: Container(
-              child: Center(
-                child: Text(
-                  "History",
-                  style: textStyle,
-                ),
+        // Showcase(
+        //   key: _two,
+        //   description: 'click this',
+        //   child:
+        Tab(
+          child: Container(
+            child: Center(
+              child: Text(
+                "History",
+                style: textStyle,
               ),
             ),
           ),
         ),
-        Showcase(
-          key: _three,
-          description: 'click this',
-          child: Tab(
-            child: Container(
-              margin: EdgeInsets.only(left: 6.w, right: 6.w),
-              child: Center(
-                child: Text(
-                  "Summary",
-                  style: textStyle,
-                ),
+        //),
+        // Showcase(
+        //   key: _three,
+        //   description: 'click this',
+        //   child:
+        Tab(
+          child: Container(
+            margin: EdgeInsets.only(left: 6.w, right: 6.w),
+            child: Center(
+              child: Text(
+                "Summary",
+                style: textStyle,
               ),
             ),
           ),
         ),
+        //),
       ],
       controller: _tabController,
     );

@@ -45,14 +45,11 @@ class HomePageState extends State<HomePage> {
       //debugPrint('onLunch : $message');
     });
 
-    fm.getToken().then((token) => setState(() {
-          this.token = token;
-        }));
-
     fm.subscribeToTopic('signal');
     super.initState();
     this.getBanner();
     this.getMarketHours();
+    //FunctionGlobal().infoDevice();
   }
 
   directPageNotif(String screenPage) async {
