@@ -5,7 +5,6 @@ import 'package:signalforex/constants.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:signalforex/model/calendar_news_model.dart';
 import 'package:signalforex/widget/something_wrong.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:flutter_calendar_carousel/classes/event.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart'
     show CalendarCarousel;
@@ -13,6 +12,7 @@ import 'package:intl/intl.dart' show DateFormat;
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'dart:math' as math;
 
 bool _isALL = true;
 bool _isHigh = false;
@@ -166,7 +166,7 @@ class CalendarPageState extends State<CalendarPage> {
                 ),
               );
             } else if (snapshot.connectionState == ConnectionState.done) {
-              return buildSlidingUpPanel();
+              return buildContainerNews();
             } else {
               return Center(
                 child: CircularProgressIndicator(
@@ -180,85 +180,86 @@ class CalendarPageState extends State<CalendarPage> {
     );
   }
 
-  buildSlidingUpPanel() {
-    return SlidingUpPanel(
-      minHeight: 950.w,
-      maxHeight: 950.w,
-      backdropEnabled: false,
-      borderRadius: BorderRadius.only(
-          topRight: Radius.circular(35.w), topLeft: Radius.circular(35.w)),
-      panel: Container(
-        width: double.infinity,
-        height: double.infinity,
-        padding: EdgeInsets.only(left: 35.w, top: 50.w, right: 35.w),
-        decoration: BoxDecoration(
-          // color: kPrimaryColor,
-          color: kPrimaryColor.withOpacity(0.93),
-          borderRadius: BorderRadius.only(
-              topRight: Radius.circular(35.w), topLeft: Radius.circular(35.w)),
+  buildContainerNews() {
+    return Column(
+      children: <Widget>[
+        Container(
+          width: double.infinity,
+          height: 270.w,
+          margin: EdgeInsets.symmetric(horizontal: 35.w),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20.w),
+            boxShadow: [
+              BoxShadow(
+                offset: Offset(8.w, 21.w),
+                blurRadius: 53.w,
+                color: Colors.black.withOpacity(0.05),
+              ),
+            ],
+          ),
+          child: _calendarCarousel,
         ),
-        child: ListView(
-          scrollDirection: Axis.vertical,
-          children: <Widget>[
-            buildLineSwipeUp(),
-            SizedBox(height: 30.w),
-            buildFilterButton(),
-            SizedBox(height: 30.w),
-            Container(
-              child: FutureBuilder<List>(
-                future: futureCalendar,
-                builder: (context, AsyncSnapshot<List> snapshot) {
-                  if (snapshot.hasError) {
-                    return SomethingWrong(
-                      textColor: "black",
-                    );
-                  } else if (snapshot.connectionState == ConnectionState.done) {
-                    List<CalendarNews> calendarNewsData = snapshot.data;
-                    if (_flagEventToDay) {
-                      return buildListNews(calendarNewsData, DateTime.now());
-                    } else {
-                      return buildListNews(calendarNewsData, dateSelectedEvent);
-                    }
-                  } else {
-                    return Center(
-                      child: CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
-                    );
-                  }
-                },
+        Expanded(
+          child: Container(
+            margin: EdgeInsets.only(top: 65.w),
+            padding: EdgeInsets.only(left: 35.w, top: 50.w, right: 35.w),
+            height: MediaQuery.of(context).size.height / 1.6,
+            decoration: BoxDecoration(
+              color: kPrimaryColor.withOpacity(0.93),
+              borderRadius: BorderRadius.only(
+                topRight: Radius.circular(35.w),
+                topLeft: Radius.circular(35.w),
               ),
             ),
-          ],
-        ),
-      ),
-      body: Column(
-        children: <Widget>[
-          Container(
-            width: double.infinity,
-            height: 270.w,
-            margin: EdgeInsets.symmetric(horizontal: 35.w),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20.w),
-              boxShadow: [
-                BoxShadow(
-                  offset: Offset(8.w, 21.w),
-                  blurRadius: 53.w,
-                  color: Colors.black.withOpacity(0.05),
+            child: Column(
+              children: <Widget>[
+                buildLineSwipeUp(),
+                SizedBox(height: 30.w),
+                buildFilterButton(),
+                SizedBox(height: 30.w),
+                Expanded(
+                  child: Container(
+                    child: FutureBuilder<List>(
+                      future: futureCalendar,
+                      builder: (context, AsyncSnapshot<List> snapshot) {
+                        if (snapshot.hasError) {
+                          return SomethingWrong(
+                            textColor: "black",
+                          );
+                        } else if (snapshot.connectionState ==
+                            ConnectionState.done) {
+                          List<CalendarNews> calendarNewsData = snapshot.data;
+                          if (_flagEventToDay) {
+                            return buildListNews(
+                                calendarNewsData, DateTime.now());
+                          } else {
+                            return buildListNews(
+                                calendarNewsData, dateSelectedEvent);
+                          }
+                        } else {
+                          return Center(
+                            child: CircularProgressIndicator(
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                  ),
                 ),
               ],
             ),
-            child: _calendarCarousel,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  Container buildListNews(
-      List<CalendarNews> calendarNewsData, DateTime dateSelected) {
+  buildListNews(List<CalendarNews> calendarNewsData, DateTime dateSelected) {
     List<CalendarNews> filterNewsList = [];
+
     //filter data berdasarkan tanggal
     String dateSelectedStr = dateSelected.toString().substring(0, 10);
 
@@ -282,13 +283,31 @@ class CalendarPageState extends State<CalendarPage> {
     if (filterNewsList.length == 0) {
       return buildEmptyRecords();
     } else {
-      return Container(
-        child: ListView.separated(
-          separatorBuilder: (context, index) {
-            return Divider(
-              height: 0.0,
+      ScrollController scrollController =
+          ScrollController(keepScrollOffset: false);
+      //menemukan index untuk menentukan index scroll
+      if (dateSelectedStr == DateTime.now().toString().substring(0, 10)) {
+        for (int i = 0; i < filterNewsList.length; i++) {
+          if (filterNewsList[i].date.isAfter(DateTime.now())) {
+            //koding animasi untuk mengarahkan kursor pertama ke index i
+            WidgetsBinding.instance.addPostFrameCallback(
+              (_) => scrollController.animateTo(155.w * i,
+                  duration: Duration(seconds: 2), curve: Curves.fastOutSlowIn),
             );
-          },
+            break;
+          }
+        }
+      } else {
+        //koding animasi untuk mengarahkan kursor pertama ke data pertama
+        WidgetsBinding.instance.addPostFrameCallback(
+          (_) => scrollController.animateTo(0,
+              duration: Duration(seconds: 2), curve: Curves.fastOutSlowIn),
+        );
+      }
+
+      return Container(
+        child: ListView.builder(
+          controller: scrollController,
           shrinkWrap: true,
           physics: ScrollPhysics(),
           itemCount: filterNewsList.length,
@@ -303,157 +322,175 @@ class CalendarPageState extends State<CalendarPage> {
               actionPane: SlidableDrawerActionPane(),
               actionExtentRatio: 0.2,
               secondaryActions: <Widget>[
-                IconSlideAction(
-                  caption: 'Set Alarm',
-                  color: kPrimaryColor.withOpacity(0.1),
-                  icon: FeatherIcons.clock,
-                  foregroundColor: Colors.white,
-                  onTap: () {
-                    showDialogAlarm(
-                      calendarNewsBuilder.title,
-                      calendarNewsBuilder.impact,
-                      calendarNewsBuilder.date,
-                    );
-                  },
-                ),
+                if (calendarNewsBuilder.date.isAfter(DateTime
+                    .now())) //--slidable set alarm hanya berlaku untuk timeNews di atas waktu skrng --
+                  IconSlideAction(
+                    caption: 'Set Alarm',
+                    color: kPrimaryColor.withOpacity(0.1),
+                    icon: FeatherIcons.clock,
+                    foregroundColor: Colors.white,
+                    onTap: () {
+                      showDialogAlarm(
+                        calendarNewsBuilder.title,
+                        calendarNewsBuilder.impact,
+                        calendarNewsBuilder.date,
+                      );
+                    },
+                  ),
               ],
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.w),
-                // margin: EdgeInsets.only(bottom: 10.w),
-                color: kPrimaryColor,
-                // decoration: BoxDecoration(
-                //   //color: Colors.white.withOpacity(0.08),
-                //   color: kPrimaryColor,
-                //   // borderRadius: BorderRadius.circular(10.w),
-                // ),
-                child: Column(
-                  children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Stack(
+                children: <Widget>[
+                  Container(
+                    height: 145.w,
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.w),
+                    margin: EdgeInsets.only(bottom: 10.w),
+                    color: kPrimaryColor,
+                    child: Column(
                       children: <Widget>[
-                        Text(
-                          calendarNewsBuilder.title,
-                          style: TextStyle(
-                            fontFamily: "Nunito-Bold",
-                            fontSize: 25.ssp,
-                            color: Colors.white,
-                          ),
-                        ),
-                        Text(
-                          calendarNewsBuilder.country,
-                          style: TextStyle(
-                            fontFamily: "Nunito-Bold",
-                            fontSize: 25.ssp,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 5.w),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             Text(
-                              dateNews + " " + timeNews,
+                              calendarNewsBuilder.title,
                               style: TextStyle(
-                                fontFamily: "Nunito-Light",
-                                fontSize: 20.ssp,
+                                fontFamily: "Nunito-Bold",
+                                fontSize: 25.ssp,
                                 color: Colors.white,
                               ),
                             ),
-                            SizedBox(height: 4.w),
-                            Container(
-                              height: 40.w,
-                              width: 93.w,
-                              child: Center(
-                                child: Text(
-                                  calendarNewsBuilder.impact,
+                            Text(
+                              calendarNewsBuilder.country,
+                              style: TextStyle(
+                                fontFamily: "Nunito-Bold",
+                                fontSize: 25.ssp,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 5.w),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  dateNews + " " + timeNews,
                                   style: TextStyle(
-                                    fontFamily: "Nunito",
+                                    fontFamily: "Nunito-Light",
                                     fontSize: 20.ssp,
                                     color: Colors.white,
                                   ),
                                 ),
-                              ),
-                              decoration: boxDecorationImpact(
-                                calendarNewsBuilder.impact,
-                              ),
+                                SizedBox(height: 4.w),
+                                Container(
+                                  height: 40.w,
+                                  width: 93.w,
+                                  child: Center(
+                                    child: Text(
+                                      calendarNewsBuilder.impact,
+                                      style: TextStyle(
+                                        fontFamily: "Nunito",
+                                        fontSize: 20.ssp,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                  decoration: boxDecorationImpact(
+                                    calendarNewsBuilder.impact,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Text(
-                              calendarNewsBuilder.actual == ''
-                                  ? "-"
-                                  : calendarNewsBuilder.actual,
-                              style: TextStyle(
-                                  fontFamily: "Nunito-Light",
-                                  fontSize: 22.ssp,
-                                  color: Colors.white),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Text(
+                                  calendarNewsBuilder.actual == ''
+                                      ? "-"
+                                      : calendarNewsBuilder.actual,
+                                  style: TextStyle(
+                                      fontFamily: "Nunito-Light",
+                                      fontSize: 22.ssp,
+                                      color: Colors.white),
+                                ),
+                                SizedBox(height: 4.w),
+                                Text(
+                                  "Actual",
+                                  style: TextStyle(
+                                      fontFamily: "Nunito-Light",
+                                      fontSize: 22.ssp,
+                                      color: Colors.white),
+                                ),
+                              ],
                             ),
-                            SizedBox(height: 4.w),
-                            Text(
-                              "Actual",
-                              style: TextStyle(
-                                  fontFamily: "Nunito-Light",
-                                  fontSize: 22.ssp,
-                                  color: Colors.white),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Text(
+                                  calendarNewsBuilder.forecast == ''
+                                      ? '-'
+                                      : calendarNewsBuilder.forecast,
+                                  style: TextStyle(
+                                      fontFamily: "Nunito-Light",
+                                      fontSize: 22.ssp,
+                                      color: Colors.white),
+                                ),
+                                SizedBox(height: 4.w),
+                                Text(
+                                  "Forecast",
+                                  style: TextStyle(
+                                      fontFamily: "Nunito-Light",
+                                      fontSize: 22.ssp,
+                                      color: Colors.white),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Text(
-                              calendarNewsBuilder.forecast == ''
-                                  ? '-'
-                                  : calendarNewsBuilder.forecast,
-                              style: TextStyle(
-                                  fontFamily: "Nunito-Light",
-                                  fontSize: 22.ssp,
-                                  color: Colors.white),
-                            ),
-                            SizedBox(height: 4.w),
-                            Text(
-                              "Forecast",
-                              style: TextStyle(
-                                  fontFamily: "Nunito-Light",
-                                  fontSize: 22.ssp,
-                                  color: Colors.white),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Text(
-                              calendarNewsBuilder.previous == ''
-                                  ? '-'
-                                  : calendarNewsBuilder.previous,
-                              style: TextStyle(
-                                  fontFamily: "Nunito-Light",
-                                  fontSize: 22.ssp,
-                                  color: Colors.white),
-                            ),
-                            SizedBox(height: 4.w),
-                            Text(
-                              "Previous",
-                              style: TextStyle(
-                                  fontFamily: "Nunito-Light",
-                                  fontSize: 22.ssp,
-                                  color: Colors.white),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Text(
+                                  calendarNewsBuilder.previous == ''
+                                      ? '-'
+                                      : calendarNewsBuilder.previous,
+                                  style: TextStyle(
+                                      fontFamily: "Nunito-Light",
+                                      fontSize: 22.ssp,
+                                      color: Colors.white),
+                                ),
+                                SizedBox(height: 4.w),
+                                Text(
+                                  "Previous",
+                                  style: TextStyle(
+                                      fontFamily: "Nunito-Light",
+                                      fontSize: 22.ssp,
+                                      color: Colors.white),
+                                ),
+                              ],
                             ),
                           ],
                         ),
                       ],
                     ),
-                  ],
-                ),
+                  ),
+                  //--- triangle
+                  Positioned(
+                    right: 0,
+                    top: 0,
+                    child: Container(
+                      margin: EdgeInsets.only(top: 20.w),
+                      child: CustomPaint(
+                        size: Size(20.w, 20.w),
+                        painter: DrawTriangle(
+                          strokeColor: valStatusNews(calendarNewsBuilder.title,
+                              calendarNewsBuilder.date),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             );
           },
@@ -1057,5 +1094,54 @@ class CalendarPageState extends State<CalendarPage> {
         }
       }
     });
+  }
+}
+
+//--- valdasi warna  status berita --
+valStatusNews(String newsTitle, DateTime date) {
+  DateTime now = DateTime.now();
+  int differenceMinuteNews = now.difference(date).inMinutes;
+
+  if (differenceMinuteNews.toString().contains('-') &&
+      differenceMinuteNews >= -15) {
+    return Colors.red;
+  } else if (differenceMinuteNews <= 15 && differenceMinuteNews >= 0) {
+    return Colors.red;
+  } else {
+    return Colors.teal;
+  }
+}
+
+//--- build triangle ----
+class DrawTriangle extends CustomPainter {
+  final Color strokeColor;
+
+  DrawTriangle({this.strokeColor = Colors.white});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    Paint paint = Paint()
+      ..color = strokeColor
+      ..style = PaintingStyle.fill;
+
+    // rotate the canvas
+    final degrees = -90;
+    final radians = degrees * math.pi / 180;
+    canvas.rotate(radians);
+
+    canvas.drawPath(getTrianglePath(size.width, size.height), paint);
+  }
+
+  Path getTrianglePath(double x, double y) {
+    return Path()
+      ..moveTo(y, 0)
+      ..lineTo(y, x)
+      ..lineTo(0, x)
+      ..lineTo(y, 0);
+  }
+
+  @override
+  bool shouldRepaint(DrawTriangle oldDelegate) {
+    return oldDelegate.strokeColor != strokeColor;
   }
 }

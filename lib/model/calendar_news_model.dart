@@ -13,6 +13,7 @@ class CalendarNews {
   String actual;
   DateTime createdat;
   DateTime updatedat;
+  bool selected = false;
 
   CalendarNews({
     this.title,
@@ -25,6 +26,7 @@ class CalendarNews {
     this.actual,
     this.createdat,
     this.updatedat,
+    this.selected,
   });
 
   factory CalendarNews.fromJson(Map<String, dynamic> json) => CalendarNews(

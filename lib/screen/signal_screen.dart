@@ -57,13 +57,13 @@ class SignalPageState extends State<SignalPage>
     dateStartSummary =
         timeCurrent.subtract(Duration(days: 7)).toString().substring(0, 10);
     dateEndSummary = timeCurrent.toString().substring(0, 10);
-    //------- init showcaseview -------
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Future.delayed(
-          Duration(seconds: 1),
-          () =>
-              ShowCaseWidget.of(myContext).startShowCase([_one, _two, _three]));
-    });
+    // //------- init showcaseview -------
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   Future.delayed(
+    //       Duration(seconds: 1),
+    //       () =>
+    //           ShowCaseWidget.of(myContext).startShowCase([_one, _two, _three]));
+    // });
     super.initState();
   }
 
@@ -199,20 +199,21 @@ class SignalPageState extends State<SignalPage>
     return TabBar(
       indicatorColor: kPrimaryColor,
       tabs: [
-        Showcase(
-          key: _one,
-          description: 'click this',
-          child: Tab(
-            child: Container(
-              child: Center(
-                child: Text(
-                  "Signal",
-                  style: textStyle,
-                ),
+        // Showcase(
+        //   key: _one,
+        //   description: 'click this',
+        //   child:
+        Tab(
+          child: Container(
+            child: Center(
+              child: Text(
+                "Signal",
+                style: textStyle,
               ),
             ),
           ),
         ),
+        //),
         // Showcase(
         //   key: _two,
         //   description: 'click this',
@@ -278,7 +279,7 @@ class SignalPageState extends State<SignalPage>
                       DropdownMenuItem(
                         value: 0,
                         child: Text(
-                          "ToDay",
+                          "Today",
                           style: TextStyle(
                             fontFamily: "Nunito-Bold",
                             fontSize: 25.ssp,
@@ -408,7 +409,7 @@ class SignalPageState extends State<SignalPage>
                     DropdownMenuItem(
                       value: 0,
                       child: Text(
-                        "ToDay",
+                        "Today",
                         style: TextStyle(
                           fontFamily: "Nunito-Bold",
                           fontSize: 25.ssp,

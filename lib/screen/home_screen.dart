@@ -49,7 +49,7 @@ class HomePageState extends State<HomePage> {
     super.initState();
     this.getBanner();
     this.getMarketHours();
-    //FunctionGlobal().infoDevice();
+    FunctionGlobal().infoDevice();
   }
 
   directPageNotif(String screenPage) async {

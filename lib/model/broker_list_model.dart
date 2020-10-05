@@ -30,12 +30,14 @@ class DataListBroker {
     this.name,
     this.rate,
     this.img,
+    this.intro,
   });
 
   String broker;
   String name;
   String rate;
   String img;
+  String intro;
 
   factory DataListBroker.fromJson(String str) =>
       DataListBroker.fromMap(json.decode(str));
@@ -43,6 +45,7 @@ class DataListBroker {
   factory DataListBroker.fromMap(Map<String, dynamic> json) => DataListBroker(
         broker: json["broker"] == null ? null : json["broker"],
         name: json["name"] == null ? null : json["name"],
+        intro: json["intro"] == null ? null : json["intro"],
         rate: json["rate"] == null ? null : json["rate"],
         img: json["img"] == null ? null : json["img"],
       );

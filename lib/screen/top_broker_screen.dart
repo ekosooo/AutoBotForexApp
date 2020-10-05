@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:signalforex/func_global.dart';
 import 'package:signalforex/model/banner_model.dart';
 import 'package:signalforex/model/broker_list_model.dart';
+import 'package:signalforex/widget/no_data_record.dart';
 import 'package:signalforex/widget/something_wrong.dart';
 import 'detail_top_broker_screen.dart';
 import 'package:http/http.dart' as http;
@@ -147,28 +148,7 @@ class TopBrokerPage extends StatelessWidget {
 
   buildListTopBroker(List<DataListBroker> dataBrokerList) {
     if (dataBrokerList.length == 0) {
-      return Container(
-        margin: EdgeInsets.only(top: 40.w),
-        height: 450.w,
-        child: Column(
-          children: <Widget>[
-            SvgPicture.asset(
-              'assets/images/empty.svg',
-              height: 300.w,
-              width: 300.w,
-            ),
-            SizedBox(height: 40.w),
-            Text(
-              "Ooops, Data Not Found",
-              style: TextStyle(
-                fontFamily: "Nunito-ExtraBold",
-                fontSize: 35.ssp,
-                color: Colors.white,
-              ),
-            ),
-          ],
-        ),
-      );
+      return NoDataRecord();
     } else {
       return ListView.builder(
         physics: BouncingScrollPhysics(),
@@ -189,36 +169,49 @@ class TopBrokerPage extends StatelessWidget {
               margin: EdgeInsets.only(bottom: 15.w),
               padding: EdgeInsets.symmetric(vertical: 20.w, horizontal: 15.w),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Text(
-                        no.toString() + ".",
-                        style: TextStyle(
-                          fontFamily: "Nunito-ExtraBold",
-                          fontSize: 25.ssp,
-                        ),
-                      ),
-                      SizedBox(width: 20.w),
-                      Container(
-                        width: 50.w,
-                        height: 50.w,
-                        child: Image.network(
-                          kMasterUrl + "img/broker/" + dataBroker.img,
-                          fit: BoxFit.fitWidth,
-                        ),
-                      ),
-                      SizedBox(width: 20.w),
-                      Text(
-                        dataBroker.name,
-                        style: TextStyle(
-                          fontFamily: "Nunito-ExtraBold",
-                          fontSize: 25.ssp,
-                        ),
-                      ),
-                    ],
+                  Text(
+                    no.toString() + ".",
+                    style: TextStyle(
+                      fontFamily: "Nunito-ExtraBold",
+                      fontSize: 25.ssp,
+                    ),
                   ),
+                  SizedBox(width: 20.w),
+                  Container(
+                    width: 50.w,
+                    height: 50.w,
+                    child: Image.network(
+                      kMasterUrl + "img/broker/" + dataBroker.img,
+                      fit: BoxFit.fitWidth,
+                    ),
+                  ),
+                  SizedBox(width: 20.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          dataBroker.name,
+                          style: TextStyle(
+                            fontFamily: "Nunito-ExtraBold",
+                            fontSize: 25.ssp,
+                          ),
+                        ),
+                        Text(
+                          dataBroker.intro,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          style: TextStyle(
+                            fontFamily: "Nunito",
+                            fontSize: 23.ssp,
+                            color: kTextLightColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 20.w),
                   Row(
                     children: <Widget>[
                       Icon(
@@ -238,6 +231,70 @@ class TopBrokerPage extends StatelessWidget {
                   ),
                 ],
               ),
+              // child: Row(
+              //   crossAxisAlignment: CrossAxisAlignment.start,
+              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //   children: <Widget>[
+              //     Row(
+              //       children: <Widget>[
+              //         Text(
+              //           no.toString() + ".",
+              //           style: TextStyle(
+              //             fontFamily: "Nunito-ExtraBold",
+              //             fontSize: 25.ssp,
+              //           ),
+              //         ),
+              //         SizedBox(width: 20.w),
+              //         Container(
+              //           width: 50.w,
+              //           height: 50.w,
+              //           child: Image.network(
+              //             kMasterUrl + "img/broker/" + dataBroker.img,
+              //             fit: BoxFit.fitWidth,
+              //           ),
+              //         ),
+              //         SizedBox(width: 20.w),
+              //         Column(
+              //           children: <Widget>[
+              //             Text(
+              //               dataBroker.name,
+              //               style: TextStyle(
+              //                 fontFamily: "Nunito-ExtraBold",
+              //                 fontSize: 25.ssp,
+              //               ),
+              //             ),
+              //             Text(
+              //               dataBroker.intro,
+              //               overflow: TextOverflow.ellipsis,
+              //               maxLines: 1,
+              //               style: TextStyle(
+              //                 fontFamily: "Nunito",
+              //                 fontSize: 25.ssp,
+              //               ),
+              //             ),
+              //           ],
+              //         ),
+              //       ],
+              //     ),
+              // Row(
+              //   children: <Widget>[
+              //     Icon(
+              //       Icons.star,
+              //       color: kPrimaryColor,
+              //       size: 30.w,
+              //     ),
+              //     SizedBox(width: 5.w),
+              //     Text(
+              //       dataBroker.rate,
+              //       style: TextStyle(
+              //         fontFamily: "Nunito-ExtraBold",
+              //         fontSize: 25.ssp,
+              //       ),
+              //     ),
+              //   ],
+              // ),
+              //   ],
+              // ),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(10.w),

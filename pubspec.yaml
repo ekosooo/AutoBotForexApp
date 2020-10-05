@@ -53,7 +53,7 @@ dependencies:
   #rating bar
   flutter_rating_bar: ^3.0.1+1
   #open browser
-  url_launcher: ^5.5.2
+  url_launcher: ^5.7.2
   #shimmer
   shimmer: ^1.1.1
   #photoview zoom
