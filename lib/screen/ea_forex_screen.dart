@@ -20,7 +20,7 @@ class EAForexPageState extends State<EAForexPage> {
         margin: EdgeInsets.symmetric(horizontal: 35.w),
         child: ListView.builder(
           shrinkWrap: true,
-          itemCount: 4,
+          itemCount: 1,
           itemBuilder: (BuildContext contex, int index) {
             return Container(
               margin: EdgeInsets.only(top: 20.w),

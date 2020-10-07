@@ -274,7 +274,7 @@ class HomePageState extends State<HomePage> {
             boxShadow: [
               BoxShadow(
                 offset: Offset(8.w, 21.w),
-                blurRadius: 53.w,
+                blurRadius: 35.w,
                 color: Colors.black.withOpacity(0.05),
               ),
             ],
@@ -344,10 +344,10 @@ class HomePageState extends State<HomePage> {
           ),
       ],
       options: CarouselOptions(
-        height: 450.w,
+        height: 360.w,
         autoPlay: true,
         enlargeCenterPage: true,
-        aspectRatio: 2.0,
+        aspectRatio: 1.5,
       ),
     );
   }
@@ -377,8 +377,9 @@ class HomePageState extends State<HomePage> {
               } else if (_titleMenu == "Tools") {
                 buildSnackBar();
               } else if (_titleMenu == "Indicator") {
-                Navigator.push(context,
-                    CupertinoPageRoute(builder: (context) => IndicatorPage()));
+                // Navigator.push(context,
+                //     CupertinoPageRoute(builder: (context) => IndicatorPage()));
+                buildSnackBar();
               } else if (_titleMenu == "Top Broker") {
                 Navigator.push(context,
                     CupertinoPageRoute(builder: (context) => TopBrokerPage()));

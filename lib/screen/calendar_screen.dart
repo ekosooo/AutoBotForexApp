@@ -286,14 +286,16 @@ class CalendarPageState extends State<CalendarPage> {
       ScrollController scrollController =
           ScrollController(keepScrollOffset: false);
       //menemukan index untuk menentukan index scroll
+      var indexNews = 0;
       if (dateSelectedStr == DateTime.now().toString().substring(0, 10)) {
         for (int i = 0; i < filterNewsList.length; i++) {
           if (filterNewsList[i].date.isAfter(DateTime.now())) {
             //koding animasi untuk mengarahkan kursor pertama ke index i
             WidgetsBinding.instance.addPostFrameCallback(
-              (_) => scrollController.animateTo(155.w * i,
+              (_) => scrollController.animateTo(156.w * i,
                   duration: Duration(seconds: 2), curve: Curves.fastOutSlowIn),
             );
+            indexNews = i;
             break;
           }
         }
@@ -341,7 +343,7 @@ class CalendarPageState extends State<CalendarPage> {
               child: Stack(
                 children: <Widget>[
                   Container(
-                    height: 145.w,
+                    height: 147.w,
                     padding:
                         EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.w),
                     margin: EdgeInsets.only(bottom: 10.w),
@@ -475,6 +477,7 @@ class CalendarPageState extends State<CalendarPage> {
                       ],
                     ),
                   ),
+
                   //--- triangle
                   Positioned(
                     right: 0,
@@ -484,8 +487,13 @@ class CalendarPageState extends State<CalendarPage> {
                       child: CustomPaint(
                         size: Size(20.w, 20.w),
                         painter: DrawTriangle(
-                          strokeColor: valStatusNews(calendarNewsBuilder.title,
-                              calendarNewsBuilder.date),
+                          //strokeColor: valStatusNews(calendarNewsBuilder.date),
+                          strokeColor: (index == indexNews &&
+                                  DateFormat.yMd()
+                                          .format(calendarNewsBuilder.date) ==
+                                      DateFormat.yMd().format(DateTime.now()))
+                              ? Colors.red
+                              : Colors.teal,
                         ),
                       ),
                     ),
@@ -1098,19 +1106,19 @@ class CalendarPageState extends State<CalendarPage> {
 }
 
 //--- valdasi warna  status berita --
-valStatusNews(String newsTitle, DateTime date) {
-  DateTime now = DateTime.now();
-  int differenceMinuteNews = now.difference(date).inMinutes;
+// valStatusNews(DateTime date) {
+//   DateTime now = DateTime.now();
+//   int differenceMinuteNews = now.difference(date).inMinutes;
 
-  if (differenceMinuteNews.toString().contains('-') &&
-      differenceMinuteNews >= -15) {
-    return Colors.red;
-  } else if (differenceMinuteNews <= 15 && differenceMinuteNews >= 0) {
-    return Colors.red;
-  } else {
-    return Colors.teal;
-  }
-}
+//   if (differenceMinuteNews.toString().contains('-') &&
+//       differenceMinuteNews >= -15) {
+//     return Colors.red;
+//   } else if (differenceMinuteNews <= 15 && differenceMinuteNews >= 0) {
+//     return Colors.red;
+//   } else {
+//     return Colors.teal;
+//   }
+// }
 
 //--- build triangle ----
 class DrawTriangle extends CustomPainter {

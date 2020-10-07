@@ -752,8 +752,8 @@ buildSignalList(List<DataSignal> dataSignalList) {
           child: ScrollOnExpand(
             child: Card(
               //clipBehavior: Clip.antiAlias,
-              shadowColor: Colors.black.withOpacity(0.1),
-              elevation: 35.w,
+              shadowColor: Colors.black.withOpacity(0.06),
+              elevation: 15.w,
               margin: EdgeInsets.only(left: 35.w, right: 35.w, bottom: 15.w),
               child: Column(
                 children: <Widget>[

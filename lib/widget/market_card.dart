@@ -27,8 +27,8 @@ class MarketHoursCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20.w),
                 boxShadow: [
                   BoxShadow(
-                    offset: Offset(8.w, 21.w),
-                    blurRadius: 53.w,
+                    offset: Offset(8.w, 10.w),
+                    blurRadius: 20.w,
                     color: Colors.black.withOpacity(0.05),
                   ),
                 ],
