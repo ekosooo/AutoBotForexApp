@@ -487,11 +487,12 @@ class CalendarPageState extends State<CalendarPage> {
                       child: CustomPaint(
                         size: Size(20.w, 20.w),
                         painter: DrawTriangle(
-                          //strokeColor: valStatusNews(calendarNewsBuilder.date),
                           strokeColor: (index == indexNews &&
                                   DateFormat.yMd()
                                           .format(calendarNewsBuilder.date) ==
-                                      DateFormat.yMd().format(DateTime.now()))
+                                      DateFormat.yMd().format(DateTime.now()) &&
+                                  calendarNewsBuilder.date
+                                      .isAfter(DateTime.now()))
                               ? Colors.red
                               : Colors.teal,
                         ),

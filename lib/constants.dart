@@ -6,6 +6,7 @@ const kTextLightColor = Color(0xFFACB1C0);
 //const kPrimaryColor = Color(0xFF0C8F55);
 const kPrimaryColor = Color(0xFF14B496);
 const kBackgroundColor = Color(0xFFFCFCFC);
+const kBgInputText = Color(0xFFF4F4F4);
 
 const kBaseUrlApi = "https://signalforex.id/apis/";
 const kMasterUrl = "https://signalforex.id/";

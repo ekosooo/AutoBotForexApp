@@ -1,11 +1,14 @@
 import 'package:device_info/device_info.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:signalforex/constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart' show DateFormat;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class FunctionGlobal {
   getGMTbySystem() {
@@ -64,5 +67,173 @@ class FunctionGlobal {
         print('Error:' 'Failed to get device info.');
       }
     }
+  }
+
+  showLoaderDialog(BuildContext context) {
+    ScreenUtil.init(context, width: 750, height: 1344);
+    AlertDialog alert = AlertDialog(
+      content: new Row(
+        children: [
+          CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(kPrimaryColor),
+          ),
+          SizedBox(width: 30.w),
+          Container(
+            child: Text("Loading..."),
+          ),
+        ],
+      ),
+    );
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  showSuccessDialog(BuildContext context, String message) {
+    ScreenUtil.init(context, width: 750, height: 1344);
+    AlertDialog alert = AlertDialog(
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          SvgPicture.asset(
+            'assets/images/success.svg',
+            height: 200.w,
+            width: 300.w,
+          ),
+          SizedBox(height: 40.w),
+          Text(
+            'Success',
+            style: TextStyle(
+              fontFamily: 'Nunito-Bold',
+              fontSize: 40.ssp,
+              color: kPrimaryColor,
+            ),
+          ),
+          SizedBox(height: 20.w),
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontFamily: 'Nunito',
+              fontSize: 30.ssp,
+              color: kTextLightColor,
+            ),
+          ),
+          SizedBox(height: 40.w),
+          Container(
+            height: 80.w,
+            width: 400.w,
+            decoration: BoxDecoration(
+              color: kPrimaryColor,
+              borderRadius: BorderRadius.circular(50.w),
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                splashColor: Colors.black.withOpacity(0.1),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Center(
+                  child: Text(
+                    'Done',
+                    style: TextStyle(
+                      fontFamily: 'Nunito',
+                      fontSize: 30.ssp,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  showErrorDialog(BuildContext context, String message) {
+    ScreenUtil.init(context, width: 750, height: 1344);
+    AlertDialog alert = AlertDialog(
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          SvgPicture.asset(
+            'assets/images/error.svg',
+            height: 200.w,
+            width: 300.w,
+          ),
+          SizedBox(height: 40.w),
+          Text(
+            'Error',
+            style: TextStyle(
+              fontFamily: 'Nunito-Bold',
+              fontSize: 40.ssp,
+              color: Colors.red[400],
+            ),
+          ),
+          SizedBox(height: 20.w),
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontFamily: 'Nunito',
+              fontSize: 30.ssp,
+              color: kTextLightColor,
+            ),
+          ),
+          SizedBox(height: 40.w),
+          Container(
+            height: 80.w,
+            width: 400.w,
+            decoration: BoxDecoration(
+              color: Colors.red[400],
+              borderRadius: BorderRadius.circular(50.w),
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                splashColor: Colors.black.withOpacity(0.1),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Center(
+                  child: Text(
+                    'Try Again',
+                    style: TextStyle(
+                      fontFamily: 'Nunito',
+                      fontSize: 30.ssp,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 }

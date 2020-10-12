@@ -199,10 +199,14 @@ class IndicatorDetailPageState extends State<IndicatorDetailPage> {
                                   ),
                                 ),
                                 onTap: () {
-                                  Navigator.push(context,
-                                      MaterialPageRoute(builder: (_) {
-                                    return DetailImage(index);
-                                  }));
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) {
+                                        return DetailImage(index);
+                                      },
+                                    ),
+                                  );
                                 },
                               );
                             },

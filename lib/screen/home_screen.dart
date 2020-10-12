@@ -178,7 +178,6 @@ class HomePageState extends State<HomePage> {
               SizedBox(height: 60.w),
               buildFrameMenu(),
               SizedBox(height: 60.w),
-              //buildMarketHours(),
               buildMarketHoursFuture(),
               SizedBox(height: 25.w),
             ],
@@ -255,6 +254,9 @@ class HomePageState extends State<HomePage> {
                   ),
                 ),
             ],
+          ),
+          SizedBox(
+            height: 15.w,
           ),
         ],
       ),

@@ -7,28 +7,33 @@ class ItemCardShape extends ShapeBorder {
   const ItemCardShape(this.width, this.height);
 
   @override
+  // ignore: todo
   // TODO: implement dimensions
   EdgeInsetsGeometry get dimensions => throw UnimplementedError();
 
   @override
   Path getInnerPath(Rect rect, {TextDirection textDirection}) {
+    // ignore: todo
     // TODO: implement getInnerPath
     return null;
   }
 
   @override
   Path getOuterPath(Rect rect, {TextDirection textDirection}) {
+    // ignore: todo
     // TODO: implement getOuterPath
     return getClip(Size(width, height));
   }
 
   @override
   void paint(Canvas canvas, Rect rect, {TextDirection textDirection}) {
+    // ignore: todo
     // TODO: implement paint
   }
 
   @override
   ShapeBorder scale(double t) {
+    // ignore: todo
     // TODO: implement scale
     return null;
   }
