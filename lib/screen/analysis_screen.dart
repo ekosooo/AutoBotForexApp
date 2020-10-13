@@ -182,12 +182,6 @@ class AnalysisPageState extends State<AnalysisPage>
       color: kTextLightColor,
     );
 
-    var textStylePrice = TextStyle(
-      fontSize: 22.ssp,
-      fontFamily: "Nunito-Bold",
-      color: kTextLightColor,
-    );
-
     if (dataPairList.length == 0) {
       return NoDataRecord();
     } else {
@@ -340,6 +334,7 @@ class AnalysisPageState extends State<AnalysisPage>
   }
 
   Icon buildIconAdrDirection(String adrDirection) {
+    print(adrDirection);
     if (adrDirection == '0') {
       return Icon(
         FeatherIcons.trendingUp,

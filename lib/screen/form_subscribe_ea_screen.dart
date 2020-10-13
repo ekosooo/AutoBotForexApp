@@ -5,10 +5,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:signalforex/constants.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:signalforex/model/ea_detail_model.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
-import 'package:signalforex/model/general_model.dart';
-
 import '../func_global.dart';
 
 // ignore: must_be_immutable

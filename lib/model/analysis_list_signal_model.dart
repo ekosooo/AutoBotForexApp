@@ -61,6 +61,6 @@ class DataPair {
         iPriceLow: json["low"] == null ? null : json["low"],
         iPriceHigh: json["high"] == null ? null : json["high"],
         iAdrPersen: json["persen"] == null ? null : json["persen"],
-        iAdrDirection: json["0"] == null ? null : json["0"],
+        iAdrDirection: json["direction"] == null ? null : json["direction"],
       );
 }

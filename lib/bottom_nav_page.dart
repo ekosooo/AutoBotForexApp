@@ -4,6 +4,7 @@ import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:signalforex/screen/home_screen.dart';
 import 'package:signalforex/screen/analysis_screen.dart';
 import 'package:signalforex/screen/login_screen.dart';
+import 'package:signalforex/screen/profile_screen.dart';
 import 'package:signalforex/screen/register_screen.dart';
 import 'package:signalforex/widget/coming_soon.dart';
 //import 'package:firebase_messaging/firebase_messaging.dart';
@@ -39,8 +40,8 @@ class BottomNavPageState extends State<BottomNavPage> {
       ComingSoon(),
       AnalysisPage(),
       ComingSoon(),
+      // ProfilePage(),
       LoginPage(),
-      //RegisterPage(),
     ];
 
     final _bottomNavBarItems = <BottomNavigationBarItem>[
