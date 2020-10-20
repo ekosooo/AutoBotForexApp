@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-class DetailEA {
-  DetailEA({
+class DetailTools {
+  DetailTools({
     this.status,
     this.message,
     this.data,
@@ -9,22 +9,26 @@ class DetailEA {
 
   String status;
   String message;
-  List<DataDetailEA> data;
+  List<DataDetailTools> data;
 
-  factory DetailEA.fromJson(String str) => DetailEA.fromMap(json.decode(str));
+  factory DetailTools.fromJson(String str) =>
+      DetailTools.fromMap(json.decode(str));
 
-  factory DetailEA.fromMap(Map<String, dynamic> json) => DetailEA(
+  factory DetailTools.fromMap(Map<String, dynamic> json) => DetailTools(
         status: json["status"] == null ? null : json["status"],
         message: json["message"] == null ? null : json["message"],
         data: json["data"] == null
             ? null
-            : List<DataDetailEA>.from(
-                json["data"].map((x) => DataDetailEA.fromMap(x))),
+            : List<DataDetailTools>.from(
+                json["data"].map(
+                  (x) => DataDetailTools.fromMap(x),
+                ),
+              ),
       );
 }
 
-class DataDetailEA {
-  DataDetailEA({
+class DataDetailTools {
+  DataDetailTools({
     this.name,
     this.desc,
     this.img,
@@ -46,10 +50,10 @@ class DataDetailEA {
   List<ScreenshotEA> ss;
   List<Product> product;
 
-  factory DataDetailEA.fromJson(String str) =>
-      DataDetailEA.fromMap(json.decode(str));
+  factory DataDetailTools.fromJson(String str) =>
+      DataDetailTools.fromMap(json.decode(str));
 
-  factory DataDetailEA.fromMap(Map<String, dynamic> json) => DataDetailEA(
+  factory DataDetailTools.fromMap(Map<String, dynamic> json) => DataDetailTools(
         name: json["name"] == null ? null : json["name"],
         desc: json["desc"] == null ? null : json["desc"],
         img: json["img"] == null ? null : json["img"],

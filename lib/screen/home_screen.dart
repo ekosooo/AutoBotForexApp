@@ -365,11 +365,13 @@ class HomePageState extends State<HomePage> {
                     CupertinoPageRoute(builder: (context) => CalendarPage()));
               } else if (_titleMenu == "Signal") {
                 Navigator.push(
-                    context,
-                    CupertinoPageRoute(
-                        builder: (context) => SignalPage(
-                              selectedPage: 0,
-                            )));
+                  context,
+                  CupertinoPageRoute(
+                    builder: (context) => SignalPage(
+                      selectedPage: 0,
+                    ),
+                  ),
+                );
               } else if (_titleMenu == "EA Forex") {
                 Navigator.push(context,
                     CupertinoPageRoute(builder: (context) => EAForexPage()));
@@ -379,9 +381,12 @@ class HomePageState extends State<HomePage> {
               } else if (_titleMenu == "Tools") {
                 buildSnackBar();
               } else if (_titleMenu == "Indicator") {
-                // Navigator.push(context,
-                //     CupertinoPageRoute(builder: (context) => IndicatorPage()));
-                buildSnackBar();
+                Navigator.push(
+                  context,
+                  CupertinoPageRoute(
+                    builder: (context) => IndicatorPage(),
+                  ),
+                );
               } else if (_titleMenu == "Top Broker") {
                 Navigator.push(context,
                     CupertinoPageRoute(builder: (context) => TopBrokerPage()));

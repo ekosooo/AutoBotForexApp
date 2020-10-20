@@ -3,7 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:signalforex/constants.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:signalforex/model/ea_list_model.dart';
+import 'package:signalforex/model/tools_list_model.dart';
+
 import 'package:signalforex/screen/ea_forex_detail_screen.dart';
 import 'package:http/http.dart' as http;
 import 'package:signalforex/widget/no_data_record.dart';
@@ -15,10 +16,15 @@ class EAForexPage extends StatefulWidget {
 
 class EAForexPageState extends State<EAForexPage> {
   Future getListEA() async {
-    final String baseUrl = kBaseUrlApi + 'tools/EA/list';
-    final response = await http.get('$baseUrl');
+    final String baseUrl = kBaseUrlApi + 'tools/list';
+    final response = await http.post(
+      '$baseUrl',
+      body: {
+        'cat': 'EA',
+      },
+    );
     if (response.statusCode == 200) {
-      return ListEA.fromJson(response.body);
+      return ToolsList.fromJson(response.body);
     } else {
       throw Exception('Fail load data');
     }
@@ -55,8 +61,8 @@ class EAForexPageState extends State<EAForexPage> {
     );
   }
 
-  buildListEA(List<DataListEA> eaList) {
-    if (eaList.length == 0) {
+  buildListEA(List<DataTools> toolsList) {
+    if (toolsList.length == 0) {
       return NoDataRecord();
     } else {
       return Container(
@@ -68,9 +74,9 @@ class EAForexPageState extends State<EAForexPage> {
           },
           child: ListView.builder(
             shrinkWrap: true,
-            itemCount: eaList.length,
+            itemCount: toolsList.length,
             itemBuilder: (BuildContext contex, int index) {
-              DataListEA dataEA = eaList[index];
+              DataTools dataTools = toolsList[index];
               return Container(
                 margin: EdgeInsets.only(top: 20.w),
                 height: 215.w,
@@ -78,10 +84,11 @@ class EAForexPageState extends State<EAForexPage> {
                 child: GestureDetector(
                   onTap: () {
                     Navigator.push(
-                        context,
-                        CupertinoPageRoute(
-                            builder: (context) =>
-                                EAForexDetailPage(dataEA.id)));
+                      context,
+                      CupertinoPageRoute(
+                        builder: (context) => EAForexDetailPage(dataTools.id),
+                      ),
+                    );
                   },
                   child: Stack(
                     children: <Widget>[
@@ -110,7 +117,7 @@ class EAForexPageState extends State<EAForexPage> {
                                     children: <Widget>[
                                       //-- title ea --
                                       Text(
-                                        dataEA.name,
+                                        dataTools.name,
                                         style: TextStyle(
                                           fontFamily: "Nunito-ExtraBold",
                                           fontSize: 28.ssp,
@@ -121,7 +128,7 @@ class EAForexPageState extends State<EAForexPage> {
                                       //-- desc ea --
                                       SizedBox(height: 10.w),
                                       Text(
-                                        dataEA.desc,
+                                        dataTools.desc,
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
                                         textAlign: TextAlign.justify,
@@ -141,7 +148,7 @@ class EAForexPageState extends State<EAForexPage> {
                                             itemSize: 25.w,
                                             onRatingUpdate: null,
                                             initialRating:
-                                                double.parse(dataEA.rate),
+                                                double.parse(dataTools.rate),
                                             minRating: 1,
                                             direction: Axis.horizontal,
                                             allowHalfRating: true,
@@ -152,7 +159,7 @@ class EAForexPageState extends State<EAForexPage> {
                                           ),
                                           SizedBox(width: 10.w),
                                           Text(
-                                            dataEA.rate,
+                                            dataTools.rate,
                                             style: TextStyle(
                                               fontFamily: "Nunito-ExtraBold",
                                               fontSize: 22.ssp,
@@ -189,9 +196,9 @@ class EAForexPageState extends State<EAForexPage> {
                           height: 190.w,
                           width: 135.w,
                           child: Hero(
-                            tag: dataEA.id,
+                            tag: dataTools.id,
                             child: Image.network(
-                              dataEA.img,
+                              dataTools.img,
                               fit: BoxFit.fill,
                             ),
                           ),

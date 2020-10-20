@@ -1,41 +1,37 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:signalforex/constants.dart';
 import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:photo_view/photo_view.dart';
 import 'package:http/http.dart' as http;
 import 'package:signalforex/func_global.dart';
-import 'package:signalforex/model/ea_detail_model.dart';
-import 'package:signalforex/model/ea_list_model.dart';
+import 'package:signalforex/model/tools_detail_model.dart';
+
 import 'package:signalforex/screen/form_subscribe_ea_screen.dart';
+import 'package:signalforex/widget/detial_image_from_url.dart';
 import 'package:signalforex/widget/no_data_record.dart';
 import 'package:signalforex/widget/something_wrong.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
-import 'dart:convert';
-
-final GlobalKey<ScaffoldState> scaffoldStateDialog =
-    new GlobalKey<ScaffoldState>();
 
 class EAForexDetailPage extends StatefulWidget {
-  final String idEA;
-  const EAForexDetailPage(this.idEA);
+  final String toolsID;
+  const EAForexDetailPage(this.toolsID);
   EAForexDetailPageState createState() => EAForexDetailPageState();
 }
 
 class EAForexDetailPageState extends State<EAForexDetailPage> {
-  bool isLoading = true;
-
   Future getDetailEA() async {
-    final String baseUrl = kBaseUrlApi + 'tools/EA/detail';
+    final String baseUrl = kBaseUrlApi + 'tools/detail';
     final response = await http.post(
       '$baseUrl',
-      body: {'idTools': widget.idEA},
+      body: {
+        'idTools': widget.toolsID,
+        'catTools': 'EA',
+      },
     );
 
     if (response.statusCode == 200) {
-      return DetailEA.fromJson(response.body);
+      return DetailTools.fromJson(response.body);
     } else {
       throw Exception('Fail load data');
     }
@@ -45,7 +41,6 @@ class EAForexDetailPageState extends State<EAForexDetailPage> {
   Widget build(BuildContext context) {
     ScreenUtil.init(context, width: 750, height: 1344);
     return Scaffold(
-      key: scaffoldStateDialog,
       resizeToAvoidBottomPadding: false,
       backgroundColor: Color.fromRGBO(23, 40, 59, 1),
       appBar: buildAppBar(context),
@@ -74,8 +69,9 @@ class EAForexDetailPageState extends State<EAForexDetailPage> {
     );
   }
 
-  buildDetailEA(BuildContext context, List<DataDetailEA> dataDetailEAList) {
-    if (dataDetailEAList.length == 0) {
+  buildDetailEA(
+      BuildContext context, List<DataDetailTools> dataDetailToolsList) {
+    if (dataDetailToolsList.length == 0) {
       return NoDataRecord();
     } else {
       var textContentStyle = TextStyle(
@@ -112,7 +108,7 @@ class EAForexDetailPageState extends State<EAForexDetailPage> {
                       Container(
                         margin: EdgeInsets.symmetric(horizontal: 35.w),
                         child: Text(
-                          dataDetailEAList[0].desc,
+                          dataDetailToolsList[0].desc,
                           textAlign: TextAlign.justify,
                           style: textContentStyle,
                         ),
@@ -131,7 +127,7 @@ class EAForexDetailPageState extends State<EAForexDetailPage> {
                             ),
                             SizedBox(height: 10.w),
                             Text(
-                              dataDetailEAList[0].fitur,
+                              dataDetailToolsList[0].fitur,
                               style: textContentStyle,
                             ),
                           ],
@@ -151,7 +147,7 @@ class EAForexDetailPageState extends State<EAForexDetailPage> {
                             ),
                             SizedBox(height: 10.w),
                             Text(
-                              dataDetailEAList[0].recom,
+                              dataDetailToolsList[0].recom,
                               style: textContentStyle,
                             ),
                           ],
@@ -176,14 +172,14 @@ class EAForexDetailPageState extends State<EAForexDetailPage> {
                         child: ListView.builder(
                           shrinkWrap: true,
                           scrollDirection: Axis.horizontal,
-                          itemCount: dataDetailEAList[0].backtest.length,
+                          itemCount: dataDetailToolsList[0].backtest.length,
 
                           // ignore: missing_return
                           itemBuilder: (BuildContext context, int index) {
                             String idVideo = YoutubePlayer.convertUrlToId(
-                                dataDetailEAList[0].backtest[index].url);
+                                dataDetailToolsList[0].backtest[index].url);
                             //-- untuk return video
-                            if (dataDetailEAList[0].backtest[index].cat ==
+                            if (dataDetailToolsList[0].backtest[index].cat ==
                                 'VIDEO') {
                               return GestureDetector(
                                 onTap: () {
@@ -192,7 +188,7 @@ class EAForexDetailPageState extends State<EAForexDetailPage> {
                                     MaterialPageRoute(
                                       builder: (_) => PlayVideo(
                                         title: 'Backtest EA ' +
-                                            dataDetailEAList[0].name,
+                                            dataDetailToolsList[0].name,
                                         idVideo: idVideo,
                                       ),
                                     ),
@@ -212,7 +208,7 @@ class EAForexDetailPageState extends State<EAForexDetailPage> {
                                     borderRadius: BorderRadius.circular(8.w),
                                     image: DecorationImage(
                                       image: NetworkImage(
-                                        dataDetailEAList[0]
+                                        dataDetailToolsList[0]
                                             .backtest[0]
                                             .thumbnail,
                                       ),
@@ -221,7 +217,7 @@ class EAForexDetailPageState extends State<EAForexDetailPage> {
                                   ),
                                 ),
                               );
-                            } else if (dataDetailEAList[0]
+                            } else if (dataDetailToolsList[0]
                                     .backtest[index]
                                     .cat ==
                                 'IMG') {
@@ -231,19 +227,23 @@ class EAForexDetailPageState extends State<EAForexDetailPage> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => DetailImage(
-                                          url: dataDetailEAList[0]
+                                          url: dataDetailToolsList[0]
                                               .backtest[index]
                                               .url),
                                     ),
                                   );
                                 },
                                 child: Hero(
-                                  tag: dataDetailEAList[0].backtest[index].url,
+                                  tag: dataDetailToolsList[0]
+                                      .backtest[index]
+                                      .url,
                                   child: Container(
                                     margin: EdgeInsets.only(right: 20.w),
                                     width: 550.w,
                                     child: Image.network(
-                                      dataDetailEAList[0].backtest[index].url,
+                                      dataDetailToolsList[0]
+                                          .backtest[index]
+                                          .url,
                                       fit: BoxFit.cover,
                                     ),
                                     decoration: BoxDecoration(
@@ -260,7 +260,7 @@ class EAForexDetailPageState extends State<EAForexDetailPage> {
 
                       //------------ screenshoot title ----------
 
-                      (dataDetailEAList[0].ss.length == 0)
+                      (dataDetailToolsList[0].ss.length == 0)
                           ? Container()
                           : Container(
                               margin: EdgeInsets.only(left: 35.w, top: 30.w),
@@ -271,7 +271,7 @@ class EAForexDetailPageState extends State<EAForexDetailPage> {
                             ),
 
                       //------ screenshot item ----------
-                      (dataDetailEAList[0].ss.length == 0)
+                      (dataDetailToolsList[0].ss.length == 0)
                           ? Container()
                           : Container(
                               height: 400.w,
@@ -279,7 +279,7 @@ class EAForexDetailPageState extends State<EAForexDetailPage> {
                               child: ListView.builder(
                                 shrinkWrap: true,
                                 scrollDirection: Axis.horizontal,
-                                itemCount: dataDetailEAList[0].ss.length,
+                                itemCount: dataDetailToolsList[0].ss.length,
                                 itemBuilder: (BuildContext context, int index) {
                                   return GestureDetector(
                                     child: Hero(
@@ -367,12 +367,15 @@ class EAForexDetailPageState extends State<EAForexDetailPage> {
                                         CupertinoPageRoute(
                                           builder: (context) =>
                                               FormSubscribeEAPage(
-                                            idEA: widget.idEA,
-                                            nameEA: dataDetailEAList[0].name,
-                                            rateEA: dataDetailEAList[0].rate,
-                                            urlImgEA: dataDetailEAList[0].img,
+                                            toolsID: widget.toolsID,
+                                            toolsName:
+                                                dataDetailToolsList[0].name,
+                                            toolsRate:
+                                                dataDetailToolsList[0].rate,
+                                            toolsUrlImg:
+                                                dataDetailToolsList[0].img,
                                             productList:
-                                                dataDetailEAList[0].product,
+                                                dataDetailToolsList[0].product,
                                           ),
                                         ),
                                       );
@@ -426,7 +429,7 @@ class EAForexDetailPageState extends State<EAForexDetailPage> {
                         ),
                       ),
                       Text(
-                        dataDetailEAList[0].name,
+                        dataDetailToolsList[0].name,
                         style: TextStyle(
                           fontFamily: 'Nunito-ExtraBold',
                           fontSize: 55.ssp,
@@ -444,7 +447,7 @@ class EAForexDetailPageState extends State<EAForexDetailPage> {
                           ),
                           SizedBox(width: 10.w),
                           Text(
-                            dataDetailEAList[0].rate,
+                            dataDetailToolsList[0].rate,
                             style: TextStyle(
                               fontFamily: 'Nunito-Bold',
                               fontSize: 32.ssp,
@@ -495,9 +498,9 @@ class EAForexDetailPageState extends State<EAForexDetailPage> {
                             width: 250.w,
                             height: 350.w,
                             child: Hero(
-                              tag: widget.idEA,
+                              tag: widget.toolsID,
                               child: Image.network(
-                                dataDetailEAList[0].img,
+                                dataDetailToolsList[0].img,
                                 fit: BoxFit.fill,
                               ),
                             ),
@@ -650,55 +653,6 @@ class PlayVideoState extends State<PlayVideo> {
             child: player,
           ),
         ),
-      ),
-    );
-  }
-}
-
-//-- detail image class --
-class DetailImage extends StatelessWidget {
-  final String url;
-  DetailImage({Key key, this.url}) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        elevation: 0.0,
-        backgroundColor: Colors.transparent,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-            color: Colors.white,
-          ),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ),
-      body: GestureDetector(
-        child: Center(
-          child: Hero(
-            tag: url,
-            child: Container(
-              // color: Colors.grey[300],
-              // width: 600.w,
-              // height: 900.w,
-              margin: EdgeInsets.symmetric(horizontal: 40.w, vertical: 40.w),
-              child: Center(
-                child: PhotoView(
-                  minScale: 0.8,
-                  imageProvider: NetworkImage(
-                    url,
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-        onTap: () {
-          Navigator.pop(context);
-        },
       ),
     );
   }

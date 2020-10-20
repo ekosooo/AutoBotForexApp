@@ -2,21 +2,51 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:feather_icons_flutter/feather_icons_flutter.dart';
+import 'package:signalforex/bottom_nav_page.dart';
 import 'package:signalforex/constants.dart';
 import 'package:signalforex/screen/change_password_screen.dart';
 import 'package:signalforex/screen/edit_profile.dart';
 import 'package:flutter_share/flutter_share.dart';
 import 'package:signalforex/screen/signal_notif_setting_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
+  @override
+  ProfilePageState createState() => ProfilePageState();
+}
+
+class ProfilePageState extends State<ProfilePage> {
+  //-- shared preferences --
+  SharedPreferences sharedPreferences;
+
+  String name = '';
+  String email = '';
+  String referral = '';
+
   //-- share link --
   Future<void> shareReferral() async {
     await FlutterShare.share(
-      title: 'Test',
-      text: 'Yuk.. gabung bersama kami',
-      linkUrl: 'https://www.signalforex.id',
+      title: 'Signal Forex',
+      text:
+          'Yuk.. gabung bersama kami untuk hasil trading yang lebih baik dalam genggaman',
+      linkUrl: kMasterUrl + 'register/' + referral,
       chooserTitle: 'Example Chooser Tittle',
     );
+  }
+
+  @override
+  void initState() {
+    getDataSharedPref();
+    super.initState();
+  }
+
+  getDataSharedPref() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+    setState(() {
+      name = sharedPreferences.getString('name');
+      email = sharedPreferences.getString('email');
+      referral = sharedPreferences.getString('referral');
+    });
   }
 
   @override
@@ -62,7 +92,15 @@ class ProfilePage extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: () {
-            print('Sign Out');
+            sharedPreferences.setBool('isLogin', false);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => BottomNavPage(
+                  index: 4,
+                ),
+              ),
+            );
           },
           splashColor: Colors.white.withOpacity(0.3),
           child: Container(
@@ -115,7 +153,7 @@ class ProfilePage extends StatelessWidget {
             color: kBackgroundColor,
           ),
           buildItemMenu(
-              context, 'Account Trading', FeatherIcons.user, textStyleMenu),
+              context, 'Trading Account', FeatherIcons.user, textStyleMenu),
           Container(
             height: 3.w,
             color: kBackgroundColor,
@@ -293,11 +331,11 @@ class ProfilePage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                'Eko Alfianto',
+                name,
                 style: textStyleTitle,
               ),
               Text(
-                'ekoalfnt@gmail.com',
+                email,
                 style: TextStyle(
                   fontFamily: 'Nunito',
                   fontSize: 28.ssp,

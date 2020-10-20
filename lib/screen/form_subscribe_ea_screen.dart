@@ -4,24 +4,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:signalforex/constants.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:signalforex/model/ea_detail_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:signalforex/model/tools_detail_model.dart';
 import '../func_global.dart';
 
 // ignore: must_be_immutable
 class FormSubscribeEAPage extends StatefulWidget {
-  String idEA;
-  String nameEA;
-  String rateEA;
-  String urlImgEA;
+  String toolsID;
+  String toolsName;
+  String toolsRate;
+  String toolsUrlImg;
   List<Product> productList;
 
   FormSubscribeEAPage({
     Key key,
-    this.idEA,
-    this.nameEA,
-    this.rateEA,
-    this.urlImgEA,
+    this.toolsID,
+    this.toolsName,
+    this.toolsRate,
+    this.toolsUrlImg,
     this.productList,
   });
 
@@ -176,7 +176,7 @@ class FormSubscribeEAPageState extends State<FormSubscribeEAPage> {
                                                         .spaceBetween,
                                                 children: <Widget>[
                                                   Text(
-                                                    'EA ' + widget.nameEA,
+                                                    'EA ' + widget.toolsName,
                                                     style: TextStyle(
                                                       fontFamily:
                                                           "Nunito-ExtraBold",
@@ -207,7 +207,7 @@ class FormSubscribeEAPageState extends State<FormSubscribeEAPage> {
                                                     itemSize: 25.w,
                                                     onRatingUpdate: null,
                                                     initialRating: double.parse(
-                                                        widget.rateEA),
+                                                        widget.toolsRate),
                                                     minRating: 1,
                                                     direction: Axis.horizontal,
                                                     allowHalfRating: true,
@@ -219,7 +219,7 @@ class FormSubscribeEAPageState extends State<FormSubscribeEAPage> {
                                                   ),
                                                   SizedBox(width: 10.w),
                                                   Text(
-                                                    widget.rateEA,
+                                                    widget.toolsRate,
                                                     style: TextStyle(
                                                       fontFamily:
                                                           "Nunito-ExtraBold",
@@ -246,7 +246,7 @@ class FormSubscribeEAPageState extends State<FormSubscribeEAPage> {
                                   height: 190.w,
                                   width: 135.w,
                                   child: Image.network(
-                                    widget.urlImgEA,
+                                    widget.toolsUrlImg,
                                     fit: BoxFit.fill,
                                   ),
                                   decoration: BoxDecoration(
@@ -441,7 +441,7 @@ class FormSubscribeEAPageState extends State<FormSubscribeEAPage> {
                               isLoading = true;
                             });
                             postSubscribe(
-                              widget.idEA,
+                              widget.toolsID,
                               nameController.text,
                               emailController.text,
                               noHpController.text,

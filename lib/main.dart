@@ -22,7 +22,6 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      //home: BottomNavPage(),
       home: SplashScreenPage(),
     );
   }
@@ -34,54 +33,17 @@ class SplashScreenPage extends StatefulWidget {
 }
 
 class SplashScreenPageState extends State<SplashScreenPage> {
-  //----- fcm ---
-  // FirebaseMessaging fm = FirebaseMessaging();
-  // String token = '';
-
   @override
   void initState() {
-    // fm.configure(onMessage: (Map<String, dynamic> message) async {
-    //   //debugPrint('onMessage : $message');
-    //   this.directPageNotif(message['data']['screen']);
-    // }, onResume: (Map<String, dynamic> message) async {
-    //   //debugPrint('onResume : $message');
-    //   this.directPageNotif(message['data']['screen']);
-    // }, onLaunch: (Map<String, dynamic> message) async {
-    //   this.directPageNotif(message['data']['screen']);
-    //   //debugPrint('onLunch : $message');
-    // });
-
-    // fm.getToken().then((token) => setState(() {
-    //       this.token = token;
-    //     }));
-
-    // fm.subscribeToTopic('signal');
     super.initState();
     this.startSplashScreen();
   }
-
-  // directPageNotif(String screenPage) async {
-  //   switch (screenPage) {
-  //     case "SIGNAL_PAGE":
-  //       Navigator.pushReplacement(
-  //         context,
-  //         MaterialPageRoute(
-  //           builder: (context) => SignalPage(
-  //             selectedPage: 0,
-  //           ),
-  //         ),
-  //       );
-  //       break;
-  //     default:
-  //       break;
-  //   }
-  // }
 
   startSplashScreen() async {
     var duration = const Duration(seconds: 3);
     return Timer(duration, () {
       Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) {
-        return BottomNavPage();
+        return BottomNavPage(index: 0);
       }));
     });
   }

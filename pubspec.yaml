@@ -44,8 +44,6 @@ dependencies:
   http: ^0.12.2
   #expandable layout
   expandable: ^4.1.4
-  #fl chart
-  fl_chart: ^0.11.0
   #push notif
   firebase_messaging: ^6.0.13
   #icon louncher
@@ -74,6 +72,8 @@ dependencies:
   device_info: ^0.4.2+8
   #share link
   flutter_share: ^1.0.2+1
+  #image picker
+  image_picker: ^0.6.7+12
  
 
 dev_dependencies:

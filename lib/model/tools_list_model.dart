@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-class ListEA {
-  ListEA({
+class ToolsList {
+  ToolsList({
     this.status,
     this.message,
     this.data,
@@ -9,22 +9,25 @@ class ListEA {
 
   String status;
   String message;
-  List<DataListEA> data;
+  List<DataTools> data;
 
-  factory ListEA.fromJson(String str) => ListEA.fromMap(json.decode(str));
+  factory ToolsList.fromJson(String str) => ToolsList.fromMap(json.decode(str));
 
-  factory ListEA.fromMap(Map<String, dynamic> json) => ListEA(
+  factory ToolsList.fromMap(Map<String, dynamic> json) => ToolsList(
         status: json["status"] == null ? null : json["status"],
         message: json["message"] == null ? null : json["message"],
         data: json["data"] == null
             ? null
-            : List<DataListEA>.from(
-                json["data"].map((x) => DataListEA.fromMap(x))),
+            : List<DataTools>.from(
+                json["data"].map(
+                  (x) => DataTools.fromMap(x),
+                ),
+              ),
       );
 }
 
-class DataListEA {
-  DataListEA({
+class DataTools {
+  DataTools({
     this.id,
     this.name,
     this.desc,
@@ -38,10 +41,9 @@ class DataListEA {
   String rate;
   String img;
 
-  factory DataListEA.fromJson(String str) =>
-      DataListEA.fromMap(json.decode(str));
+  factory DataTools.fromJson(String str) => DataTools.fromMap(json.decode(str));
 
-  factory DataListEA.fromMap(Map<String, dynamic> json) => DataListEA(
+  factory DataTools.fromMap(Map<String, dynamic> json) => DataTools(
         id: json["id"] == null ? null : json["id"],
         name: json["name"] == null ? null : json["name"],
         desc: json["desc"] == null ? null : json["desc"],

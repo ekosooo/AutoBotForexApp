@@ -5,33 +5,70 @@ import 'package:signalforex/screen/home_screen.dart';
 import 'package:signalforex/screen/analysis_screen.dart';
 import 'package:signalforex/screen/login_screen.dart';
 import 'package:signalforex/screen/profile_screen.dart';
-import 'package:signalforex/screen/register_screen.dart';
 import 'package:signalforex/widget/coming_soon.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 //import 'package:firebase_messaging/firebase_messaging.dart';
 
 class BottomNavPage extends StatefulWidget {
+  final int index;
+  BottomNavPage({Key key, this.index}) : super(key: key);
   @override
   BottomNavPageState createState() => BottomNavPageState();
 }
 
 class BottomNavPageState extends State<BottomNavPage> {
-  // //----- fcm ---
-  // FirebaseMessaging fm = FirebaseMessaging();
-  // String token = '';
+  //-- shared preferences ---
+  SharedPreferences sharedPreferences;
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  // }
-  // //----- end fcm ---
+  bool isLogin = false;
 
-  int _selectedTabIndex = 0;
+  int _selectedTabIndex;
+  @override
+  void initState() {
+    _selectedTabIndex = widget.index;
+    initialSharedPref();
+    super.initState();
+  }
 
   void _onNavBarTapped(int index) {
     setState(() {
       _selectedTabIndex = index;
     });
   }
+
+  initialSharedPref() async {
+    sharedPreferences = await SharedPreferences.getInstance();
+    var checkSharedPreferencesLogin = sharedPreferences.getBool('isLogin');
+    print(checkSharedPreferencesLogin);
+    if (checkSharedPreferencesLogin == null) {
+      setState(() {
+        isLogin = false;
+      });
+    } else {
+      if (sharedPreferences.getBool('isLogin')) {
+        setState(() {
+          isLogin = true;
+        });
+      } else {
+        setState(() {
+          isLogin = false;
+        });
+      }
+    }
+  }
+
+  // getLoginStatus() {
+  //   var checkSharedPreferencesLogin = sharedPreferences.getBool('isLogin');
+  //   if (checkSharedPreferencesLogin == null) {
+  //     return false;
+  //   } else {
+  //     if (sharedPreferences.getBool('isLogin')) {
+  //       return true;
+  //     } else {
+  //       return false;
+  //     }
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -40,8 +77,7 @@ class BottomNavPageState extends State<BottomNavPage> {
       ComingSoon(),
       AnalysisPage(),
       ComingSoon(),
-      // ProfilePage(),
-      LoginPage(),
+      (isLogin) ? ProfilePage() : LoginPage(),
     ];
 
     final _bottomNavBarItems = <BottomNavigationBarItem>[
